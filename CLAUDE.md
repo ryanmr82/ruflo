@@ -7,21 +7,182 @@
 - `npm run typecheck`: Run TypeScript type checking
 - `./claude-flow --help`: Show all available commands
 
-## Batch Tools and Orchestration
-This project is configured for advanced Claude Code batch operations and swarm orchestration:
+## Claude-Flow Complete Command Reference
 
-### Batch Tool Usage Guidelines
-- **Always use TodoWrite** at the start of complex operations for task coordination
-- **Use Task tool** to launch parallel agents for independent work streams
-- **Store results in Memory** for cross-agent coordination and knowledge sharing
-- **Batch file operations** when reading/writing multiple files for efficiency
-- **Use parallel execution** whenever possible with batch tool coordination
+### Core System Commands
+- `./claude-flow start [--ui] [--port 3000] [--host localhost]`: Start orchestration system with optional web UI
+- `./claude-flow status`: Show comprehensive system status
+- `./claude-flow monitor`: Real-time system monitoring dashboard
+- `./claude-flow config <subcommand>`: Configuration management (show, get, set, init, validate)
 
-### Todo Tools for Advanced Orchestration
-TodoWrite and TodoRead are the foundation of all swarm operations:
+### Agent Management
+- `./claude-flow agent spawn <type> [--name <name>]`: Create AI agents (researcher, coder, analyst, etc.)
+- `./claude-flow agent list`: List all active agents
+- `./claude-flow spawn <type>`: Quick agent spawning (alias for agent spawn)
+
+### Task Orchestration
+- `./claude-flow task create <type> [description]`: Create and manage tasks
+- `./claude-flow task list`: View active task queue
+- `./claude-flow workflow <file>`: Execute workflow automation files
+
+### Memory Management
+- `./claude-flow memory store <key> <data>`: Store persistent data across sessions
+- `./claude-flow memory get <key>`: Retrieve stored information
+- `./claude-flow memory list`: List all memory keys
+- `./claude-flow memory export <file>`: Export memory to file
+- `./claude-flow memory import <file>`: Import memory from file
+- `./claude-flow memory stats`: Memory usage statistics
+- `./claude-flow memory cleanup`: Clean unused memory entries
+
+### SPARC Development Modes
+- `./claude-flow sparc "<task>"`: Run orchestrator mode (default)
+- `./claude-flow sparc run <mode> "<task>"`: Run specific SPARC mode
+- `./claude-flow sparc tdd "<feature>"`: Test-driven development mode
+- `./claude-flow sparc modes`: List all 17 available SPARC modes
+
+Available SPARC modes: orchestrator, coder, researcher, tdd, architect, reviewer, debugger, tester, analyzer, optimizer, documenter, designer, innovator, swarm-coordinator, memory-manager, batch-executor, workflow-manager
+
+### Swarm Coordination
+- `./claude-flow swarm "<objective>" [options]`: Multi-agent swarm coordination
+- `--strategy`: research, development, analysis, testing, optimization, maintenance
+- `--mode`: centralized, distributed, hierarchical, mesh, hybrid
+- `--max-agents <n>`: Maximum number of agents (default: 5)
+- `--parallel`: Enable parallel execution
+- `--monitor`: Real-time monitoring
+- `--output <format>`: json, sqlite, csv, html
+
+### MCP Server Integration
+- `./claude-flow mcp start [--port 3000] [--host localhost]`: Start MCP server
+- `./claude-flow mcp status`: Show MCP server status
+- `./claude-flow mcp tools`: List available MCP tools
+
+### Claude Integration
+- `./claude-flow claude auth`: Authenticate with Claude API
+- `./claude-flow claude models`: List available Claude models
+- `./claude-flow claude chat`: Interactive chat mode
+
+### Session Management
+- `./claude-flow session`: Manage terminal sessions
+- `./claude-flow repl`: Start interactive REPL mode
+
+### Enterprise Features
+- `./claude-flow project <subcommand>`: Project management (Enterprise)
+- `./claude-flow deploy <subcommand>`: Deployment operations (Enterprise)
+- `./claude-flow cloud <subcommand>`: Cloud infrastructure management (Enterprise)
+- `./claude-flow security <subcommand>`: Security and compliance tools (Enterprise)
+- `./claude-flow analytics <subcommand>`: Analytics and insights (Enterprise)
+
+### Project Initialization
+- `./claude-flow init`: Initialize Claude-Flow project
+- `./claude-flow init --sparc`: Initialize with full SPARC development environment
+
+## Quick Start Workflows
+
+### Research Workflow
+```bash
+# Start a research swarm with distributed coordination
+./claude-flow swarm "Research modern web frameworks" --strategy research --mode distributed --parallel --monitor
+
+# Or use SPARC researcher mode for focused research
+./claude-flow sparc run researcher "Analyze React vs Vue vs Angular performance characteristics"
+
+# Store findings in memory for later use
+./claude-flow memory store "research_findings" "Key insights from framework analysis"
+```
+
+### Development Workflow
+```bash
+# Start orchestration system with web UI
+./claude-flow start --ui --port 3000
+
+# Run TDD workflow for new feature
+./claude-flow sparc tdd "User authentication system with JWT tokens"
+
+# Development swarm for complex projects
+./claude-flow swarm "Build e-commerce API with payment integration" --strategy development --mode hierarchical --max-agents 8 --monitor
+
+# Check system status
+./claude-flow status
+```
+
+### Analysis Workflow
+```bash
+# Analyze codebase performance
+./claude-flow sparc run analyzer "Identify performance bottlenecks in current codebase"
+
+# Data analysis swarm
+./claude-flow swarm "Analyze user behavior patterns from logs" --strategy analysis --mode mesh --parallel --output sqlite
+
+# Store analysis results
+./claude-flow memory store "performance_analysis" "Bottlenecks identified in database queries"
+```
+
+### Maintenance Workflow
+```bash
+# System maintenance with safety controls
+./claude-flow swarm "Update dependencies and security patches" --strategy maintenance --mode centralized --monitor
+
+# Security review
+./claude-flow sparc run reviewer "Security audit of authentication system"
+
+# Export maintenance logs
+./claude-flow memory export maintenance_log.json
+```
+
+## Integration Patterns
+
+### Memory-Driven Coordination
+Use Memory to coordinate information across multiple SPARC modes and swarm operations:
+
+```bash
+# Store architecture decisions
+./claude-flow memory store "system_architecture" "Microservices with API Gateway pattern"
+
+# All subsequent operations can reference this decision
+./claude-flow sparc run coder "Implement user service based on system_architecture in memory"
+./claude-flow sparc run tester "Create integration tests for microservices architecture"
+```
+
+### Multi-Stage Development
+Coordinate complex development through staged execution:
+
+```bash
+# Stage 1: Research and planning
+./claude-flow sparc run researcher "Research authentication best practices"
+./claude-flow sparc run architect "Design authentication system architecture"
+
+# Stage 2: Implementation
+./claude-flow sparc tdd "User registration and login functionality"
+./claude-flow sparc run coder "Implement JWT token management"
+
+# Stage 3: Testing and deployment
+./claude-flow sparc run tester "Comprehensive security testing"
+./claude-flow swarm "Deploy authentication system" --strategy maintenance --mode centralized
+```
+
+### Enterprise Integration
+For enterprise environments with additional tooling:
+
+```bash
+# Project management integration
+./claude-flow project create "authentication-system"
+./claude-flow project switch "authentication-system"
+
+# Security compliance
+./claude-flow security scan
+./claude-flow security audit
+
+# Analytics and monitoring
+./claude-flow analytics dashboard
+./claude-flow deploy production --monitor
+```
+
+## Advanced Batch Tool Patterns
+
+### TodoWrite Coordination
+Always use TodoWrite for complex task coordination:
 
 ```javascript
-// Example: Comprehensive task breakdown for development
 TodoWrite([
   {
     id: "architecture_design",
@@ -30,8 +191,7 @@ TodoWrite([
     priority: "high",
     dependencies: [],
     estimatedTime: "60min",
-    assignedAgent: "architect",
-    batchOptimized: true
+    assignedAgent: "architect"
   },
   {
     id: "frontend_development", 
@@ -40,184 +200,22 @@ TodoWrite([
     priority: "medium",
     dependencies: ["architecture_design"],
     estimatedTime: "120min",
-    assignedAgent: "frontend_team",
-    parallelExecution: true
-  },
-  {
-    id: "backend_services",
-    content: "Implement backend APIs and business logic",
-    status: "pending",
-    priority: "medium", 
-    dependencies: ["architecture_design"],
-    estimatedTime: "150min",
-    assignedAgent: "backend_team",
-    parallelExecution: true
-  },
-  {
-    id: "integration_testing",
-    content: "Integration testing and system validation",
-    status: "pending",
-    priority: "high",
-    dependencies: ["frontend_development", "backend_services"],
-    estimatedTime: "90min",
-    assignedAgent: "testing_team",
-    batchOptimized: true
+    assignedAgent: "frontend_team"
   }
 ]);
-
-// Launch coordinated parallel agents with batch optimization
-Task("System Architect", "Design scalable system architecture using Memory for component coordination", {
-  mode: "architect",
-  batchOptimized: true,
-  memoryIntegration: true
-});
-Task("Frontend Development Team", "Build React components based on architecture stored in Memory", {
-  mode: "coder", 
-  parallelFileOps: true,
-  dependsOn: "architecture_design"
-});
-Task("Backend Development Team", "Implement APIs according to architecture specifications in Memory", {
-  mode: "coder",
-  parallelFileOps: true, 
-  dependsOn: "architecture_design"
-});
 ```
 
-## SPARC Development Modes
-This project includes 17 specialized SPARC modes optimized for batch operations:
+### Task and Memory Integration
+Launch coordinated agents with shared memory:
 
-### Core Orchestration Modes
-- **orchestrator**: Multi-agent task orchestration with TodoWrite/TodoRead/Task/Memory
-  - Coordination Mode: Centralized
-  - Max Parallel Tasks: 10
-  - Batch Optimized: Yes
-  
-- **swarm-coordinator**: Specialized swarm management with batch coordination
-  - Coordination Mode: Hierarchical
-  - Swarm Size: Scalable
-  - Load Balancing: Automatic
-  
-- **workflow-manager**: Process automation with TodoWrite planning and Task execution
-  - Workflow Engine: Event-driven
-  - Process Optimization: Continuous
-  - Automation Level: High
-  
-- **batch-executor**: Parallel task execution specialist using batch operations
-  - Execution Mode: Parallel
-  - Resource Management: Dynamic
-  - Throughput Optimized: Yes
+```javascript
+// Store architecture in memory
+Task("System Architect", "Design architecture and store specs in Memory");
 
-### Development Modes
-- **coder**: Autonomous code generation with batch file operations
-  - File Operations: Parallel
-  - Code Style: ES2022
-  - Batch Optimized: Yes
-  
-- **architect**: System design with Memory-based coordination
-  - Design Patterns: Enterprise
-  - Scalability Focus: Yes
-  - Memory Integration: Automatic
-  
-- **reviewer**: Code review using batch file analysis
-  - Review Depth: Comprehensive
-  - Quality Gates: Security, Performance, Maintainability
-  - Batch Analysis: Yes
-  
-- **tdd**: Test-driven development with TodoWrite planning
-  - Testing Mode: Comprehensive
-  - Coverage Target: 90%
-  - Batch Test Execution: Yes
-
-### Analysis and Research Modes  
-- **researcher**: Deep research with parallel WebSearch/WebFetch and Memory coordination
-  - Search Mode: Parallel
-  - Memory Integration: Automatic
-  - Web Research: Optimized
-  
-- **analyzer**: Code and data analysis with batch processing
-  - Analysis Depth: Comprehensive
-  - Data Processing: Parallel
-  - Pattern Recognition: Advanced
-  
-- **optimizer**: Performance optimization with systematic analysis
-  - Optimization Focus: Performance, Memory, Scalability
-  - Benchmarking: Automatic
-  - Systematic Approach: Yes
-
-### Creative and Support Modes
-- **designer**: UI/UX design with Memory coordination
-  - Design Systems: Atomic
-  - User Centered: Yes
-  - Memory Coordination: Yes
-  
-- **innovator**: Creative problem solving with WebSearch and Memory
-  - Creativity Mode: Divergent-Convergent
-  - Inspiration Sources: Web Research
-  - Cross-session Ideas: Memory-based
-  
-- **documenter**: Documentation with batch file operations
-  - Doc Formats: Markdown, JSDoc, API-docs
-  - Auto Generation: Yes
-  - Batch File Processing: Yes
-  
-- **debugger**: Systematic debugging with TodoWrite and Memory
-  - Debugging Approach: Systematic
-  - Issue Tracking: Memory-based
-  - Pattern Recognition: Yes
-  
-- **tester**: Comprehensive testing with parallel execution
-  - Test Types: Unit, Integration, E2E, Performance
-  - Parallel Execution: Yes
-  - Coverage Analysis: Comprehensive
-  
-- **memory-manager**: Knowledge management with Memory tools
-  - Memory Strategy: Hierarchical
-  - Knowledge Graph: Yes
-  - Cross-session Persistence: Yes
-
-## Advanced Swarm Commands
-Multi-agent coordination with comprehensive batch tools integration:
-
-```bash
-# Research swarm with parallel execution and memory coordination
-claude-flow swarm "Research microservices architecture" \
-  --strategy research --mode distributed --parallel --max-agents 6 --monitor \
-  --batch-optimized --memory-shared --coordination hierarchical
-
-# Development swarm with hierarchical coordination
-claude-flow swarm "Build e-commerce platform" \
-  --strategy development --mode hierarchical --parallel --max-agents 10 --monitor \
-  --file-ops-parallel --code-review-automated --testing-continuous
-
-# Analysis swarm with mesh coordination for complex data processing
-claude-flow swarm "Analyze user behavior patterns" \
-  --strategy analysis --mode mesh --parallel --max-agents 8 --output sqlite \
-  --data-processing-parallel --pattern-recognition --insights-memory
-
-# Testing swarm with comprehensive parallel validation
-claude-flow swarm "Comprehensive security testing" \
-  --strategy testing --mode distributed --parallel --max-agents 12 --monitor \
-  --test-types all --coverage-target 95 --parallel-execution --batch-reports
-
-# Optimization swarm with hybrid adaptive coordination
-claude-flow swarm "Optimize system performance" \
-  --strategy optimization --mode hybrid --parallel --monitor --timeout 180 \
-  --benchmarking-automated --resource-profiling --batch-analysis
-
-# Maintenance swarm with centralized safety controls
-claude-flow swarm "System maintenance and updates" \
-  --strategy maintenance --mode centralized --monitor --output json \
-  --safety-checks --rollback-capable --batch-validation
+// Other agents use memory for coordination
+Task("Frontend Team", "Develop UI using Memory architecture specs");
+Task("Backend Team", "Implement APIs according to Memory specifications");
 ```
-
-### Automatic Batch Tool Integration
-Every swarm command automatically uses:
-- **TodoWrite**: Creates comprehensive task breakdowns with dependencies and batch optimization
-- **Task**: Launches specialized parallel agents with resource management
-- **Memory**: Enables cross-agent knowledge sharing and persistent coordination
-- **Batch File Ops**: Concurrent Read/Write/Edit operations for maximum efficiency
-- **Parallel Search**: Simultaneous Glob/Grep operations for discovery and analysis
-- **Resource Management**: Dynamic allocation and load balancing across agents
 
 ## Code Style Preferences
 - Use ES modules (import/export) syntax
@@ -235,254 +233,14 @@ Every swarm command automatically uses:
 - Create feature branches for new functionality
 - Ensure all tests pass before merging
 
-## Advanced Batch Tool Patterns
-
-### Research and Analysis Pattern
-```javascript
-// 1. Research coordination with batch optimization
-TodoWrite([
-  {
-    id: "domain_research", 
-    content: "Research domain patterns", 
-    status: "pending", 
-    priority: "high",
-    batchOptimized: true,
-    parallelWebSearch: true
-  },
-  {
-    id: "competitive_analysis", 
-    content: "Analyze competitors", 
-    status: "pending", 
-    priority: "medium",
-    batchWebFetch: true,
-    memoryStorage: "competitive_intel"
-  },
-  {
-    id: "synthesis", 
-    content: "Synthesize findings", 
-    status: "pending", 
-    priority: "high",
-    dependsOn: ["domain_research", "competitive_analysis"],
-    memoryIntegration: "comprehensive"
-  }
-]);
-
-// 2. Parallel research agents with specialized coordination
-Task("Domain Expert", "Research best practices using parallel WebSearch and store in Memory", {
-  mode: "researcher",
-  searchMode: "parallel",
-  memoryKey: "domain_expertise",
-  batchOptimized: true
-});
-Task("Competitive Analyst", "Analyze competitor solutions using batch WebFetch", {
-  mode: "analyzer", 
-  fetchMode: "batch",
-  analysisDepth: "comprehensive",
-  memoryKey: "competitive_analysis"
-});
-Task("Technology Evaluator", "Evaluate technology options using research coordination", {
-  mode: "researcher",
-  evaluationCriteria: "comprehensive",
-  memoryIntegration: true
-});
-
-// 3. Knowledge synthesis with cross-agent coordination
-Task("Research Synthesizer", "Combine all Memory findings into comprehensive recommendations", {
-  mode: "analyzer",
-  synthesisMode: "cross-agent",
-  memoryAccess: "all_research_keys",
-  outputFormat: "structured_recommendations"
-});
-```
-
-### Development Coordination Pattern
-```javascript
-// 1. Development planning with resource optimization
-TodoWrite([
-  {
-    id: "architecture", 
-    content: "System architecture design", 
-    status: "pending", 
-    priority: "high",
-    designPatterns: "enterprise",
-    memoryKey: "system_architecture"
-  },
-  {
-    id: "frontend", 
-    content: "Frontend development", 
-    status: "pending", 
-    priority: "medium",
-    parallelFileOps: true,
-    dependsOn: ["architecture"],
-    frameworkOptimized: true
-  },
-  {
-    id: "backend", 
-    content: "Backend development", 
-    status: "pending", 
-    priority: "medium",
-    parallelFileOps: true,
-    dependsOn: ["architecture"],
-    apiFirst: true
-  },
-  {
-    id: "integration", 
-    content: "System integration", 
-    status: "pending", 
-    priority: "high",
-    dependsOn: ["frontend", "backend"],
-    testingIntegrated: true
-  }
-]);
-
-// 2. Coordinated development with specialized agents
-Task("System Architect", "Design architecture and store specs in Memory", {
-  mode: "architect",
-  designApproach: "scalable",
-  memoryKey: "architecture_specs",
-  documentationLevel: "comprehensive"
-});
-Task("Frontend Team", "Develop UI components using Memory architecture specs", {
-  mode: "coder",
-  codeStyle: "ES2022",
-  parallelFileOps: true,
-  memoryDependency: "architecture_specs",
-  testingIntegrated: true
-});
-Task("Backend Team", "Implement APIs according to Memory specifications", {
-  mode: "coder",
-  apiFirst: true,
-  parallelFileOps: true,
-  memoryDependency: "architecture_specs",
-  performanceOptimized: true
-});
-Task("DevOps Team", "Setup deployment using coordinated specifications", {
-  mode: "devops",
-  automationLevel: "high",
-  memoryAccess: "all_specs",
-  cicdIntegrated: true
-});
-```
-
-### Analysis and Optimization Pattern
-```javascript
-// 1. Analysis planning with systematic approach
-TodoWrite([
-  {
-    id: "data_collection", 
-    content: "Collect performance data", 
-    status: "pending", 
-    priority: "high",
-    dataTypes: ["performance", "memory", "network"],
-    batchCollection: true
-  },
-  {
-    id: "pattern_analysis", 
-    content: "Analyze patterns", 
-    status: "pending", 
-    priority: "medium",
-    analysisDepth: "comprehensive",
-    parallelProcessing: true,
-    dependsOn: ["data_collection"]
-  },
-  {
-    id: "optimization", 
-    content: "Implement optimizations", 
-    status: "pending", 
-    priority: "high",
-    optimizationFocus: ["performance", "scalability"],
-    dependsOn: ["pattern_analysis"],
-    benchmarkingIntegrated: true
-  }
-]);
-
-// 2. Parallel analysis with specialized coordination
-Task("Data Collector", "Gather performance metrics using batch Read operations", {
-  mode: "analyzer",
-  dataCollection: "comprehensive",
-  batchFileOps: true,
-  memoryKey: "performance_data"
-});
-Task("Pattern Analyst", "Analyze patterns using parallel Grep and statistical analysis", {
-  mode: "analyzer",
-  analysisType: "pattern_recognition",
-  parallelProcessing: true,
-  memoryDependency: "performance_data",
-  insightGeneration: true
-});
-Task("Optimization Specialist", "Implement improvements using batch Edit operations", {
-  mode: "optimizer",
-  optimizationStrategy: "systematic",
-  batchFileOps: true,
-  memoryAccess: "all_analysis_data",
-  benchmarkingEnabled: true
-});
-```
-
-## Orchestration Patterns
-
-### Hierarchical Coordination
-```javascript
-// Master orchestrator manages specialized teams
-Task("Master Orchestrator", "Coordinate all development phases", {
-  mode: "orchestrator",
-  coordinationMode: "hierarchical",
-  teamManagement: true,
-  resourceAllocation: "dynamic"
-});
-
-// Specialized team leaders
-Task("Development Team Leader", "Coordinate coding activities", {
-  mode: "swarm-coordinator",
-  teamFocus: "development",
-  reportTo: "Master Orchestrator"
-});
-Task("Testing Team Leader", "Coordinate testing activities", {
-  mode: "swarm-coordinator", 
-  teamFocus: "testing",
-  reportTo: "Master Orchestrator"
-});
-```
-
-### Mesh Coordination
-```javascript
-// All agents coordinate directly with each other
-const meshAgents = [
-  "Researcher", "Analyzer", "Coder", "Tester", "Reviewer"
-];
-
-meshAgents.forEach(agent => {
-  Task(agent, `Perform ${agent.toLowerCase()} tasks with peer coordination`, {
-    mode: agent.toLowerCase(),
-    coordinationMode: "mesh",
-    peerCommunication: true,
-    sharedMemory: "mesh_coordination"
-  });
-});
-```
-
-### Pipeline Coordination
-```javascript
-// Sequential processing with handoffs
-TodoWrite([
-  {id: "research", content: "Research phase", priority: "high", pipelineStage: 1},
-  {id: "design", content: "Design phase", dependsOn: ["research"], pipelineStage: 2},
-  {id: "implement", content: "Implementation phase", dependsOn: ["design"], pipelineStage: 3},
-  {id: "test", content: "Testing phase", dependsOn: ["implement"], pipelineStage: 4},
-  {id: "deploy", content: "Deployment phase", dependsOn: ["test"], pipelineStage: 5}
-]);
-```
-
 ## Important Notes
-- **Use TodoWrite extensively** for all complex task coordination with batch optimization
-- **Leverage Task tool** for parallel agent execution with resource management
-- **Store all important information in Memory** for cross-agent coordination and persistence
-- **Use batch file operations** whenever reading/writing multiple files for efficiency
-- **Enable parallel execution** with appropriate flags for maximum throughput
-- **Monitor resource usage** during swarm operations for optimal performance
-- **Implement proper error handling** and recovery mechanisms in batch operations
-- **Use memory keys strategically** for efficient cross-agent data sharing
-- **Configure agent specialization** based on task requirements and resource constraints
-- **Enable continuous monitoring** for long-running swarm operations
+- **Use TodoWrite extensively** for all complex task coordination
+- **Leverage Task tool** for parallel agent execution on independent work
+- **Store all important information in Memory** for cross-agent coordination
+- **Use batch file operations** whenever reading/writing multiple files
+- **Check .claude/commands/** for detailed command documentation
+- **All swarm operations include automatic batch tool coordination**
+- **Monitor progress** with TodoRead during long-running operations
+- **Enable parallel execution** with --parallel flags for maximum efficiency
 
-This configuration ensures optimal use of Claude Code's batch tools for swarm orchestration, parallel task execution, and comprehensive project coordination.
+This configuration ensures optimal use of Claude Code's batch tools for swarm orchestration and parallel task execution with full Claude-Flow capabilities.

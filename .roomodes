@@ -8,10 +8,7 @@
       "Task",
       "Memory",
       "Bash"
-    ],
-    "batchOptimized": true,
-    "coordinationMode": "centralized",
-    "maxParallelTasks": 10
+    ]
   },
   "coder": {
     "description": "Autonomous code generation and implementation",
@@ -24,10 +21,7 @@
       "Glob",
       "Grep",
       "TodoWrite"
-    ],
-    "batchOptimized": true,
-    "fileOperations": "parallel",
-    "codeStyle": "ES2022"
+    ]
   },
   "researcher": {
     "description": "Deep research and comprehensive analysis",
@@ -40,10 +34,7 @@
       "Memory",
       "TodoWrite",
       "Task"
-    ],
-    "batchOptimized": true,
-    "searchMode": "parallel",
-    "memoryIntegration": "automatic"
+    ]
   },
   "tdd": {
     "description": "Test-driven development methodology",
@@ -55,10 +46,7 @@
       "Bash",
       "TodoWrite",
       "Task"
-    ],
-    "batchOptimized": true,
-    "testingMode": "comprehensive",
-    "coverageTarget": 90
+    ]
   },
   "architect": {
     "description": "System design and architecture planning",
@@ -70,10 +58,7 @@
       "Memory",
       "TodoWrite",
       "Task"
-    ],
-    "batchOptimized": true,
-    "designPatterns": "enterprise",
-    "scalabilityFocus": true
+    ]
   },
   "reviewer": {
     "description": "Code review and quality optimization",
@@ -85,13 +70,6 @@
       "Bash",
       "TodoWrite",
       "Memory"
-    ],
-    "batchOptimized": true,
-    "reviewDepth": "comprehensive",
-    "qualityGates": [
-      "security",
-      "performance",
-      "maintainability"
     ]
   },
   "debugger": {
@@ -104,10 +82,7 @@
       "Grep",
       "TodoWrite",
       "Memory"
-    ],
-    "batchOptimized": true,
-    "debuggingApproach": "systematic",
-    "issueTracking": "memory-based"
+    ]
   },
   "tester": {
     "description": "Comprehensive testing and validation",
@@ -119,15 +94,7 @@
       "Bash",
       "TodoWrite",
       "Task"
-    ],
-    "batchOptimized": true,
-    "testTypes": [
-      "unit",
-      "integration",
-      "e2e",
-      "performance"
-    ],
-    "parallelExecution": true
+    ]
   },
   "analyzer": {
     "description": "Code and data analysis specialist",
@@ -140,10 +107,7 @@
       "Memory",
       "TodoWrite",
       "Task"
-    ],
-    "batchOptimized": true,
-    "analysisDepth": "comprehensive",
-    "dataProcessing": "parallel"
+    ]
   },
   "optimizer": {
     "description": "Performance optimization specialist",
@@ -155,14 +119,7 @@
       "Grep",
       "TodoWrite",
       "Memory"
-    ],
-    "batchOptimized": true,
-    "optimizationFocus": [
-      "performance",
-      "memory",
-      "scalability"
-    ],
-    "benchmarking": "automatic"
+    ]
   },
   "documenter": {
     "description": "Documentation generation and maintenance",
@@ -173,14 +130,7 @@
       "Glob",
       "Memory",
       "TodoWrite"
-    ],
-    "batchOptimized": true,
-    "docFormats": [
-      "markdown",
-      "jsdoc",
-      "api-docs"
-    ],
-    "autoGeneration": true
+    ]
   },
   "designer": {
     "description": "UI/UX design and user experience",
@@ -191,10 +141,7 @@
       "Edit",
       "Memory",
       "TodoWrite"
-    ],
-    "batchOptimized": true,
-    "designSystems": "atomic",
-    "userCentered": true
+    ]
   },
   "innovator": {
     "description": "Creative problem solving and innovation",
@@ -206,10 +153,7 @@
       "Memory",
       "TodoWrite",
       "Task"
-    ],
-    "batchOptimized": true,
-    "creativityMode": "divergent-convergent",
-    "inspirationSources": "web-research"
+    ]
   },
   "swarm-coordinator": {
     "description": "Swarm coordination and management",
@@ -220,11 +164,7 @@
       "Task",
       "Memory",
       "Bash"
-    ],
-    "batchOptimized": true,
-    "coordinationMode": "hierarchical",
-    "swarmSize": "scalable",
-    "loadBalancing": true
+    ]
   },
   "memory-manager": {
     "description": "Memory and knowledge management",
@@ -235,10 +175,7 @@
       "Write",
       "TodoWrite",
       "TodoRead"
-    ],
-    "batchOptimized": true,
-    "memoryStrategy": "hierarchical",
-    "knowledgeGraph": true
+    ]
   },
   "batch-executor": {
     "description": "Parallel task execution specialist",
@@ -250,11 +187,7 @@
       "Write",
       "TodoWrite",
       "Memory"
-    ],
-    "batchOptimized": true,
-    "executionMode": "parallel",
-    "resourceManagement": "dynamic",
-    "throughputOptimized": true
+    ]
   },
   "workflow-manager": {
     "description": "Workflow automation and process management",
@@ -265,10 +198,6 @@
       "Task",
       "Bash",
       "Memory"
-    ],
-    "batchOptimized": true,
-    "workflowEngine": "event-driven",
-    "processOptimization": "continuous",
-    "automationLevel": "high"
+    ]
   }
 }
