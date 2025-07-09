@@ -47,7 +47,15 @@ const criticalDeps = [
   'ora',
   'inquirer',
   'express',
-  'ws'
+  'ws',
+  'fs-extra',
+  'nanoid',
+  'p-queue'
+];
+
+// Test MCP SDK separately (it has special export requirements)
+const specialDeps = [
+  '@modelcontextprotocol/sdk'
 ];
 
 console.log('Testing critical dependencies:');
@@ -63,6 +71,24 @@ for (const dep of criticalDeps) {
   }
 }
 
+// Test special dependencies
+console.log('\nTesting special dependencies:');
+for (const dep of specialDeps) {
+  try {
+    // MCP SDK has ESM exports, so we just check if the package exists
+    const depPath = path.join(__dirname, '..', 'node_modules', dep, 'package.json');
+    if (fs.existsSync(depPath)) {
+      console.log(`  ✓ ${dep} (package exists)`);
+    } else {
+      throw new Error('Package not found');
+    }
+  } catch (error) {
+    console.error(`  ❌ ${dep} - ${error.message}`);
+    // MCP SDK is optional for basic tests
+    console.log(`    Note: ${dep} is optional for CI tests`);
+  }
+}
+
 // Test native dependencies with fallback info
 console.log('\nTesting native dependencies:');
 const nativeDeps = ['better-sqlite3', 'blessed'];
@@ -74,6 +100,25 @@ for (const dep of nativeDeps) {
   } catch (error) {
     console.log(`  ⚠️  ${dep} (not available - will use fallback)`);
   }
+}
+
+// Test fallback wrappers (skip ESM modules in CJS context)
+console.log('\nTesting fallback wrappers:');
+// Database wrapper uses top-level await, can't be required in CJS
+const dbWrapperPath = path.join(__dirname, '..', 'src', 'utils', 'database-wrapper.js');
+if (fs.existsSync(dbWrapperPath)) {
+  console.log(`  ✓ database-wrapper.js exists`);
+} else {
+  console.error(`  ❌ database-wrapper.js not found`);
+  hasErrors = true;
+}
+
+// Blessed wrapper exists check
+const blessedWrapperPath = path.join(__dirname, '..', 'src', 'utils', 'blessed-wrapper.js');
+if (fs.existsSync(blessedWrapperPath)) {
+  console.log(`  ✓ blessed-wrapper.js exists`);
+} else {
+  console.warn(`  ⚠️  blessed-wrapper.js not found`);
 }
 
 // Test npm ci
