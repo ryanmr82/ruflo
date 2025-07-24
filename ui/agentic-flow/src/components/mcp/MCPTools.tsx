@@ -131,6 +131,7 @@ const MCPTools: React.FC = () => {
   const [toolsLoaded, setToolsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [executing, setExecuting] = useState(false)
+  const [wsConnected, setWsConnected] = useState(false)
   
   // Real MCP Bridge
   const mcpBridge = new MCPBridge()
@@ -156,6 +157,13 @@ const MCPTools: React.FC = () => {
     }
     
     loadTools()
+    
+    // Check WebSocket connection status periodically
+    const checkWsStatus = setInterval(() => {
+      setWsConnected(mcpBridge.isWebSocketConnected())
+    }, 1000)
+    
+    return () => clearInterval(checkWsStatus)
   }, [])
   
   // Helper function to get category info
@@ -369,8 +377,14 @@ ${result.metadata ? Object.entries(result.metadata).map(([key, value]) =>
             </div>
           )}
           {toolsLoaded && (
-            <div className="text-green-400 text-sm">
-              ✅ {realTools.length} real tools loaded
+            <div className="flex items-center gap-4">
+              <div className="text-green-400 text-sm">
+                ✅ {realTools.length} real tools loaded
+              </div>
+              <div className={`text-sm flex items-center gap-2 ${wsConnected ? 'text-green-400' : 'text-yellow-400'}`}>
+                <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-400' : 'bg-yellow-400'} ${wsConnected ? '' : 'animate-pulse'}`} />
+                {wsConnected ? 'WebSocket Connected' : 'HTTP Fallback Mode'}
+              </div>
             </div>
           )}
         </div>
