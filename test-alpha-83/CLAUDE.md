@@ -458,14 +458,14 @@ If you need to do X operations, they should be in 1 message, not X messages
   mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
   mcp__claude-flow__agent_spawn { type: "researcher" }
   mcp__claude-flow__agent_spawn { type: "coder" }
-  mcp__claude-flow__agent_spawn { type: "analyst" }
+  mcp__claude-flow__agent_spawn { type: "code-analyzer" }
   mcp__claude-flow__agent_spawn { type: "tester" }
-  mcp__claude-flow__agent_spawn { type: "coordinator" }
+  mcp__claude-flow__agent_spawn { type: "task-orchestrator" }
 
   // Claude Code execution - ALL in parallel
   Task("You are researcher agent. MUST coordinate via hooks...")
   Task("You are coder agent. MUST coordinate via hooks...")
-  Task("You are analyst agent. MUST coordinate via hooks...")
+  Task("You are code-analyzer agent. MUST coordinate via hooks...")
   Task("You are tester agent. MUST coordinate via hooks...")
   TodoWrite { todos: [5-10 todos with all priorities and statuses] }
 
@@ -601,7 +601,7 @@ Once configured, Claude Flow MCP tools enhance Claude Code's coordination:
 - Tool: `mcp__claude-flow__agent_spawn`
 - Parameters: `{"type": "researcher", "name": "Literature Review"}`
 - Tool: `mcp__claude-flow__agent_spawn`
-- Parameters: `{"type": "analyst", "name": "Data Analysis"}`
+- Parameters: `{"type": "code-analyzer", "name": "Data Analysis"}`
 - Result: Different cognitive patterns for Claude Code to use
 
 **Step 3:** Coordinate research execution
@@ -634,7 +634,7 @@ Once configured, Claude Flow MCP tools enhance Claude Code's coordination:
 **Step 2:** Define development perspectives
 
 - Tool: `mcp__claude-flow__agent_spawn`
-- Parameters: `{"type": "architect", "name": "System Design"}`
+- Parameters: `{"type": "system-architect", "name": "System Design"}`
 - Result: Architectural thinking pattern for Claude Code
 
 **Step 3:** Coordinate implementation
@@ -801,9 +801,9 @@ See `.claude/commands/` for detailed documentation on all features.
    - Medium tasks (4-6 components): 5-7 agents
    - Complex tasks (7+ components): 8-12 agents
 3. **Agent Type Distribution**: Balance agent types based on task:
-   - Always include 1 coordinator
+   - Always include 1 task-orchestrator
    - For code-heavy tasks: more coders
-   - For design tasks: more architects/analysts
+   - For design tasks: more system-architects/code-analyzers
    - For quality tasks: more testers/reviewers
 
 **Example Auto-Decision Logic:**
@@ -895,15 +895,15 @@ Message 1: [BatchTool]
   - mcp__claude-flow__swarm_init
   - mcp__claude-flow__agent_spawn (researcher)
   - mcp__claude-flow__agent_spawn (coder)
-  - mcp__claude-flow__agent_spawn (analyst)
+  - mcp__claude-flow__agent_spawn (code-analyzer)
   - mcp__claude-flow__agent_spawn (tester)
-  - mcp__claude-flow__agent_spawn (coordinator)
+  - mcp__claude-flow__agent_spawn (task-orchestrator)
 
 Message 2: [BatchTool - Claude Code execution]
   // Task agents with full coordination instructions
   - Task("You are researcher agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Research API patterns")
   - Task("You are coder agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Implement REST endpoints")
-  - Task("You are analyst agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Analyze performance")
+  - Task("You are code-analyzer agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Analyze performance")
   - Task("You are tester agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Write comprehensive tests")
 
   // TodoWrite with ALL todos batched
@@ -939,13 +939,13 @@ STEP 1: IMMEDIATE PARALLEL SPAWN (Single Message!)
 
   // Spawn agents based on maxAgents count and task requirements
   // If CLI specifies 3 agents, spawn 3. If no args, auto-decide optimal count (3-12)
-  - mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
+  - mcp__claude-flow__agent_spawn { type: "system-architect", name: "System Designer" }
   - mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
   - mcp__claude-flow__agent_spawn { type: "coder", name: "Frontend Dev" }
-  - mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
+  - mcp__claude-flow__agent_spawn { type: "code-analyzer", name: "DB Designer" }
   - mcp__claude-flow__agent_spawn { type: "tester", name: "QA Engineer" }
   - mcp__claude-flow__agent_spawn { type: "researcher", name: "Tech Lead" }
-  - mcp__claude-flow__agent_spawn { type: "coordinator", name: "PM" }
+  - mcp__claude-flow__agent_spawn { type: "task-orchestrator", name: "PM" }
   - TodoWrite { todos: [multiple todos at once] }
 
 STEP 2: PARALLEL TASK EXECUTION (Single Message!)
@@ -997,12 +997,12 @@ Dependencies: ↳ X deps | Actionable: ▶
 [BatchTool - Message 1]:
   // Initialize and spawn ALL agents at once
   mcp__claude-flow__swarm_init { topology: "hierarchical", maxAgents: 8, strategy: "parallel" }
-  mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
+  mcp__claude-flow__agent_spawn { type: "system-architect", name: "System Designer" }
   mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
   mcp__claude-flow__agent_spawn { type: "coder", name: "Auth Expert" }
-  mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
+  mcp__claude-flow__agent_spawn { type: "code-analyzer", name: "DB Designer" }
   mcp__claude-flow__agent_spawn { type: "tester", name: "Test Engineer" }
-  mcp__claude-flow__agent_spawn { type: "coordinator", name: "Lead" }
+  mcp__claude-flow__agent_spawn { type: "task-orchestrator", name: "Lead" }
 
   // Update ALL todos at once - NEVER split todos!
   TodoWrite { todos: [
@@ -1108,12 +1108,12 @@ When showing swarm status, use this format:
 └── 🧠 Memory: 15 coordination points stored
 
 Agent Activity:
-├── 🟢 architect: Designing database schema...
+├── 🟢 system-architect: Designing database schema...
 ├── 🟢 coder-1: Implementing auth endpoints...
 ├── 🟢 coder-2: Building user CRUD operations...
-├── 🟢 analyst: Optimizing query performance...
+├── 🟢 code-analyzer: Optimizing query performance...
 ├── 🟡 tester: Waiting for auth completion...
-└── 🟢 coordinator: Monitoring progress...
+└── 🟢 task-orchestrator: Monitoring progress...
 ```
 
 ## 📝 CRITICAL: TODOWRITE AND TASK TOOL BATCHING
