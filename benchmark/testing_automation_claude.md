@@ -1,0 +1,72 @@
+# CLAUDE.md - Optimized for Testing Automation
+
+
+## 🎯 Configuration Overview
+- **Use Case**: Testing Automation
+- **Optimization Target**: balanced
+- **Team Size**: N/A
+- **Complexity**: medium
+
+## ⚡ Performance Configuration
+- **Execution Mode**: Standard
+- **Agent Count**: 6 (tester, performance-benchmarker, reviewer)
+- **Topology**: Mesh
+- **Batch Operations**: RECOMMENDED
+- **Parallel Execution**: STANDARD
+
+## 🎯 Primary Objectives
+1. Test automation
+2. Quality assurance
+3. Coverage analysis
+
+## 🚀 Execution Rules
+
+### CRITICAL: Concurrency Requirements
+```javascript
+// ALWAYS execute in single message:
+[
+  Task("Tester", "...", "tester"),
+  Task("Performance Benchmarker", "...", "performance-benchmarker"),
+  Task("Reviewer", "...", "reviewer"),
+  TodoWrite({ todos: [ALL_TASKS] }),
+  // ... all related operations
+]```
+
+### Critical Rules
+- Achieve high test coverage
+- Implement parallel test execution
+- Use property-based testing
+- Monitor test performance
+- ALWAYS batch test runs
+- Parallel coverage analysis
+- Always run tests after changes
+- Use type checking and linting
+- Implement comprehensive error handling
+- Request code review from reviewer agent
+- Validate all inputs and outputs
+- Use static analysis tools
+- Implement integration testing
+- Add comprehensive logging
+- Verify requirements before implementation
+- Use defensive programming practices
+
+### Tool Priority Order
+1. MultiEdit → Edit → Bash → Read
+
+### Testing Automation Workflow
+**Test Planning**: Comprehensive test strategy
+**Implementation**: Parallel test creation
+**Execution**: Distributed test execution
+**Reporting**: Automated test reporting
+**Maintenance**: Continuous test optimization
+
+## 🤖 Agent Configuration
+- **Swarm Topology**: Mesh
+- **Maximum Agents**: 6
+- **Preferred Agent Types**: tester, performance-benchmarker, reviewer
+
+## 📊 Success Metrics
+- Test Coverage: >95%
+- Test Execution Time: <5 min
+- Test Success Rate: >99%
+- Maintenance Overhead: <10%
