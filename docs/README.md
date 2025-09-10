@@ -7,15 +7,24 @@ Welcome to the Claude-Flow documentation! This directory contains comprehensive 
 | Document | Description |
 |----------|-------------|
 | [INDEX.md](INDEX.md) | Main documentation hub with quick start and navigation |
-| [USER_GUIDE.md](USER_GUIDE.md) | Comprehensive user guide with tutorials and examples |
-| [API_DOCUMENTATION.md](API_DOCUMENTATION.md) | Complete API reference with all 112 MCP tools |
-| [AGENTS.md](AGENTS.md) | All 65+ agent types with capabilities and usage |
-| [SWARM.md](SWARM.md) | Swarm intelligence, topologies, and coordination |
-| [SPARC.md](SPARC.md) | SPARC methodology with all 17 development modes |
-| [MCP_TOOLS.md](MCP_TOOLS.md) | Detailed reference for all MCP tools |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and design patterns |
-| [DEPLOYMENT.md](DEPLOYMENT.md) | Production deployment guides for Docker, K8s, Cloud |
-| [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) | Development setup and contribution guide |
+| **Guides** |  |
+| [USER_GUIDE.md](guides/USER_GUIDE.md) | Comprehensive user guide with tutorials and examples |
+| [SPARC.md](guides/SPARC.md) | SPARC methodology with all 17 development modes |
+| [token-tracking-guide.md](guides/token-tracking-guide.md) | Token tracking implementation guide |
+| **API Documentation** |  |
+| [API_DOCUMENTATION.md](api/API_DOCUMENTATION.md) | Complete API reference with all 112 MCP tools |
+| [MCP_TOOLS.md](api/MCP_TOOLS.md) | Detailed reference for all MCP tools |
+| **Architecture** |  |
+| [ARCHITECTURE.md](architecture/ARCHITECTURE.md) | System architecture and design patterns |
+| [AGENTS.md](architecture/AGENTS.md) | All 65+ agent types with capabilities and usage |
+| [SWARM.md](architecture/SWARM.md) | Swarm intelligence, topologies, and coordination |
+| **Development** |  |
+| [DEPLOYMENT.md](development/DEPLOYMENT.md) | Production deployment guides for Docker, K8s, Cloud |
+| [DEVELOPMENT_WORKFLOW.md](development/DEVELOPMENT_WORKFLOW.md) | Development setup and contribution guide |
+| **Validation** |  |
+| [validation/*.md](validation/) | Training pipeline and validation documentation |
+| **Integrations** |  |
+| [mcp-registry.md](integrations/mcp-registry.md) | MCP Registry integration guide |
 
 ## 🚀 Quick Links
 
