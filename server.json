@@ -1,8 +1,8 @@
 {
   "name": "io.github.ruvnet/claude-flow",
   "display_name": "Claude Flow",
-  "summary": "AI-powered development orchestration with swarm intelligence and SPARC methodology",
-  "description": "Claude Flow extends Claude Code with multi-agent swarms, distributed task orchestration, and the SPARC development methodology. Features include autonomous agent coordination, persistent memory, performance optimization, comprehensive GitHub integration, and enterprise-grade scalability. Supports hierarchical, mesh, ring, and star topologies for swarm coordination.",
+  "summary": "Enterprise-grade AI orchestration platform with hive-mind swarm intelligence and 87 MCP tools",
+  "description": "Claude-Flow v2 Alpha reimagines AI-powered development by combining hive-mind swarm intelligence, neural pattern recognition, and 87 advanced MCP tools. Features include Queen-led AI coordination, 27+ cognitive models with WASM SIMD acceleration, Dynamic Agent Architecture (DAA), SQLite memory system, advanced hooks, GitHub integration, and Flow Nexus cloud platform with E2B sandboxes, challenges, and marketplace.",
   "homepage_url": "https://github.com/ruvnet/claude-flow",
   "source_repo": "https://github.com/ruvnet/claude-flow",
   "license": "MIT",
