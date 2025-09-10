@@ -255,21 +255,21 @@ npx claude-flow@alpha --agents 3 swarm "task description"
 
 #### 👨‍💻 **Developers**
 1. [Quick Start Guide](../README.md#-quick-start) - Get up and running in 5 minutes
-2. [SPARC Development](../README.md#-sparc-development-environment) - Structured development methodology
-3. [API Reference](API_DOCUMENTATION.md) - Complete endpoint documentation
-4. [Development Workflow](DEVELOPMENT_WORKFLOW.md) - Best practices and standards
+2. [SPARC Development](guides/SPARC.md) - Structured development methodology
+3. [API Reference](api/API_DOCUMENTATION.md) - Complete endpoint documentation
+4. [Development Workflow](development/DEVELOPMENT_WORKFLOW.md) - Best practices and standards
 
 #### 🏢 **DevOps/Operations**  
-1. [Deployment Guide](DEPLOYMENT.md) - Production deployment strategies
-2. [Architecture Overview](ARCHITECTURE.md) - System design and scaling
-3. [Monitoring Setup](DEPLOYMENT.md#monitoring--maintenance) - Health checks and metrics
-4. [Security Implementation](ARCHITECTURE.md#security-architecture) - Security best practices
+1. [Deployment Guide](development/DEPLOYMENT.md) - Production deployment strategies
+2. [Architecture Overview](architecture/ARCHITECTURE.md) - System design and scaling
+3. [Monitoring Setup](development/DEPLOYMENT.md#monitoring--maintenance) - Health checks and metrics
+4. [Security Implementation](architecture/ARCHITECTURE.md#security-architecture) - Security best practices
 
 #### 👑 **Technical Leaders**
-1. [System Architecture](ARCHITECTURE.md#system-overview) - High-level system design
+1. [System Architecture](architecture/ARCHITECTURE.md#system-overview) - High-level system design
 2. [Performance Metrics](../README.md#-performance-metrics) - Benchmarks and optimization
-3. [Swarm Intelligence](../README.md#-swarm-intelligence) - Distributed coordination strategies
-4. [Enterprise Features](DEPLOYMENT.md#production-setup) - Production-grade capabilities
+3. [Swarm Intelligence](architecture/SWARM.md) - Distributed coordination strategies
+4. [Enterprise Features](development/DEPLOYMENT.md#production-setup) - Production-grade capabilities
 
 #### 🚀 **Product Managers**
 1. [Feature Overview](../README.md#-key-features) - Complete capability matrix
