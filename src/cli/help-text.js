@@ -11,17 +11,17 @@ export { VERSION };
 export const MAIN_HELP = `
 🌊 Claude-Flow v${VERSION} - Enterprise-Grade AI Agent Orchestration Platform
 
-🎯 ENTERPRISE FEATURES: Complete ruv-swarm integration with 90+ MCP tools, neural networking, and production-ready infrastructure
-🐝 NEW: Claude Code 1.0.51+ full compatibility with enhanced hooks and batch processing
-⚡ ALPHA 90: Major MCP Implementation & Quality Update
+🎯 ENTERPRISE FEATURES: Complete ruv-swarm integration with 100+ MCP tools, Flow Nexus cloud platform, and production-ready infrastructure
+🐝 NEW: Claude Code 1.0.51+ full compatibility with enhanced hooks and cross-platform support
+⚡ ALPHA 107: Flow Nexus Integration & Enhanced Cloud Features
 
-🔍 ALPHA 90 HIGHLIGHTS:
-  ✅ 15+ Real MCP Tools - DAA, Workflow, Performance tools fully implemented
-  🐛 Critical Bug Fixes - agent_metrics, swarm_monitor, neural_train errors resolved
-  🧠 Real WASM Neural Networks - ruv-fann powered actual neural processing
-  📊 >95% Functionality - Mock rate reduced from 40% to <5%
-  🔧 MCP Routing Fixed - All workflow/performance tools properly routed
-  🔧 Non-interactive Fixes - Proper prompt injection for CI/CD & automation
+🔍 ALPHA 107 HIGHLIGHTS:
+  ✅ Flow Nexus Cloud Platform - Full integration with sandboxes, neural networks, and workflows
+  🐛 macOS Compatibility Fixes - Enhanced settings.json hooks for cross-platform support
+  🧠 Distributed Neural Networks - Real multi-node training with E2B sandbox clusters
+  📊 100% Real Functionality - All MCP tools fully implemented with real backends
+  🔧 Enhanced GitHub Integration - Automated releases, checkpoints, and workflow orchestration
+  🔧 Production-Ready Infrastructure - Enterprise-grade reliability and performance
 
 USAGE:
   npx claude-flow@alpha <command> [options]    # Run latest alpha version
