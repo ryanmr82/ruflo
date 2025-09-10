@@ -244,11 +244,11 @@ npx claude-flow@alpha --agents 3 swarm "task description"
 
 ### 📖 **Core Documentation**
 ```
-├── 📄 README-NEW.md           # Project overview & quick start
-├── 🏗️ ARCHITECTURE.md         # System design & patterns  
-├── 🚀 DEPLOYMENT.md           # Installation & production setup
-├── 🛠️ DEVELOPMENT_WORKFLOW.md # Development best practices
-└── 📡 API_DOCUMENTATION.md    # Complete API reference
+├── 📄 README-NEW.md                        # Project overview & quick start
+├── 🏗️ architecture/ARCHITECTURE.md         # System design & patterns  
+├── 🚀 development/DEPLOYMENT.md            # Installation & production setup
+├── 🛠️ development/DEVELOPMENT_WORKFLOW.md  # Development best practices
+└── 📡 api/API_DOCUMENTATION.md             # Complete API reference
 ```
 
 ### 🎯 **By User Type**
