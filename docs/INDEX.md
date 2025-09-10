@@ -76,7 +76,7 @@ Complete automation toolkit covering file operations, system management, GitHub 
 
 ### 🏃‍♂️ Getting Started
 - **[README-NEW.md](../README.md)** - Complete project overview and quick start
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Installation, setup, and production deployment
+- **[DEPLOYMENT.md](development/DEPLOYMENT.md)** - Installation, setup, and production deployment
 - **System Requirements**: Node.js v20+, 2GB RAM minimum, 8GB recommended
 
 ### 🏗️ Architecture & Development  
