@@ -1,0 +1,87 @@
+name: Publish to MCP Registry
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - '*.*.*-alpha.*'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for OIDC authentication
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org/'
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+      
+      - name: Build MCP Publisher
+        run: |
+          git clone https://github.com/modelcontextprotocol/registry.git ~/registry
+          make -C ~/registry publisher
+      
+      - name: Verify server.json exists
+        run: |
+          if [ ! -f server.json ]; then
+            echo "Error: server.json not found in repository root"
+            exit 1
+          fi
+          echo "✅ server.json found"
+          cat server.json
+      
+      - name: Extract version from package.json
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "📦 Package version: ${VERSION}"
+      
+      - name: Update server.json version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          # Update version in server.json to match package.json
+          jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' server.json > server.json.tmp
+          mv server.json.tmp server.json
+          echo "✅ Updated server.json with version ${VERSION}"
+          cat server.json
+      
+      - name: Publish to NPM (if not already published)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          # Check if version already exists on npm
+          if npm view claude-flow@${VERSION} version 2>/dev/null; then
+            echo "✅ Version ${VERSION} already published to npm"
+          else
+            echo "📦 Publishing version ${VERSION} to npm..."
+            npm publish --tag alpha
+          fi
+      
+      - name: Publish to MCP Registry
+        run: |
+          echo "🚀 Publishing to MCP Registry..."
+          ~/registry/bin/mcp-publisher publish ./server.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Verify publication
+        run: |
+          echo "✅ Successfully published claude-flow to MCP Registry!"
+          echo "🔗 View at: https://registry.modelcontextprotocol.io/server/io.github.ruvnet/claude-flow"
