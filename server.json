@@ -53,9 +53,9 @@
   "packages": [
     {
       "type": "npm",
-      "name": "claude-flow",
-      "version": "2.0.0-alpha.103",
-      "registry": "https://registry.npmjs.org/"
+      "identifier": "claude-flow",
+      "registry_type": "npm",
+      "version": "2.0.0-alpha.103"
     }
   ],
   "capabilities": {
