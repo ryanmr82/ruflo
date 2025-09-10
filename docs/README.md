@@ -28,10 +28,10 @@ Welcome to the Claude-Flow documentation! This directory contains comprehensive 
 
 ## 🚀 Quick Links
 
-- **Getting Started**: See [USER_GUIDE.md](USER_GUIDE.md#getting-started)
-- **API Reference**: See [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
-- **Agent Catalog**: See [AGENTS.md](AGENTS.md)
-- **Deployment**: See [DEPLOYMENT.md](DEPLOYMENT.md)
+- **Getting Started**: See [USER_GUIDE.md](guides/USER_GUIDE.md#getting-started)
+- **API Reference**: See [api/API_DOCUMENTATION.md](api/API_DOCUMENTATION.md)
+- **Agent Catalog**: See [architecture/AGENTS.md](architecture/AGENTS.md)
+- **Deployment**: See [development/DEPLOYMENT.md](development/DEPLOYMENT.md)
 
 ## 📞 Support
 
