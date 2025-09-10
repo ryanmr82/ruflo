@@ -80,9 +80,9 @@ Complete automation toolkit covering file operations, system management, GitHub 
 - **System Requirements**: Node.js v20+, 2GB RAM minimum, 8GB recommended
 
 ### 🏗️ Architecture & Development  
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design, patterns, and scalability
-- **[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md)** - Development process and best practices
-- **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** - Complete API reference and examples
+- **[ARCHITECTURE.md](architecture/ARCHITECTURE.md)** - System design, patterns, and scalability
+- **[DEVELOPMENT_WORKFLOW.md](development/DEVELOPMENT_WORKFLOW.md)** - Development process and best practices
+- **[API_DOCUMENTATION.md](api/API_DOCUMENTATION.md)** - Complete API reference and examples
 
 ### 🎯 Core Concepts
 - **Agent Management**: Spawn, coordinate, and monitor AI agents
