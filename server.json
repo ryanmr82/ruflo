@@ -1,0 +1,122 @@
+{
+  "name": "io.github.ruvnet/claude-flow",
+  "display_name": "Claude Flow",
+  "summary": "AI-powered development orchestration with swarm intelligence and SPARC methodology",
+  "description": "Claude Flow extends Claude Code with multi-agent swarms, distributed task orchestration, and the SPARC development methodology. Features include autonomous agent coordination, persistent memory, performance optimization, comprehensive GitHub integration, and enterprise-grade scalability. Supports hierarchical, mesh, ring, and star topologies for swarm coordination.",
+  "homepage_url": "https://github.com/ruvnet/claude-flow",
+  "source_repo": "https://github.com/ruvnet/claude-flow",
+  "license": "MIT",
+  "author": "rUv",
+  "categories": ["development", "ai", "automation", "orchestration"],
+  "tags": ["claude", "ai", "agent", "orchestration", "mcp", "workflow", "automation", "swarm", "github", "enterprise", "multi-agent"],
+  "environment_variables": [
+    {
+      "name": "ANTHROPIC_API_KEY",
+      "description": "Anthropic API key for Claude AI models (optional, uses client's key if not set)",
+      "required": false
+    },
+    {
+      "name": "CLAUDE_FLOW_MODE",
+      "description": "Operation mode: development, production, or test (default: development)",
+      "required": false,
+      "default": "development"
+    },
+    {
+      "name": "CLAUDE_FLOW_MEMORY_PATH",
+      "description": "Path for persistent memory storage (default: .claude-flow/memory)",
+      "required": false,
+      "default": ".claude-flow/memory"
+    },
+    {
+      "name": "CLAUDE_FLOW_MAX_AGENTS",
+      "description": "Maximum number of concurrent agents (default: 8)",
+      "required": false,
+      "default": "8"
+    },
+    {
+      "name": "CLAUDE_FLOW_PORT",
+      "description": "MCP server port (default: 3000)",
+      "required": false,
+      "default": "3000"
+    },
+    {
+      "name": "GITHUB_TOKEN",
+      "description": "GitHub personal access token for repository operations (optional)",
+      "required": false
+    },
+    {
+      "name": "FLOW_NEXUS_API_KEY",
+      "description": "Flow Nexus cloud platform API key (optional)",
+      "required": false
+    }
+  ],
+  "packages": [
+    {
+      "type": "npm",
+      "name": "claude-flow",
+      "version": "2.0.0-alpha.103",
+      "registry": "https://registry.npmjs.org/"
+    }
+  ],
+  "capabilities": {
+    "tools": [
+      "swarm_init",
+      "agent_spawn",
+      "task_orchestrate",
+      "memory_usage",
+      "neural_train",
+      "performance_report",
+      "github_integration"
+    ],
+    "topologies": ["hierarchical", "mesh", "ring", "star"],
+    "agent_types": [
+      "coordinator",
+      "analyst",
+      "optimizer",
+      "documenter",
+      "monitor",
+      "specialist",
+      "architect",
+      "researcher",
+      "coder",
+      "tester",
+      "reviewer"
+    ],
+    "features": [
+      "multi-agent-swarms",
+      "persistent-memory",
+      "neural-networks",
+      "github-integration",
+      "performance-optimization",
+      "sparc-methodology",
+      "workflow-automation",
+      "consensus-protocols",
+      "fault-tolerance",
+      "real-time-monitoring"
+    ]
+  },
+  "requirements": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "installation": {
+    "npm": "npm install -g claude-flow@alpha",
+    "npx": "npx claude-flow@alpha",
+    "mcp": "claude mcp add claude-flow npx claude-flow@alpha mcp start"
+  },
+  "documentation": {
+    "readme": "https://github.com/ruvnet/claude-flow#readme",
+    "api": "https://github.com/ruvnet/claude-flow/blob/main/docs/api.md",
+    "examples": "https://github.com/ruvnet/claude-flow/tree/main/examples",
+    "sparc": "https://github.com/ruvnet/claude-flow/blob/main/docs/sparc.md"
+  },
+  "support": {
+    "issues": "https://github.com/ruvnet/claude-flow/issues",
+    "discussions": "https://github.com/ruvnet/claude-flow/discussions"
+  },
+  "version_info": {
+    "current": "2.0.0-alpha.103",
+    "stability": "alpha",
+    "release_date": "2025-01-10"
+  }
+}
