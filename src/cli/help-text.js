@@ -36,7 +36,12 @@ USAGE:
   # First time setup (creates CLAUDE.md & .claude/commands)
   npx claude-flow@alpha init
   
-  # 🐝 HIVE MIND QUICK START (NEW!):
+  # 🌐 FLOW NEXUS CLOUD (NEW!):
+  mcp__flow-nexus__user_register         # Register for cloud features
+  mcp__flow-nexus__user_login            # Login to access sandboxes & neural networks
+  mcp__flow-nexus__sandbox_create        # Create cloud execution environments
+  
+  # 🐝 HIVE MIND QUICK START:
   claude-flow hive-mind wizard          # Interactive setup wizard
   claude-flow hive-mind spawn "objective"  # Create intelligent swarm
   claude-flow hive-mind spawn "Build API" --claude  # Open Claude Code CLI
