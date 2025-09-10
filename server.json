@@ -2,7 +2,7 @@
   "name": "io.github.ruvnet/claude-flow",
   "display_name": "Claude Flow",
   "summary": "Enterprise-grade AI orchestration platform with hive-mind swarm intelligence and 87 MCP tools",
-  "description": "Claude-Flow v2 Alpha reimagines AI-powered development by combining hive-mind swarm intelligence, neural pattern recognition, and 87 advanced MCP tools. Features include Queen-led AI coordination, 27+ cognitive models with WASM SIMD acceleration, Dynamic Agent Architecture (DAA), SQLite memory system, advanced hooks, GitHub integration, and Flow Nexus cloud platform with E2B sandboxes, challenges, and marketplace.",
+  "description": "AI orchestration with hive-mind swarms, neural networks, and 87 MCP tools for enterprise development.",
   "homepage_url": "https://github.com/ruvnet/claude-flow",
   "source_repo": "https://github.com/ruvnet/claude-flow",
   "license": "MIT",
