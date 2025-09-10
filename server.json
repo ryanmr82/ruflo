@@ -5,18 +5,13 @@
   "status": "active",
   "repository": {
     "url": "https://github.com/ruvnet/claude-flow",
-    "source": "github"
+    "source": "github",
+    "id": "854513237"
   },
-  "version": "2.0.0-alpha.106",
+  "version": "2.0.0-alpha.107",
   "packages": [
     {
-      "registry_type": "npm",
-      "registry_base_url": "https://registry.npmjs.org",
-      "identifier": "claude-flow",
-      "version": "2.0.0-alpha.106",
-      "transport": {
-        "type": "stdio"
-      },
+      "version": "2.0.0-alpha.107",
       "environment_variables": [
         {
           "description": "Anthropic API key for Claude AI models",
@@ -67,7 +62,13 @@
           "is_secret": true,
           "name": "FLOW_NEXUS_API_KEY"
         }
-      ]
+      ],
+      "registry_type": "npm",
+      "identifier": "claude-flow",
+      "registry_base_url": "https://registry.npmjs.org",
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }
