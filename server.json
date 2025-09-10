@@ -1,12 +1,12 @@
 {
   "name": "io.github.ruvnet/claude-flow",
   "description": "AI orchestration with hive-mind swarms, neural networks, and 87 MCP tools for enterprise dev.",
-  "version": "2.0.0-alpha.103",
+  "version": "2.0.0",
   "packages": [
     {
       "registry_type": "npm",
       "identifier": "claude-flow",
-      "version": "2.0.0-alpha.103",
+      "version": "2.0.0",
       "transport": {
         "type": "stdio"
       }
