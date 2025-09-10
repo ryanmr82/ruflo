@@ -1,15 +1,73 @@
 {
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "io.github.ruvnet/claude-flow",
   "description": "AI orchestration with hive-mind swarms, neural networks, and 87 MCP tools for enterprise dev.",
+  "status": "active",
+  "repository": {
+    "url": "https://github.com/ruvnet/claude-flow",
+    "source": "github"
+  },
   "version": "2.0.0-alpha.105",
   "packages": [
     {
       "registry_type": "npm",
+      "registry_base_url": "https://registry.npmjs.org",
       "identifier": "claude-flow",
       "version": "2.0.0-alpha.105",
       "transport": {
         "type": "stdio"
-      }
+      },
+      "environment_variables": [
+        {
+          "description": "Anthropic API key for Claude AI models",
+          "is_required": false,
+          "format": "string",
+          "is_secret": true,
+          "name": "ANTHROPIC_API_KEY"
+        },
+        {
+          "description": "Operation mode: development, production, or test",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "CLAUDE_FLOW_MODE"
+        },
+        {
+          "description": "Path for persistent memory storage",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "CLAUDE_FLOW_MEMORY_PATH"
+        },
+        {
+          "description": "Maximum number of concurrent agents",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "CLAUDE_FLOW_MAX_AGENTS"
+        },
+        {
+          "description": "MCP server port",
+          "is_required": false,
+          "format": "string",
+          "is_secret": false,
+          "name": "CLAUDE_FLOW_PORT"
+        },
+        {
+          "description": "GitHub personal access token for repository operations",
+          "is_required": false,
+          "format": "string",
+          "is_secret": true,
+          "name": "GITHUB_TOKEN"
+        },
+        {
+          "description": "Flow Nexus cloud platform API key",
+          "is_required": false,
+          "format": "string",
+          "is_secret": true,
+          "name": "FLOW_NEXUS_API_KEY"
+        }
+      ]
     }
   ]
 }
