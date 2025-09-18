@@ -70,68 +70,79 @@ Your feedback loop methodology:
    - Synchronize across distributed nodes
    - Prepare for cross-session retrieval
 
-Your neural training approach with Flow Nexus:
+Your neural training approach with Claude Flow:
 
-**Distributed SAFLA Cluster**:
+**Distributed SAFLA Training**:
 ```javascript
-// Initialize SAFLA-enabled neural cluster
-mcp__flow-nexus__neural_cluster_init {
-  name: "safla-memory-cluster",
-  topology: "mesh",  // For memory sharing
-  architecture: "transformer",
-  wasmOptimization: true,
-  daaEnabled: true,
-  consensus: "proof-of-learning"
+// Initialize SAFLA neural patterns
+mcp__claude-flow__neural_train {
+  pattern_type: "coordination",  // SAFLA coordination patterns
+  training_data: JSON.stringify({
+    architecture: "safla-transformer",
+    memory_tiers: ["vector", "episodic", "semantic", "working"],
+    feedback_loops: true,
+    persistence: true
+  }),
+  epochs: 50
 }
 
-// Deploy SAFLA memory nodes
-mcp__flow-nexus__neural_node_deploy {
-  cluster_id: "cluster_id",
-  node_type: "worker",
-  model: "safla-hybrid",
-  capabilities: [
-    "vector_memory",
-    "episodic_memory",
-    "semantic_memory",
-    "feedback_processing"
-  ]
+// Analyze cognitive patterns for SAFLA
+mcp__claude-flow__neural_patterns {
+  action: "analyze",
+  operation: "safla_memory_integration",
+  metadata: {
+    memory_types: ["vector", "episodic", "semantic"],
+    compression_ratio: 0.6,
+    ops_per_second: 172000
+  }
+}
+
+// Learn from interactions
+mcp__claude-flow__neural_patterns {
+  action: "learn",
+  operation: "feedback_loop",
+  outcome: "pattern_extracted",
+  metadata: {
+    confidence: 0.95,
+    improvements: ["speed", "accuracy", "recall"]
+  }
 }
 ```
 
-**SAFLA Neural Configuration**:
+**SAFLA Model Training**:
 ```javascript
-mcp__flow-nexus__neural_train {
-  config: {
-    architecture: {
-      type: "safla-transformer",
-      layers: [
-        { type: "input", size: 512 },
-        { type: "vector_memory", size: 256 },
-        { type: "attention", heads: 8 },
-        { type: "episodic_recall", window: 100 },
-        { type: "semantic_mapping", clusters: 64 },
-        { type: "feedback_loop", iterations: 3 },
-        { type: "output", size: 256 }
-      ]
-    },
-    divergent: {
+// Train SAFLA model with WASM optimization
+mcp__claude-flow__neural_train {
+  pattern_type: "prediction",  // For predictive capabilities
+  training_data: JSON.stringify({
+    model: "safla-transformer",
+    layers: [
+      { type: "input", size: 512 },
+      { type: "vector_memory", size: 256 },
+      { type: "attention", heads: 8 },
+      { type: "episodic_recall", window: 100 },
+      { type: "semantic_mapping", clusters: 64 },
+      { type: "feedback_loop", iterations: 3 },
+      { type: "output", size: 256 }
+    ],
+    divergent_thinking: {
       enabled: true,
-      pattern: "lateral",  // Cross-domain thinking
+      pattern: "lateral",
       factor: 0.4
     },
-    memory: {
-      persistence: true,
-      compression: 0.6,
-      sharing: "distributed"
-    },
-    training: {
-      epochs: 50,
-      batch_size: 32,
-      learning_rate: 0.001,
-      optimizer: "adam",
-      feedback_weight: 0.3
-    }
-  }
+    optimization: "wasm_simd"
+  }),
+  epochs: 50
+}
+
+// Make predictions with trained model
+mcp__claude-flow__neural_predict {
+  modelId: "safla-model-${timestamp}",
+  input: JSON.stringify({
+    context: current_state,
+    memory_recall: true,
+    feedback_weight: 0.3
+  })
 }
 ```
 
@@ -187,15 +198,16 @@ mcp__claude-flow__coordination_sync {
   sync_mode: "bidirectional"
 }
 
-// Collective learning
-mcp__flow-nexus__workflow_create {
+// Collective learning workflow
+mcp__claude-flow__workflow_create {
   name: "safla-collective-learning",
   steps: [
-    { agent: "safla-neural", action: "observe" },
-    { agent: "all", action: "share_experience" },
-    { agent: "safla-neural", action: "aggregate_learning" },
-    { agent: "all", action: "update_models" }
-  ]
+    { type: "observe", agent: "safla-neural", tool: "neural_patterns" },
+    { type: "share", agent: "all", tool: "memory_sync" },
+    { type: "aggregate", agent: "safla-neural", tool: "learning_adapt" },
+    { type: "update", agent: "all", tool: "model_save" }
+  ],
+  triggers: ["feedback_received", "performance_threshold"]  
 }
 ```
 
