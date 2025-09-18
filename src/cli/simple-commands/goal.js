@@ -123,73 +123,10 @@ mcp__claude-flow__memory_usage {
     await fs.writeFile(path.join(targetDir, 'goal-planner.md'), plannerContent);
     console.log(chalk.gray('  ✓ Created goal-planner.md'));
     
-    // Create config
-    const config = {
-      version: '1.0.0',
-      goal: {
-        enabled: true,
-        algorithm: 'astar',
-        maxPlanDepth: 100,
-        replanning: {
-          enabled: true,
-          threshold: 0.3,
-          maxRetries: 5
-        },
-        execution: {
-          mode: 'mixed', // 'llm', 'code', or 'mixed'
-          parallelization: true,
-          monitoring: 'ooda' // OODA loop
-        },
-        optimization: {
-          costFunction: 'weighted',
-          heuristic: 'manhattan',
-          pruning: true
-        }
-      }
-    };
-    
-    await fs.writeFile(
-      path.join(targetDir, 'config.json'),
-      JSON.stringify(config, null, 2)
-    );
-    console.log(chalk.gray('  ✓ Created config.json'));
-    
-    // Create README
-    const readme = `# Goal Module - GOAP
-
-## Quick Start
-
-Use the goal-planner agent in Claude Code:
-
-\`\`\`
-@agent-goal-planner "Create deployment plan"
-\`\`\`
-
-## Features
-
-- A* pathfinding for optimal planning
-- OODA loop execution monitoring
-- Adaptive replanning on failures
-- Mixed LLM + code execution
-- Cost-optimized action sequences
-
-## Configuration
-
-Edit \`config.json\` to customize settings.
-
-## Learn More
-
-See [Goal Module Documentation](https://github.com/ruvnet/claude-flow/docs/NEURAL_GOAL_MODULES.md)
-`;
-    
-    await fs.writeFile(path.join(targetDir, 'README.md'), readme);
-    console.log(chalk.gray('  ✓ Created README.md'));
-    
     console.log(chalk.green('\n✅ Goal module initialized successfully!'));
     console.log(chalk.magenta('\n📚 Usage:'));
     console.log(chalk.gray('  • In Claude Code: @agent-goal-planner "Create deployment plan"'));
     console.log(chalk.gray('  • View agent: cat .claude/agents/goal/goal-planner.md'));
-    console.log(chalk.gray('  • Configure: edit .claude/agents/goal/config.json'));
     
   } catch (error) {
     console.error(chalk.red('❌ Failed to initialize goal module:'), error.message);
