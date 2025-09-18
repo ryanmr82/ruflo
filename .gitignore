@@ -134,4 +134,14 @@ claude-flow.bat
 claude-flow.ps1
 hive-mind-prompt-*.txt
 .claude-flow/.claude-flow/metrics/*.json
+# MCP Registry tokens
 .mcpregistry_github_token
+.mcpregistry_registry_token
+
+# Metrics files that change frequently
+.claude-flow/metrics/performance.json
+.claude-flow/metrics/system-metrics.json
+.claude-flow/metrics/task-metrics.json
+**/metrics/performance.json
+**/metrics/system-metrics.json
+**/metrics/task-metrics.json
