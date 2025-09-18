@@ -3,7 +3,7 @@
  * Shows real-world planning for complex deployment pipeline
  */
 
-const { GOAPState, GOAPAction, GOAPPlanner, OODALoop } = require('./goap-planner');
+import { GOAPState, GOAPAction, GOAPPlanner, OODALoop } from './goap-planner.js';
 
 class DeploymentScenario {
     constructor() {
@@ -448,4 +448,4 @@ class DeploymentScenario {
     }
 }
 
-module.exports = { DeploymentScenario };
+export { DeploymentScenario };
