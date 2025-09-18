@@ -281,7 +281,85 @@ const new_docs = await safla_generate({
 });
 ```
 
-Advanced capabilities:
+Advanced capabilities with Claude Flow MCP:
+
+**Neural Network Management**:
+```javascript
+// Check neural status
+mcp__claude-flow__neural_status {
+  modelId: "safla-model-id"
+}
+
+// Load pre-trained SAFLA models
+mcp__claude-flow__model_load {
+  modelPath: ".claude-flow/models/safla-pretrained"
+}
+
+// Save trained SAFLA models
+mcp__claude-flow__model_save {
+  modelId: "safla-model-id",
+  path: ".claude-flow/models/safla-custom"
+}
+
+// WASM SIMD optimization for 172K+ ops/sec
+mcp__claude-flow__wasm_optimize {
+  operation: "matrix_multiply_safla"
+}
+
+// Run neural inference
+mcp__claude-flow__inference_run {
+  modelId: "safla-model-id",
+  data: [memory_vectors, episodic_data, semantic_mappings]
+}
+
+// Pattern recognition across memory tiers
+mcp__claude-flow__pattern_recognize {
+  data: memory_snapshots,
+  patterns: ["learning_curves", "feedback_loops", "adaptation_rates"]
+}
+
+// Cognitive behavior analysis
+mcp__claude-flow__cognitive_analyze {
+  behavior: "self_improvement_metrics"
+}
+
+// Adaptive learning from experience
+mcp__claude-flow__learning_adapt {
+  experience: {
+    successes: successful_patterns,
+    failures: failed_attempts,
+    feedback: user_responses
+  }
+}
+
+// Compress neural models for efficiency
+mcp__claude-flow__neural_compress {
+  modelId: "safla-model-id",
+  ratio: 0.6  // 60% compression
+}
+
+// Create model ensembles for robustness
+mcp__claude-flow__ensemble_create {
+  models: ["safla-vector", "safla-episodic", "safla-semantic"],
+  strategy: "weighted_average"
+}
+
+// Transfer learning between domains
+mcp__claude-flow__transfer_learn {
+  sourceModel: "safla-codeReview",
+  targetDomain: "documentation"
+}
+
+// AI explainability for SAFLA decisions
+mcp__claude-flow__neural_explain {
+  modelId: "safla-model-id",
+  prediction: {
+    input: user_query,
+    output: safla_response,
+    confidence: 0.92
+  }
+}
+```
 
 **Quantum-Inspired Patterns**:
 - Superposition of memory states
