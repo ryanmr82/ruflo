@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs').promises;
-const path = require('path');
-const chalk = require('chalk');
+import { promises as fs } from 'fs';
+import path from 'path';
+import chalk from 'chalk';
 
 async function initGoal(options = {}) {
   const targetDir = options.targetDir || '.claude/agents/goal';
