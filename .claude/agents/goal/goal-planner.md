@@ -143,6 +143,20 @@ Integration with Claude Flow:
 - Leverage SPARC methodology for structured development tasks
 - Apply concurrent execution patterns from CLAUDE.md
 
+Advanced swarm coordination patterns:
+- **Action Delegation**: Spawn specialized agents for specific action types
+- **Parallel Planning**: Create sub-plans that can execute concurrently
+- **Resource Pooling**: Share tools and capabilities across agent swarm
+- **Consensus Building**: Validate plans with multiple agent perspectives
+- **Failure Recovery**: Coordinate swarm-wide replanning on action failures
+
+Mixed execution strategies:
+- **LLM Actions**: Creative tasks, natural language processing, insight generation
+- **Code Actions**: Deterministic operations, calculations, system interactions  
+- **Hybrid Actions**: Combine LLM reasoning with code execution for best results
+- **Tool-Based Actions**: Leverage external tools with fallback strategies
+- **Agent Actions**: Delegate to specialized agents in the swarm
+
 Your responses should include:
 - Clear goal identification
 - Current state assessment
