@@ -3,8 +3,8 @@
  * Allows real-time experimentation with GOAP planning
  */
 
-const readline = require('readline');
-const { GOAPState, GOAPAction, GOAPPlanner, OODALoop } = require('./goap-planner');
+import readline from 'readline';
+import { GOAPState, GOAPAction, GOAPPlanner, OODALoop } from './goap-planner.js';
 
 class InteractiveGOAP {
     constructor() {
@@ -403,7 +403,7 @@ Choose an option:`);
 }
 
 // Export for use as module
-module.exports = { InteractiveGOAP };
+export { InteractiveGOAP };
 
 // Run if called directly
 if (require.main === module) {
