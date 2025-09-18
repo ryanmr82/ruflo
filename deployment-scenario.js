@@ -317,10 +317,28 @@ class DeploymentScenario {
         
         // Generate initial plan
         let plan = this.planner.generatePlan(currentState, scenario.goal);
-        console.log('\n📋 Initial Plan:');
-        plan.forEach((action, index) => {
-            console.log(`${index + 1}. ${action.name}`);
-        });
+        if (!plan) {
+            console.log('❌ No initial plan found - adding missing actions...');
+            // Add some basic missing actions
+            this.planner.addAction(new GOAPAction(
+                'analyze_code_simple',
+                { repository_cloned: true },
+                { code_analyzed: true },
+                1,
+                'code'
+            ));
+            plan = this.planner.generatePlan(currentState, scenario.goal);
+        }
+        
+        if (plan) {
+            console.log('\n📋 Initial Plan:');
+            plan.forEach((action, index) => {
+                console.log(`${index + 1}. ${action.name}`);
+            });
+        } else {
+            console.log('❌ Unable to generate plan');
+            return;
+        }
 
         // Simulate execution with mid-course changes
         console.log('\n🎭 Simulating execution with unexpected changes...');
