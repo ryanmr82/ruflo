@@ -23,6 +23,8 @@ import { hookSafetyCommand } from './simple-commands/hook-safety.js';
 import { hiveMindCommand } from './simple-commands/hive-mind.js';
 import { HelpFormatter } from './help-formatter.js';
 import hiveMindOptimizeCommand from './simple-commands/hive-mind-optimize.js';
+import { neuralCommand } from './simple-commands/neural.js';
+import { goalCommand } from './simple-commands/goal.js';
 import {
   showUnifiedMetrics,
   fixTaskAttribution,
