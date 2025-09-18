@@ -123,4 +123,7 @@ if (targetIndex !== -1 && args[targetIndex + 1]) {
 }
 
 // Execute
-initGoal(options);
+initGoal(options).catch(err => {
+  console.error(err);
+  process.exit(1);
+});
