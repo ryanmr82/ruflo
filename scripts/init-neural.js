@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs').promises;
-const path = require('path');
-const chalk = require('chalk');
+import { promises as fs } from 'fs';
+import path from 'path';
+import chalk from 'chalk';
 
 async function initNeural(options = {}) {
   const targetDir = options.targetDir || '.claude/agents/neural';
@@ -104,4 +104,7 @@ if (targetIndex !== -1 && args[targetIndex + 1]) {
 }
 
 // Execute
-initNeural(options);
+initNeural(options).catch(err => {
+  console.error(err);
+  process.exit(1);
+});
