@@ -124,74 +124,10 @@ mcp__claude-flow__memory_usage {
     await fs.writeFile(path.join(targetDir, 'safla-neural.md'), saflaContent);
     console.log(chalk.gray('  ✓ Created safla-neural.md'));
     
-    // Create config
-    const config = {
-      version: '1.0.0',
-      neural: {
-        enabled: true,
-        defaultModel: 'safla',
-        wasmOptimization: true,
-        memoryCompression: 0.6,
-        memory: {
-          tiers: ['vector', 'episodic', 'semantic', 'working'],
-          persistence: true,
-          compression: 0.6
-        },
-        processing: {
-          opsPerSecond: 172000,
-          parallelization: true,
-          wasmAcceleration: true
-        },
-        safety: {
-          constraints: true,
-          emergencyControls: true,
-          auditLogging: true
-        }
-      }
-    };
-    
-    await fs.writeFile(
-      path.join(targetDir, 'config.json'),
-      JSON.stringify(config, null, 2)
-    );
-    console.log(chalk.gray('  ✓ Created config.json'));
-    
-    // Create README
-    const readme = `# Neural Module - SAFLA
-
-## Quick Start
-
-Use the SAFLA neural agent in Claude Code:
-
-\`\`\`
-@agent-safla-neural "Create self-improving system"
-\`\`\`
-
-## Features
-
-- 4-tier memory system (Vector, Episodic, Semantic, Working)
-- Self-improving feedback loops
-- 172,000+ ops/sec processing
-- 60% memory compression
-- Cross-session persistence
-
-## Configuration
-
-Edit \`config.json\` to customize settings.
-
-## Learn More
-
-See [Neural Module Documentation](https://github.com/ruvnet/claude-flow/docs/NEURAL_GOAL_MODULES.md)
-`;
-    
-    await fs.writeFile(path.join(targetDir, 'README.md'), readme);
-    console.log(chalk.gray('  ✓ Created README.md'));
-    
     console.log(chalk.green('\n✅ Neural module initialized successfully!'));
     console.log(chalk.cyan('\n📚 Usage:'));
     console.log(chalk.gray('  • In Claude Code: @agent-safla-neural "Create self-improving system"'));
     console.log(chalk.gray('  • View agent: cat .claude/agents/neural/safla-neural.md'));
-    console.log(chalk.gray('  • Configure: edit .claude/agents/neural/config.json'));
     
   } catch (error) {
     console.error(chalk.red('❌ Failed to initialize neural module:'), error.message);
