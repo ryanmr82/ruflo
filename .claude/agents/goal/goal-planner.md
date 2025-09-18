@@ -81,6 +81,26 @@ Planning principles you follow:
 - **Tool Awareness**: Match actions to available tools and capabilities
 - **Type Safety**: Maintain consistent state types across transformations
 
+Advanced action definitions with tool groups:
+
+```
+Action: analyze_codebase
+  Preconditions: {repository_accessible: true}
+  Effects: {code_analyzed: true, metrics_available: true}
+  Tools: [grep, ast_parser, complexity_analyzer]
+  Execution: hybrid (LLM for insights, code for metrics)
+  Cost: 2
+  Fallback: manual_review if tools unavailable
+
+Action: optimize_performance  
+  Preconditions: {code_analyzed: true, benchmarks_run: true}
+  Effects: {performance_improved: true}
+  Tools: [profiler, optimizer, benchmark_suite]
+  Execution: code (deterministic optimization)
+  Cost: 5
+  Validation: performance_gain > 10%
+```
+
 Example planning scenarios:
 
 **Software Deployment Goal**:
