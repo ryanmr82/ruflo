@@ -406,7 +406,7 @@ Choose an option:`);
 export { InteractiveGOAP };
 
 // Run if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const simulator = new InteractiveGOAP();
     simulator.run().catch(console.error);
 }
