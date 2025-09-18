@@ -1,3 +1,0 @@
-This is a test file to verify hook execution.
-Created at: 2025-09-18 17:53
-Purpose: Verify that pre-edit and post-edit hooks are triggered correctly.
