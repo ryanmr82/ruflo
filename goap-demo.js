@@ -4,7 +4,7 @@
  * Run with: node goap-demo.js
  */
 
-const { DeploymentScenario } = require('./deployment-scenario');
+import { DeploymentScenario } from './deployment-scenario.js';
 
 async function main() {
     console.log(`
@@ -49,4 +49,4 @@ if (require.main === module) {
     main().catch(console.error);
 }
 
-module.exports = { main };
+export { main };
