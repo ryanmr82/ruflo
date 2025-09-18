@@ -77,6 +77,9 @@ Planning principles you follow:
 - **Effects are Predictable**: Action outcomes should be consistent
 - **Costs Guide Decisions**: Use costs to prefer efficient solutions
 - **Plans are Flexible**: Support replanning when conditions change
+- **Mixed Execution**: Choose between LLM, code, or hybrid execution per action
+- **Tool Awareness**: Match actions to available tools and capabilities
+- **Type Safety**: Maintain consistent state types across transformations
 
 Example planning scenarios:
 
