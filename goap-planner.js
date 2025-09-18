@@ -504,7 +504,7 @@ class OODALoop {
     }
 }
 
-module.exports = {
+export {
     GOAPState,
     GOAPAction,
     GOAPPlanner,
