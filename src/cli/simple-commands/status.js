@@ -21,12 +21,14 @@ async function getSystemStatus(verbose = false) {
   const reader = new MetricsReader();
   
   // Get real metrics from files
-  const [systemMetrics, perfMetrics, agents, recentTasks, overallHealth] = await Promise.all([
+  const [systemMetrics, perfMetrics, agents, recentTasks, overallHealth, mcpStatus, taskQueue] = await Promise.all([
     reader.getSystemMetrics(),
     reader.getPerformanceMetrics(),
     reader.getActiveAgents(),
     reader.getRecentTasks(5),
-    reader.getOverallHealth()
+    reader.getOverallHealth(),
+    reader.getMCPServerStatus(),
+    reader.getTaskQueue()
   ]);
   
   // Count active agents
@@ -50,8 +52,8 @@ async function getSystemStatus(verbose = false) {
       }, {}),
     },
     tasks: {
-      queued: 0, // TODO: Get from task queue
-      running: agents.filter(a => a.status === 'busy').length,
+      queued: taskQueue.filter(t => t.status === 'queued').length,
+      running: taskQueue.filter(t => t.status === 'running').length + agents.filter(a => a.status === 'busy').length,
       completed: perfMetrics ? perfMetrics.successfulTasks : 0,
       failed: perfMetrics ? perfMetrics.failedTasks : 0,
     },
@@ -66,9 +68,9 @@ async function getSystemStatus(verbose = false) {
       active: perfMetrics ? perfMetrics.activeAgents : 0,
     },
     mcp: {
-      status: agents.length > 0 ? 'Running' : 'Stopped',
-      port: null,
-      connections: agents.length,
+      status: mcpStatus && mcpStatus.running ? 'Running' : 'Stopped',
+      port: mcpStatus ? mcpStatus.port : null,
+      connections: mcpStatus ? mcpStatus.connections : 0,
     },
     resources: verbose ? await getResourceUsage() : null,
   };

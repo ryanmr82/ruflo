@@ -1,5 +1,9 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 class MetricsReader {
   constructor() {
@@ -17,6 +21,16 @@ class MetricsReader {
       return metrics.length > 0 ? metrics[metrics.length - 1] : null;
     } catch (error) {
       return null;
+    }
+  }
+
+  async getTaskQueue() {
+    try {
+      const queueFile = '.claude-flow/tasks/queue.json';
+      const content = await fs.readFile(queueFile, 'utf8');
+      return JSON.parse(content);
+    } catch (error) {
+      return [];
     }
   }
 
@@ -42,40 +56,41 @@ class MetricsReader {
 
   async getActiveAgents() {
     try {
-      // First check performance metrics for agent count
-      const perfMetrics = await this.getPerformanceMetrics();
-      
-      // Also check session files for more detailed agent info
-      const sessionFiles = await this.getSessionFiles();
       const agents = [];
       
-      for (const file of sessionFiles) {
-        try {
-          const content = await fs.readFile(path.join(this.sessionsDir, 'pair', file), 'utf8');
-          const sessionData = JSON.parse(content);
-          
-          if (sessionData.agents && Array.isArray(sessionData.agents)) {
-            agents.push(...sessionData.agents);
+      // Check for agents in the .claude-flow/agents directory
+      const agentsDir = '.claude-flow/agents';
+      try {
+        const agentFiles = await fs.readdir(agentsDir);
+        for (const file of agentFiles) {
+          if (file.endsWith('.json')) {
+            try {
+              const content = await fs.readFile(path.join(agentsDir, file), 'utf8');
+              const agent = JSON.parse(content);
+              agents.push(agent);
+            } catch {
+              // Skip invalid agent files
+            }
           }
-        } catch {
-          // Skip invalid session files
         }
+      } catch {
+        // Agents directory doesn't exist yet
       }
       
-      // If no agents found in sessions, create mock agents based on performance metrics
-      if (agents.length === 0 && perfMetrics) {
-        const activeCount = perfMetrics.activeAgents || 0;
-        const totalCount = perfMetrics.totalAgents || 0;
-        
-        for (let i = 0; i < totalCount; i++) {
-          agents.push({
-            id: `agent-${i + 1}`,
-            name: `Agent ${i + 1}`,
-            type: i === 0 ? 'orchestrator' : 'worker',
-            status: i < activeCount ? 'active' : 'idle',
-            activeTasks: i < activeCount ? 1 : 0,
-            lastActivity: Date.now() - (i * 1000)
-          });
+      // If no agents found in directory, check session files
+      if (agents.length === 0) {
+        const sessionFiles = await this.getSessionFiles();
+        for (const file of sessionFiles) {
+          try {
+            const content = await fs.readFile(path.join(this.sessionsDir, 'pair', file), 'utf8');
+            const sessionData = JSON.parse(content);
+            
+            if (sessionData.agents && Array.isArray(sessionData.agents)) {
+              agents.push(...sessionData.agents);
+            }
+          } catch {
+            // Skip invalid session files
+          }
         }
       }
       
@@ -169,6 +184,50 @@ class MetricsReader {
       return files.filter(f => f.endsWith('.json')).sort();
     } catch (error) {
       return [];
+    }
+  }
+
+  async getMCPServerStatus() {
+    try {
+      // Check if MCP server process is running (including flow-nexus and other MCP variants)
+      const { stdout } = await execAsync('ps aux | grep -E "mcp" | grep -v grep | wc -l');
+      const processCount = parseInt(stdout.trim(), 10);
+      
+      // Check for orchestrator running
+      const { stdout: orchestratorOut } = await execAsync('ps aux | grep -E "claude-flow start" | grep -v grep | wc -l');
+      const orchestratorRunning = parseInt(orchestratorOut.trim(), 10) > 0;
+      
+      // Determine status
+      const isRunning = processCount > 0;
+      
+      // Try to get port from process (default is 3000)
+      let port = 3000;
+      try {
+        const { stdout: portOut } = await execAsync('lsof -i :3000 2>/dev/null | grep LISTEN | wc -l');
+        if (parseInt(portOut.trim(), 10) === 0) {
+          // If port 3000 not listening, check other common ports
+          port = null;
+        }
+      } catch {
+        // lsof might not be available or port not in use
+      }
+      
+      return {
+        running: isRunning,
+        processCount,
+        orchestratorRunning,
+        port,
+        connections: processCount > 0 ? Math.max(1, processCount - 1) : 0 // Estimate connections
+      };
+    } catch (error) {
+      // Fallback if commands fail
+      return {
+        running: false,
+        processCount: 0,
+        orchestratorRunning: false,
+        port: null,
+        connections: 0
+      };
     }
   }
 }

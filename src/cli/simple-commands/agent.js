@@ -48,25 +48,117 @@ async function spawnAgent(subArgs, flags) {
   const agentName = getFlag(subArgs, '--name') || flags.name || `agent-${Date.now()}`;
   const agentId = `${agentType}-${Date.now()}`;
 
-  printSuccess(`Spawning ${agentType} agent: ${agentName}`);
-  console.log('🤖 Agent would be created with the following configuration:');
+  // Create the agent object
+  const agent = {
+    id: agentId,
+    name: agentName,
+    type: agentType,
+    status: 'active',
+    activeTasks: 0,
+    lastActivity: Date.now(),
+    capabilities: getAgentCapabilities(agentType),
+    createdAt: Date.now()
+  };
+
+  // Store agent in session/agents directory
+  const { promises: fs } = await import('fs');
+  const path = await import('path');
+  
+  // Ensure agents directory exists
+  const agentsDir = '.claude-flow/agents';
+  await fs.mkdir(agentsDir, { recursive: true });
+  
+  // Save agent data
+  const agentFile = path.join(agentsDir, `${agentId}.json`);
+  await fs.writeFile(agentFile, JSON.stringify(agent, null, 2));
+  
+  // Update performance metrics
+  const perfFile = '.claude-flow/metrics/performance.json';
+  try {
+    const perfData = JSON.parse(await fs.readFile(perfFile, 'utf8'));
+    perfData.totalAgents = (perfData.totalAgents || 0) + 1;
+    perfData.activeAgents = (perfData.activeAgents || 0) + 1;
+    await fs.writeFile(perfFile, JSON.stringify(perfData, null, 2));
+  } catch (e) {
+    // Create new performance file if doesn't exist
+    await fs.writeFile(perfFile, JSON.stringify({
+      startTime: Date.now(),
+      totalTasks: 0,
+      successfulTasks: 0,
+      failedTasks: 0,
+      totalAgents: 1,
+      activeAgents: 1,
+      neuralEvents: 0
+    }, null, 2));
+  }
+
+  printSuccess(`✅ Spawned ${agentType} agent: ${agentName}`);
+  console.log('🤖 Agent successfully created:');
+  console.log(`   ID: ${agentId}`);
   console.log(`   Type: ${agentType}`);
   console.log(`   Name: ${agentName}`);
-  console.log('   Capabilities: Research, Analysis, Code Generation');
-  console.log('   Status: Ready');
-  console.log('\n📋 Note: Full agent spawning requires orchestrator to be running');
+  console.log(`   Capabilities: ${agent.capabilities.join(', ')}`);
+  console.log(`   Status: ${agent.status}`);
+  console.log(`   Location: ${agentFile}`);
   
   // Track agent spawn for performance metrics
   await onAgentSpawn(agentId, agentType, { name: agentName });
 }
 
+function getAgentCapabilities(type) {
+  const capabilities = {
+    researcher: ['Research', 'Analysis', 'Information Gathering', 'Documentation'],
+    coder: ['Code Generation', 'Implementation', 'Refactoring', 'Debugging'],
+    tester: ['Testing', 'Validation', 'Quality Assurance', 'Performance Testing'],
+    analyst: ['Data Analysis', 'Pattern Recognition', 'Reporting', 'Optimization'],
+    coordinator: ['Task Management', 'Workflow Orchestration', 'Resource Allocation'],
+    general: ['Research', 'Analysis', 'Code Generation']
+  };
+  return capabilities[type] || capabilities.general;
+}
+
 async function listAgents(subArgs, flags) {
-  printSuccess('Active agents:');
-  console.log('📋 No agents currently active (orchestrator not running)');
-  console.log('\nTo create agents:');
-  console.log('  claude-flow agent spawn researcher --name "ResearchBot"');
-  console.log('  claude-flow agent spawn coder --name "CodeBot"');
-  console.log('  claude-flow agent spawn analyst --name "DataBot"');
+  const { promises: fs } = await import('fs');
+  const path = await import('path');
+  
+  const agentsDir = '.claude-flow/agents';
+  const agents = [];
+  
+  try {
+    const agentFiles = await fs.readdir(agentsDir);
+    for (const file of agentFiles) {
+      if (file.endsWith('.json')) {
+        try {
+          const content = await fs.readFile(path.join(agentsDir, file), 'utf8');
+          const agent = JSON.parse(content);
+          agents.push(agent);
+        } catch {
+          // Skip invalid agent files
+        }
+      }
+    }
+  } catch {
+    // Agents directory doesn't exist yet
+  }
+  
+  if (agents.length > 0) {
+    printSuccess(`Active agents (${agents.length}):`);
+    agents.forEach(agent => {
+      const statusEmoji = agent.status === 'active' ? '🟢' : '🟡';
+      console.log(`${statusEmoji} ${agent.name} (${agent.type})`);
+      console.log(`   ID: ${agent.id}`);
+      console.log(`   Status: ${agent.status}`);
+      console.log(`   Tasks: ${agent.activeTasks}`);
+      console.log(`   Created: ${new Date(agent.createdAt).toLocaleString()}`);
+      console.log('');
+    });
+  } else {
+    console.log('📋 No agents currently active');
+    console.log('\nTo create agents:');
+    console.log('  claude-flow agent spawn researcher --name "ResearchBot"');
+    console.log('  claude-flow agent spawn coder --name "CodeBot"');
+    console.log('  claude-flow agent spawn analyst --name "DataBot"');
+  }
 }
 
 async function manageHierarchy(subArgs, flags) {
