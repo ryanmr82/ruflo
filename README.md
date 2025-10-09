@@ -1,10 +1,10 @@
-# 🌊 Claude-Flow v2.5.0 Alpha 130: AI Orchestration Platform
+# 🌊 Claude-Flow v2.5.0 Alpha 140: AI Orchestration Platform
 
 <div align="center">
 
 [![🌟 Star on GitHub](https://img.shields.io/github/stars/ruvnet/claude-flow?style=for-the-badge&logo=github&color=gold)](https://github.com/ruvnet/claude-flow)
 [![📈 Downloads](https://img.shields.io/npm/dt/claude-flow?style=for-the-badge&logo=npm&color=blue&label=Downloads)](https://www.npmjs.com/package/claude-flow)
-[![📦 Latest Release](https://img.shields.io/npm/v/claude-flow?style=for-the-badge&logo=npm&color=green&label=v2.5.0-alpha.130)](https://www.npmjs.com/package/claude-flow)
+[![📦 Latest Release](https://img.shields.io/npm/v/claude-flow?style=for-the-badge&logo=npm&color=green&label=v2.5.0-alpha.140)](https://www.npmjs.com/package/claude-flow)
 [![⚡ Claude Code](https://img.shields.io/badge/Claude%20Code-SDK%20Integrated-green?style=for-the-badge&logo=anthropic)](https://github.com/ruvnet/claude-flow)
 [![🏛️ Agentics Foundation](https://img.shields.io/badge/Agentics-Foundation-crimson?style=for-the-badge&logo=openai)](https://discord.com/invite/dfxmpwkG2D)
 [![🐝 Hive-Mind](https://img.shields.io/badge/Hive--Mind-AI%20Coordination-purple?style=for-the-badge&logo=swarm)](https://github.com/ruvnet/claude-flow)
@@ -12,57 +12,6 @@
 [![🛡️ MIT License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative)](https://opensource.org/licenses/MIT)
 
 </div>
-
----
-
-## 🎉 What's New in v2.5.0-alpha.130
-
-**🚀 Claude Code SDK Integration** - Major performance breakthrough with 100-600x potential speedup!
-
-### ✨ New Features
-
-**Session Forking & Real-Time Control** 🔥
-- ⚡ **10-20x faster** parallel agent spawning using Claude Code SDK's session forking
-- 🎮 Real-time query control: pause, resume, terminate agents mid-execution
-- 🔄 Dynamic model and permission changes during runtime
-- 📊 26 new methods for advanced agent orchestration
-
-**Hook Matchers & 4-Level Permissions** 🎯
-- 🎨 **2-3x faster** hook execution with pattern-based selective triggering
-- 🔐 Hierarchical permission system: USER → PROJECT → LOCAL → SESSION
-- 🔍 Glob and regex pattern matching for file-based hooks
-- ⚡ Intelligent caching for near-instant permission resolution
-
-**In-Process MCP Server** 🚄
-- 🏎️ **50-100x faster** tool calls by eliminating IPC overhead
-- 📦 Direct in-process execution for all 50+ Claude-Flow tools
-- 💾 10MB memory savings per MCP server (no extra processes)
-- 🔌 Automatic routing: in-process for local tools, stdio/SSE for external
-
-
-
-### 📊 Performance Impact
-
-| Feature | Speedup | Impact |
-|---------|---------|--------|
-| Session Forking | 10-20x | Parallel agent spawning |
-| Hook Matchers | 2-3x | Selective hook execution |
-| In-Process MCP | 50-100x | Tool call latency |
-| **Combined** | **100-600x** | Full workflow orchestration |
-
-**Real-World Example**: Spawning 10 agents now takes ~750ms instead of ~7,500ms! 🚀
-
-### 🔧 SDK Integration Benefits
-
-- ✅ Native Claude Code SDK features instead of custom implementations
-- ✅ Automatic retry handling and error management
-- ✅ Optimized streaming and artifact durability
-- ✅ Context checkpoints and session management
-- ✅ Reduced codebase by 200+ lines of redundant retry logic
-
-**See Full Details**: [GitHub Issue #780](https://github.com/ruvnet/claude-flow/issues/780)
-
----
 
 ## 🌟 **Overview**
 
@@ -78,8 +27,72 @@
 - **🪝 Advanced Hooks System**: Automated workflows with pre/post operation hooks
 - **📊 GitHub Integration**: 6 specialized modes for repository management
 - **🌐 Flow Nexus Cloud Platform**: E2B sandboxes, AI swarms, challenges, and marketplace integration
+- **🎯 PreToolUse Modification Hooks**: NEW - Claude Code v2.0.10+ intelligent input modification (safety, organization, optimization)
 
 > 🔥 **Revolutionary AI Coordination**: Build faster, smarter, and more efficiently with AI-powered development orchestration
+
+## 🎯 **NEW: PreToolUse Modification Hooks Plugin** (v2.5.0-alpha.140)
+
+**The First Claude Code Plugin with Intelligent Tool Input Modification**
+
+Claude-Flow now includes a revolutionary plugin that leverages Claude Code v2.0.10+'s PreToolUse feature to **automatically enhance every command and file operation** before execution:
+
+### ✨ **What It Does**
+
+**🛡️ Safety Enhancements:**
+- Auto-adds `-i` flag to `rm` commands for interactive confirmation
+- Detects sensitive keywords (password, token, api-key) and warns before execution
+- Prevents accidental destructive operations
+
+**📁 Intelligent File Organization:**
+- Never saves working files to project root
+- Auto-organizes: tests → `/tests/`, source → `/src/`, docs → `/docs/working/`
+- Suggests formatters (Prettier, ESLint, Black) based on file type
+
+**⚡ Developer Productivity:**
+- Expands aliases: `ll` → `ls -lah`, `la` → `ls -la`
+- Conventional commit formatting with `[feat]`, `[fix]`, `[docs]` prefixes
+- JIRA ticket extraction from branch names
+- Co-authorship attribution
+
+### 🚀 **Installation**
+
+The plugin is automatically configured when you run:
+
+```bash
+npx claude-flow@alpha init --force
+```
+
+This creates `.claude-plugin/hooks/hooks.json` ready for Claude Code v2.0.10+
+
+### 📖 **Usage Examples**
+
+**Bash Safety:**
+```bash
+# Your command:  rm test.txt
+# Auto-modified: rm -i test.txt
+# Note: [Safety: Added -i flag for interactive confirmation]
+```
+
+**File Organization:**
+```bash
+# Your write:    test.js
+# Auto-saved to: src/test.js
+# Note: [Organization: Moved source file to /src/] [Tip: Auto-format with Prettier recommended]
+```
+
+**Git Commits:**
+```bash
+# Your commit:  git commit -m "fix auth bug"
+```
+
+### 🔌 **Plugin Distribution**
+
+**NPM Package:** `claude-flow@alpha` (includes `.claude-plugin/` directory)
+**Marketplace Ready:** Plugin can be distributed independently via Claude Code marketplace
+**Composable:** Works seamlessly with other tools like `agent-booster`
+
+> 📚 **Full Documentation**: See [docs/HOOKS-V2-MODIFICATION.md](./docs/HOOKS-V2-MODIFICATION.md) for complete feature list and advanced configuration
 
 ## 🌐 **Flow Nexus Cloud Platform**
 
@@ -347,6 +360,130 @@ For detailed information about all features, advanced usage, and comprehensive g
 
 ---
 
+## 📈 **Market Plan: PreToolUse Modification Hooks Plugin**
+
+### 🎯 **Target Markets**
+
+**Primary Markets:**
+1. **Enterprise Development Teams** - Safety & standardization for production code
+2. **Open Source Maintainers** - Automated code quality and consistency
+3. **AI-Powered Development Tools** - Integration with Claude Code ecosystem
+4. **DevOps & Platform Engineers** - Infrastructure-as-code safety and optimization
+
+**Secondary Markets:**
+5. **Individual Developers** - Productivity enhancement and error prevention
+6. **Coding Bootcamps & Education** - Teaching best practices through automation
+7. **AI Agent Developers** - Enhanced agent coordination and memory management
+
+### 💰 **Revenue Streams**
+
+**Free Tier** (Open Source):
+- Core modification hooks (bash, file, git-commit)
+- Basic safety features and organization
+- Community support via GitHub Issues
+
+**Pro Tier** ($19/month):
+- Advanced memory injection hooks
+- Smart swarm coordination
+- Neural training automation
+- Priority support + Discord access
+
+**Enterprise Tier** (Custom pricing):
+- Custom hook development
+- Private deployment support
+- SLA guarantees
+- Training and onboarding
+
+**Marketplace Revenue:**
+- Claude Code plugin marketplace listing (30% platform fee)
+- Premium hook templates and recipes
+- Integration bundles (claude-flow + agent-booster)
+
+### 🚀 **Go-to-Market Strategy**
+
+**Phase 1: Launch (Weeks 1-4)**
+- ✅ Release v2.5.0-alpha.140 with PreToolUse hooks
+- 📢 Announce on Twitter, Reddit (r/ClaudeAI, r/ChatGPT), HackerNews
+- 📝 Write blog post: "How We Built the First Claude Code Modification Plugin"
+- 🎥 Create demo video showing safety features and productivity gains
+- 📊 Track metrics: GitHub stars, npm downloads, hook usage
+
+**Phase 2: Community Building (Weeks 5-12)**
+- 🤝 Partner with `agent-booster` for joint marketing campaign
+- 📚 Create comprehensive documentation and tutorials
+- 🎓 Host webinar: "Building Safer AI-Powered Development Workflows"
+- 💬 Engage with early adopters, collect feedback
+- 🔧 Release hook marketplace templates (GitHub Actions, Terraform, etc.)
+
+**Phase 3: Monetization (Weeks 13-24)**
+- 💳 Launch Pro tier with advanced features
+- 🏢 Target enterprise customers with custom solutions
+- 📈 Submit to Claude Code marketplace (once available)
+- 🤖 Develop AI-powered hook generation tool
+- 🌐 Expand integrations (Prettier, ESLint, agent-booster, etc.)
+
+**Phase 4: Scale (Month 7+)**
+- 🌍 International expansion (localized documentation)
+- 🏆 Developer certification program
+- 🔌 Plugin ecosystem marketplace
+- 📊 AI-powered analytics dashboard
+- 🤝 Strategic partnerships with AI companies
+
+### 📊 **Success Metrics**
+
+**Technical Metrics:**
+- GitHub Stars: 1,000+ (Month 3), 5,000+ (Month 12)
+- NPM Downloads: 10,000/month (Month 3), 50,000/month (Month 12)
+- Active Users: 500+ (Month 3), 5,000+ (Month 12)
+- Hook Executions: 100K/day (Month 6)
+
+**Business Metrics:**
+- MRR: $5K (Month 6), $25K (Month 12)
+- Enterprise Customers: 3 (Month 6), 15 (Month 12)
+- Community Size: 1,000+ Discord members (Month 12)
+- Marketplace Sales: $10K/month (Month 18)
+
+**Quality Metrics:**
+- User Satisfaction: 4.5+ stars
+- Error Prevention Rate: 90%+ (destructive commands caught)
+- Time Saved: 30+ minutes/developer/week
+- Code Quality Improvement: 25%+ (via automated organization)
+
+### 🎁 **Competitive Advantages**
+
+1. **First Mover** - First Claude Code plugin with PreToolUse modification
+2. **Proven Safety** - 100ms timeout handles all environments (containerized, remote, local)
+3. **Composable** - Works with any stdin/stdout tool (agent-booster, prettier, etc.)
+4. **Open Source Core** - Builds trust and community
+5. **Enterprise Ready** - SQLite memory, comprehensive logging, audit trails
+
+### 🔄 **Distribution Channels**
+
+1. **NPM Package** - `claude-flow@alpha` (primary distribution)
+2. **Claude Code Marketplace** - Official plugin listing (when available)
+3. **GitHub Releases** - Standalone `.claude-plugin/` downloads
+4. **Documentation Sites** - flow-nexus.ruv.io, GitHub wiki
+5. **Community Channels** - Discord, Reddit, Twitter, HackerNews
+
+### 🎯 **Marketing Messages**
+
+**Tagline:** "The Safety Net for AI-Powered Development"
+
+**Key Messages:**
+- 🛡️ "Never accidentally delete production files again"
+- 📁 "Your AI keeps projects organized automatically"
+- ⚡ "10x faster with intelligent command expansion"
+- 🤝 "Works seamlessly with agent-booster and other tools"
+- 🎯 "First Claude Code plugin with tool modification"
+
+**Call to Action:**
+```bash
+npx claude-flow@alpha init --force
+# Get safety, organization, and productivity in one command
+```
+
+---
+
 ## Star History
 
 <a href="https://www.star-history.com/#ruvnet/claude-flow&Date">
@@ -361,6 +498,6 @@ For detailed information about all features, advanced usage, and comprehensive g
 
 **Built with ❤️ by [rUv](https://github.com/ruvnet) | Powered by Revolutionary AI**
 
-*v2.0.0 Alpha - The Future of AI Orchestration*
+*v2.5.0-alpha.140 - The Future of AI Orchestration with PreToolUse Modification Hooks*
 
 </div>
