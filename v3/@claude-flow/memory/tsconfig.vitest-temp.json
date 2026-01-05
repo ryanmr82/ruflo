@@ -25,7 +25,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "emitDeclarationOnly": false,
-    "tsBuildInfoFile": "/workspaces/claude-flow/v3/node_modules/vitest/dist/vendor/tsconfig.tmp.tsbuildinfo"
+    "tsBuildInfoFile": "/workspaces/claude-flow/v3/node_modules/.pnpm/vitest@1.6.1_@types+node@20.19.27/node_modules/vitest/dist/vendor/tsconfig.tmp.tsbuildinfo"
   },
   "include": [
     "src/**/*"
