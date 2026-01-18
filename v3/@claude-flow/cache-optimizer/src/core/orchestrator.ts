@@ -166,20 +166,6 @@ export class CacheOptimizer {
     return this.getSessionStorage(sessionId).entries;
   }
 
-  /**
-   * Get all entries across all sessions
-   * @internal Used for iteration and debugging
-   */
-  private _getAllEntries(): CacheEntry[] {
-    if (!this.sessionIsolation) {
-      return Array.from(this.entries.values());
-    }
-    const allEntries: CacheEntry[] = [];
-    for (const storage of this.sessions.values()) {
-      allEntries.push(...storage.entries.values());
-    }
-    return allEntries;
-  }
 
   /**
    * Merge user config with defaults
