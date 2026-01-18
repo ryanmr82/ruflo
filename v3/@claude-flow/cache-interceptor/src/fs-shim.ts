@@ -194,15 +194,35 @@ function shimmedReadFileSync(
 const Module = require('module');
 const originalRequire = Module.prototype.require;
 
-// Create wrapped fs with intercepted methods
-const wrappedFs: any = Object.create(originalFs);
+// Create wrapped fs by copying all properties
+const wrappedFs: any = {};
+
+// Copy all properties from originalFs
+for (const key of Object.keys(originalFs)) {
+  wrappedFs[key] = (originalFs as any)[key];
+}
+
+// Also copy from prototype
+const proto = Object.getPrototypeOf(originalFs);
+if (proto) {
+  for (const key of Object.getOwnPropertyNames(proto)) {
+    if (key !== 'constructor' && !(key in wrappedFs)) {
+      wrappedFs[key] = (originalFs as any)[key];
+    }
+  }
+}
+
+// Copy all enumerable properties
+Object.assign(wrappedFs, originalFs);
+
+// Override with our intercepted version
 wrappedFs.readFileSync = shimmedReadFileSync;
 
 Module.prototype.require = function(id: string) {
   if (id === 'fs' || id === 'node:fs') {
     return wrappedFs;
   }
-  return originalRequire.apply(this, arguments);
+  return originalRequire.apply(this, arguments as any);
 };
 
 log('fs-shim installed - intercepting fs.readFileSync for Claude sessions');
