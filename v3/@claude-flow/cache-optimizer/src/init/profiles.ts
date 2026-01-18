@@ -3,9 +3,10 @@
  *
  * Pre-configured profiles for different implementation requirements.
  * Each profile optimizes for specific use cases.
+ *
+ * These profiles define configuration presets that get merged
+ * with defaults at runtime.
  */
-
-import type { CacheOptimizerConfig, HandoffConfig } from '../types.js';
 
 /**
  * Profile identifier
@@ -21,14 +22,54 @@ export type ProfileId =
   | 'production';
 
 /**
+ * Flexible profile config - not strictly typed to allow
+ * easy profile definition without matching all type requirements
+ */
+export interface ProfileCacheConfig {
+  maxContextTokens?: number;
+  targetUtilization?: number;
+  pruning?: {
+    strategy?: 'lru' | 'relevance' | 'adaptive';
+    softThreshold?: number;
+    hardThreshold?: number;
+    emergencyThreshold?: number;
+  };
+  temporal?: {
+    hotDuration?: number;
+    warmDuration?: number;
+    coldDuration?: number;
+  };
+  sessionIsolation?: boolean;
+  debug?: boolean;
+  [key: string]: unknown;
+}
+
+export interface ProfileHandoffConfig {
+  enabled?: boolean;
+  retryAttempts?: number;
+  retryDelay?: number;
+  timeout?: number;
+  circuitBreaker?: {
+    enabled?: boolean;
+    threshold?: number;
+    resetTimeout?: number;
+  };
+  background?: {
+    enabled?: boolean;
+    maxConcurrent?: number;
+  };
+  [key: string]: unknown;
+}
+
+/**
  * Profile definition with metadata
  */
 export interface Profile {
   id: ProfileId;
   name: string;
   description: string;
-  cacheConfig: Partial<CacheOptimizerConfig>;
-  handoffConfig?: Partial<HandoffConfig>;
+  cacheConfig: ProfileCacheConfig;
+  handoffConfig?: ProfileHandoffConfig;
   hooks: HookConfiguration;
   recommended: string[];
 }
@@ -64,11 +105,10 @@ const singleAgentProfile: Profile = {
     targetUtilization: 0.80,
     pruning: {
       strategy: 'adaptive',
-      aggressiveness: 0.3,
-      minRetention: 0.2,
+      softThreshold: 0.60,
+      hardThreshold: 0.75,
     },
     temporal: {
-      enabled: true,
       hotDuration: 300000,     // 5 min
       warmDuration: 1800000,   // 30 min
       coldDuration: 3600000,   // 1 hour
@@ -113,11 +153,10 @@ const multiAgentProfile: Profile = {
     targetUtilization: 0.70,
     pruning: {
       strategy: 'adaptive',
-      aggressiveness: 0.5,
-      minRetention: 0.15,
+      softThreshold: 0.55,
+      hardThreshold: 0.70,
     },
     temporal: {
-      enabled: true,
       hotDuration: 180000,     // 3 min (faster cycling for swarms)
       warmDuration: 600000,    // 10 min
       coldDuration: 1800000,   // 30 min
@@ -170,12 +209,12 @@ const aggressiveProfile: Profile = {
     maxContextTokens: 200000,
     targetUtilization: 0.85,
     pruning: {
-      strategy: 'minimal',
-      aggressiveness: 0.1,
-      minRetention: 0.4,
+      strategy: 'relevance',
+      softThreshold: 0.70,
+      hardThreshold: 0.80,
+      emergencyThreshold: 0.90,
     },
     temporal: {
-      enabled: true,
       hotDuration: 600000,     // 10 min
       warmDuration: 3600000,   // 1 hour
       coldDuration: 7200000,   // 2 hours
@@ -212,12 +251,12 @@ const conservativeProfile: Profile = {
     maxContextTokens: 200000,
     targetUtilization: 0.60,
     pruning: {
-      strategy: 'aggressive',
-      aggressiveness: 0.7,
-      minRetention: 0.1,
+      strategy: 'lru',
+      softThreshold: 0.45,
+      hardThreshold: 0.55,
+      emergencyThreshold: 0.65,
     },
     temporal: {
-      enabled: true,
       hotDuration: 120000,     // 2 min
       warmDuration: 300000,    // 5 min
       coldDuration: 600000,    // 10 min
@@ -254,19 +293,15 @@ const memoryConstrainedProfile: Profile = {
     maxContextTokens: 100000,
     targetUtilization: 0.50,
     pruning: {
-      strategy: 'aggressive',
-      aggressiveness: 0.8,
-      minRetention: 0.05,
+      strategy: 'lru',
+      softThreshold: 0.35,
+      hardThreshold: 0.45,
+      emergencyThreshold: 0.55,
     },
     temporal: {
-      enabled: true,
       hotDuration: 60000,      // 1 min
       warmDuration: 180000,    // 3 min
       coldDuration: 300000,    // 5 min
-    },
-    compression: {
-      enabled: true,
-      level: 'high',
     },
   },
   hooks: {
@@ -301,19 +336,13 @@ const performanceProfile: Profile = {
     targetUtilization: 0.75,
     pruning: {
       strategy: 'adaptive',
-      aggressiveness: 0.4,
-      minRetention: 0.25,
+      softThreshold: 0.60,
+      hardThreshold: 0.72,
     },
     temporal: {
-      enabled: true,
       hotDuration: 300000,
       warmDuration: 1200000,
       coldDuration: 2400000,
-    },
-    intelligence: {
-      flashAttention: true,
-      sona: true,
-      moe: true,
     },
   },
   handoffConfig: {
@@ -371,11 +400,10 @@ const developmentProfile: Profile = {
     targetUtilization: 0.75,
     pruning: {
       strategy: 'adaptive',
-      aggressiveness: 0.3,
-      minRetention: 0.2,
+      softThreshold: 0.60,
+      hardThreshold: 0.75,
     },
     temporal: {
-      enabled: true,
       hotDuration: 300000,
       warmDuration: 1800000,
       coldDuration: 3600000,
@@ -432,18 +460,13 @@ const productionProfile: Profile = {
     targetUtilization: 0.72,
     pruning: {
       strategy: 'adaptive',
-      aggressiveness: 0.4,
-      minRetention: 0.2,
+      softThreshold: 0.58,
+      hardThreshold: 0.70,
     },
     temporal: {
-      enabled: true,
       hotDuration: 300000,
       warmDuration: 1200000,
       coldDuration: 2400000,
-    },
-    persistence: {
-      enabled: true,
-      path: './data/cache-optimizer',
     },
   },
   handoffConfig: {
@@ -558,11 +581,11 @@ export function detectRecommendedProfile(): ProfileId {
  */
 export function mergeWithProfile(
   profileId: ProfileId,
-  customConfig?: Partial<CacheOptimizerConfig>
-): CacheOptimizerConfig {
+  customConfig?: ProfileCacheConfig
+): ProfileCacheConfig {
   const profile = getProfile(profileId);
   return {
     ...profile.cacheConfig,
     ...customConfig,
-  } as CacheOptimizerConfig;
+  };
 }
