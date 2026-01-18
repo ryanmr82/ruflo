@@ -210,14 +210,32 @@ export class CacheOptimizer {
 
   /**
    * Add a new entry to the cache
+   * Uses mutex to prevent race conditions in multi-agent scenarios
    */
   async add(
     content: string,
     type: CacheEntryType,
     metadata: Partial<CacheEntryMetadata> = {}
   ): Promise<string> {
+    const release = await this.mutex.acquire();
+    try {
+      return await this.addInternal(content, type, metadata);
+    } finally {
+      release();
+    }
+  }
+
+  /**
+   * Internal add implementation (called within mutex)
+   */
+  private async addInternal(
+    content: string,
+    type: CacheEntryType,
+    metadata: Partial<CacheEntryMetadata> = {}
+  ): Promise<string> {
     const id = generateId();
     const now = Date.now();
+    const sessionId = metadata.sessionId ?? 'default';
     const tokens = this.tokenCounter.countTokens(content, type);
 
     const entry: CacheEntry = {
@@ -228,7 +246,7 @@ export class CacheOptimizer {
       timestamp: now,
       metadata: {
         source: metadata.source ?? 'unknown',
-        sessionId: metadata.sessionId ?? 'default',
+        sessionId,
         tags: metadata.tags ?? [],
         ...metadata,
       },
@@ -252,12 +270,21 @@ export class CacheOptimizer {
     // Check if we need to prune before adding
     const predictedUtilization = this.tokenCounter.predictUtilization(tokens);
     if (predictedUtilization > this.config.pruning.softThreshold) {
-      await this.proactivePrune(tokens);
+      await this.proactivePruneInternal(tokens, sessionId);
     }
 
-    // Add to storage
-    this.entries.set(id, entry);
+    // Add to storage (session-aware)
+    const entriesMap = this.getEntriesForSession(sessionId);
+    entriesMap.set(id, entry);
+
+    // Update both global and session token counters
     this.tokenCounter.addEntry(entry);
+    if (this.sessionIsolation) {
+      const storage = this.getSessionStorage(sessionId);
+      storage.tokenCounter.addEntry(entry);
+      storage.accessOrder.push(id);
+    }
+
     this.updateAccessOrder(id);
 
     // Embed in hyperbolic space for drift detection
@@ -266,7 +293,7 @@ export class CacheOptimizer {
 
       // Add hyperedges for relationships
       if (metadata.filePath) {
-        const relatedEntries = Array.from(this.entries.values())
+        const relatedEntries = Array.from(entriesMap.values())
           .filter(e => e.metadata?.filePath === metadata.filePath && e.id !== id)
           .slice(-5) // Last 5 related entries
           .map(e => e.id);
@@ -281,8 +308,8 @@ export class CacheOptimizer {
       }
 
       // Session context hyperedge
-      const sessionEntries = Array.from(this.entries.values())
-        .filter(e => e.metadata?.sessionId === metadata.sessionId && e.id !== id)
+      const sessionEntries = Array.from(entriesMap.values())
+        .filter(e => e.metadata?.sessionId === sessionId && e.id !== id)
         .slice(-10)
         .map(e => e.id);
 
@@ -290,7 +317,7 @@ export class CacheOptimizer {
         this.hyperbolicIntelligence.addRelationship(
           [id, ...sessionEntries],
           'session_context',
-          { session: metadata.sessionId, timestamp: now }
+          { session: sessionId, timestamp: now }
         );
       }
     }
