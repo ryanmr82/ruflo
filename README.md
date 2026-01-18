@@ -3181,6 +3181,89 @@ await hooks.endTrajectory(trajectory, { success: true });
 
 </details>
 
+<details>
+<summary>🗄️ <strong>Cache Optimizer</strong> — Zero-Compaction Context Management</summary>
+
+Prevents Claude Code context compaction through intelligent cache management with temporal compression and attention-based scoring.
+
+```bash
+# Initialize with multi-agent profile
+npx @claude-flow/cache-optimizer init --profile multi-agent
+
+# Check status and utilization
+npx @claude-flow/cache-optimizer status
+
+# Run security diagnostics
+npx @claude-flow/cache-optimizer doctor --security
+```
+
+### Key Features
+
+| Feature | Description | Performance |
+|---------|-------------|-------------|
+| **Zero-Compaction** | Proactive pruning before thresholds | Prevents context loss |
+| **Temporal Compression** | Hot/warm/cold tiering | Efficient storage |
+| **Flash Attention** | Attention-based relevance scoring | 2.49x-7.47x speedup |
+| **Session Isolation** | Multi-agent support | Isolated storage |
+| **Background Handoff** | Delegate to Ollama/OpenAI | Offload expensive tasks |
+
+### Configuration Profiles
+
+| Profile | Use Case | Target Utilization |
+|---------|----------|-------------------|
+| `single-agent` | Single Claude instance | 80% |
+| `multi-agent` | Swarm orchestration | 70% |
+| `aggressive` | Maximum retention | 85% |
+| `conservative` | Minimal footprint | 60% |
+| `memory-constrained` | CI/CD, Docker | 50% |
+
+### Programmatic API
+
+```typescript
+import { createCacheOptimizer, handoff } from '@claude-flow/cache-optimizer';
+
+const optimizer = createCacheOptimizer({
+  targetUtilization: 0.7,
+  pruning: { strategy: 'adaptive' },
+  sessionIsolation: true,
+});
+
+await optimizer.initialize();
+
+// Add entries with metadata
+await optimizer.add(content, 'file_read', { filePath: '/src/auth.ts' });
+
+// Get utilization and trigger pruning if needed
+if (optimizer.getUtilization() > 0.7) {
+  const decision = await optimizer.getPruningDecision({ trigger: 'threshold' });
+  await optimizer.prune(decision);
+}
+
+// Background handoff to local LLM
+const analysis = await handoff('Analyze this code for security issues', {
+  provider: 'ollama',
+  model: 'codellama',
+});
+```
+
+### Hook Integration
+
+The init command configures these hooks in `.claude/settings.json`:
+
+- **UserPromptSubmit**: Session-isolated context loading
+- **PostToolUse**: Session-isolated tool caching
+- **PreCompact**: Session-aware compaction prevention
+- **MessageComplete**: Sync session state across agents
+
+### Security Features
+
+- **SSRF Prevention**: Validates endpoints against allowlists
+- **Command Injection Protection**: Sanitizes shell arguments
+- **Path Traversal Protection**: Validates file paths
+- **Multi-Instance Safety**: Async mutex + file locking
+
+</details>
+
 ### Package Reference
 
 | Package | Purpose | Main Exports |
