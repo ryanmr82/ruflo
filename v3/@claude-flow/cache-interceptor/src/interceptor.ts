@@ -950,6 +950,184 @@ export const CacheQuery = {
       return { messages: 0, summaries: 0, patterns: 0, sessions: 0 };
     }
   },
+
+  // =========================================================================
+  // Multi-Session Management API
+  // =========================================================================
+
+  /**
+   * Get all active sessions (from registry)
+   */
+  getActiveSessions(): Array<{
+    sessionId: string;
+    pid: number;
+    projectName: string;
+    isActive: boolean;
+    lastHeartbeat: string;
+  }> {
+    return discoverAllSessions();
+  },
+
+  /**
+   * Discover all sessions from filesystem
+   */
+  discoverSessions(): Array<{
+    sessionId: string;
+    filePath: string;
+    projectName: string;
+    size: number;
+    mtime: Date;
+  }> {
+    return discoverSessionsFromFilesystem();
+  },
+
+  /**
+   * Get session owned by a specific PID
+   */
+  getSessionByPid(pid: number): {
+    sessionId: string;
+    projectName: string;
+    filePath: string;
+  } | null {
+    if (!db) return null;
+    try {
+      const result = db.exec(
+        'SELECT session_id, project_name, file_path FROM active_sessions WHERE pid = ? AND is_active = 1',
+        [pid]
+      );
+      if (!result[0]?.values?.length) return null;
+      const row = result[0].values[0];
+      return {
+        sessionId: row[0] as string,
+        projectName: row[1] as string,
+        filePath: row[2] as string,
+      };
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Get current process session
+   */
+  getCurrentSession(): {
+    sessionId: string | null;
+    pid: number;
+    startTime: number;
+  } {
+    return {
+      sessionId: currentSessionId,
+      pid: PROCESS_ID,
+      startTime: PROCESS_START_TIME,
+    };
+  },
+
+  /**
+   * Get messages for current process session only
+   */
+  getOwnMessages(): any[] {
+    if (!currentSessionId) return [];
+    return this.getSession(currentSessionId);
+  },
+
+  /**
+   * Check if session is owned by this process
+   */
+  isOwnSession(sessionId: string): boolean {
+    return isOwnSession(sessionId);
+  },
+
+  /**
+   * Get multi-process stats
+   */
+  getMultiProcessStats(): {
+    currentPid: number;
+    currentSession: string | null;
+    activeSessions: number;
+    totalSessions: number;
+    staleSessionCount: number;
+  } {
+    if (!db) {
+      return {
+        currentPid: PROCESS_ID,
+        currentSession: currentSessionId,
+        activeSessions: 0,
+        totalSessions: 0,
+        staleSessionCount: 0,
+      };
+    }
+    try {
+      const active = db.exec('SELECT COUNT(*) FROM active_sessions WHERE is_active = 1')[0]?.values[0]?.[0] as number || 0;
+      const total = db.exec('SELECT COUNT(*) FROM active_sessions')[0]?.values[0]?.[0] as number || 0;
+      const stale = db.exec('SELECT COUNT(*) FROM active_sessions WHERE is_active = 0')[0]?.values[0]?.[0] as number || 0;
+
+      return {
+        currentPid: PROCESS_ID,
+        currentSession: currentSessionId,
+        activeSessions: active,
+        totalSessions: total,
+        staleSessionCount: stale,
+      };
+    } catch {
+      return {
+        currentPid: PROCESS_ID,
+        currentSession: currentSessionId,
+        activeSessions: 0,
+        totalSessions: 0,
+        staleSessionCount: 0,
+      };
+    }
+  },
+
+  /**
+   * Force cleanup of stale sessions
+   */
+  cleanupStaleSessions(): void {
+    cleanupStaleSessions();
+  },
+
+  /**
+   * Sync session data from filesystem to database (for recovery)
+   */
+  syncFromFilesystem(sessionId: string): { synced: number; errors: number } {
+    if (!db) return { synced: 0, errors: 1 };
+
+    const sessions = discoverSessionsFromFilesystem();
+    const session = sessions.find(s => s.sessionId === sessionId);
+
+    if (!session) return { synced: 0, errors: 1 };
+
+    try {
+      const content = originalFs.readFileSync(session.filePath, 'utf8');
+      const lines = content.split('\n').filter(line => line.trim());
+
+      let synced = 0;
+      const insertStmt = db.prepare(
+        'INSERT OR IGNORE INTO messages (session_id, line_number, type, content, timestamp, pid) VALUES (?, ?, ?, ?, ?, ?)'
+      );
+
+      for (let i = 0; i < lines.length; i++) {
+        const parsed = safeJsonParse(lines[i]);
+        insertStmt.run([
+          sessionId,
+          i + 1,
+          parsed?.type || 'unknown',
+          lines[i],
+          parsed?.timestamp || null,
+          null, // Unknown PID for historical data
+        ]);
+        synced++;
+      }
+
+      insertStmt.free();
+      schedulePersist();
+
+      return { synced, errors: 0 };
+    } catch (error) {
+      logError(`Sync error: ${error}`);
+      return { synced: 0, errors: 1 };
+    }
+  },
 };
 
 // ============================================================================
