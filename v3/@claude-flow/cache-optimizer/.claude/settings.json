@@ -2,23 +2,33 @@
   "hooks": {
     "UserPromptSubmit": [
       {
-        "command": "npx @claude-flow/cache-optimizer handle-prompt \"$PROMPT\"",
-        "description": "Pre-load relevant context and prevent compaction",
-        "timeout": 5000
+        "command": "npx @claude-flow/cache-optimizer handle-prompt \"$PROMPT\" --session \"$SESSION_ID\"",
+        "description": "Session-isolated context loading",
+        "timeout": 5000,
+        "env": {
+          "CACHE_SESSION_ISOLATED": "true"
+        }
       }
     ],
     "PostToolUse": [
       {
-        "command": "npx @claude-flow/cache-optimizer post-tool \"$TOOL_NAME\" \"$TOOL_INPUT\"",
-        "description": "Cache tool results for future use",
+        "command": "npx @claude-flow/cache-optimizer post-tool \"$TOOL_NAME\" \"$TOOL_INPUT\" --session \"$SESSION_ID\"",
+        "description": "Session-isolated tool caching",
         "timeout": 3000
       }
     ],
     "PreCompact": [
       {
-        "command": "npx @claude-flow/cache-optimizer prevent-compact",
-        "description": "Attempt to prevent compaction via intelligent pruning",
+        "command": "npx @claude-flow/cache-optimizer prevent-compact --session \"$SESSION_ID\"",
+        "description": "Session-aware compaction prevention",
         "timeout": 10000
+      }
+    ],
+    "MessageComplete": [
+      {
+        "command": "npx @claude-flow/cache-optimizer sync-session \"$SESSION_ID\"",
+        "description": "Sync session state across agents",
+        "timeout": 5000
       }
     ]
   }
