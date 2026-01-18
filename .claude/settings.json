@@ -31,7 +31,14 @@
     "CLAUDE_FLOW_CHECKPOINTS_ENABLED": "true",
     "CLAUDE_FLOW_V3_CLI_ENABLED": "true",
     "CLAUDE_FLOW_V3_CLI_PATH": "/workspaces/claude-flow/v3/@claude-flow/cli/bin/cli.js",
-    "CLAUDE_FLOW_V3_INTELLIGENCE": "true"
+    "CLAUDE_FLOW_V3_INTELLIGENCE": "true",
+    "CLAUDE_FLOW_CACHE_OPTIMIZER_ENABLED": "true",
+    "CLAUDE_FLOW_GNN_TOPOLOGY": "hybrid",
+    "CLAUDE_FLOW_GNN_HIDDEN_DIM": "128",
+    "CLAUDE_FLOW_GNN_LAYERS": "2",
+    "CLAUDE_FLOW_GRNN_HIDDEN_SIZE": "64",
+    "CLAUDE_FLOW_GRNN_EWC_LAMBDA": "0.5",
+    "CLAUDE_FLOW_CACHE_PROFILE": "multi-agent"
   },
   "permissions": {
     "allowedTools": [
