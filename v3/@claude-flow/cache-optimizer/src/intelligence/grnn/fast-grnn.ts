@@ -482,7 +482,7 @@ export class FastGRNN {
   /**
    * Update weights using gradient descent
    */
-  private updateWeights(probs: number[], targetIdx: number, input: number[]): number {
+  private updateWeights(probs: number[], targetIdx: number, _input: number[]): number {
     // Compute gradient for output layer
     const outputGrad = [...probs];
     outputGrad[targetIdx] -= 1;
