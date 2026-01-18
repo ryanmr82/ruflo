@@ -634,6 +634,328 @@ export interface PercentileMetrics {
 // DEFAULT CONFIGURATION
 // =============================================================================
 
+// =============================================================================
+// HANDOFF TYPES (Background Process Model Invocation)
+// =============================================================================
+
+export interface HandoffConfig {
+  /** Provider configurations */
+  providers: HandoffProviderConfig[];
+
+  /** Default provider to use */
+  defaultProvider: string;
+
+  /** Background process settings */
+  background: BackgroundProcessConfig;
+
+  /** Retry settings */
+  retry: HandoffRetryConfig;
+
+  /** Timeout settings */
+  timeout: HandoffTimeoutConfig;
+}
+
+export interface HandoffProviderConfig {
+  /** Provider name/id */
+  name: string;
+
+  /** Provider type */
+  type: HandoffProviderType;
+
+  /** API endpoint URL */
+  endpoint: string;
+
+  /** API key (for remote providers) */
+  apiKey?: string;
+
+  /** Model to use */
+  model: string;
+
+  /** Provider-specific options */
+  options?: Record<string, unknown>;
+
+  /** Priority (lower = preferred) */
+  priority: number;
+
+  /** Whether this provider is available/healthy */
+  healthy: boolean;
+}
+
+export type HandoffProviderType =
+  | 'ollama'      // Local Ollama instance
+  | 'anthropic'   // Anthropic API (Claude)
+  | 'openai'      // OpenAI API (GPT)
+  | 'openrouter'  // OpenRouter (multi-provider)
+  | 'custom';     // Custom API endpoint
+
+export interface BackgroundProcessConfig {
+  /** Enable background processing */
+  enabled: boolean;
+
+  /** Maximum concurrent handoffs */
+  maxConcurrent: number;
+
+  /** Process queue size */
+  queueSize: number;
+
+  /** Polling interval in ms */
+  pollInterval: number;
+
+  /** Working directory for temporary files */
+  workDir: string;
+}
+
+export interface HandoffRetryConfig {
+  /** Maximum retry attempts */
+  maxRetries: number;
+
+  /** Base delay in ms */
+  baseDelay: number;
+
+  /** Maximum delay in ms */
+  maxDelay: number;
+
+  /** Exponential backoff factor */
+  backoffFactor: number;
+}
+
+export interface HandoffTimeoutConfig {
+  /** Request timeout in ms */
+  request: number;
+
+  /** Total handoff timeout in ms */
+  total: number;
+
+  /** Streaming chunk timeout in ms */
+  stream: number;
+}
+
+export interface HandoffRequest {
+  /** Unique request ID */
+  id: string;
+
+  /** Provider to use (or 'auto' for auto-selection) */
+  provider: string;
+
+  /** System prompt/context */
+  systemPrompt?: string;
+
+  /** User prompt/instructions */
+  prompt: string;
+
+  /** Previous context (for multi-turn) */
+  context?: HandoffContext[];
+
+  /** Callback instructions to inject on completion */
+  callbackInstructions?: string;
+
+  /** Metadata */
+  metadata: HandoffMetadata;
+
+  /** Request options */
+  options: HandoffRequestOptions;
+}
+
+export interface HandoffContext {
+  /** Role in conversation */
+  role: 'system' | 'user' | 'assistant';
+
+  /** Content */
+  content: string;
+}
+
+export interface HandoffMetadata {
+  /** Session ID */
+  sessionId: string;
+
+  /** Task ID */
+  taskId?: string;
+
+  /** Source of the request */
+  source: string;
+
+  /** Custom tags */
+  tags: string[];
+
+  /** Creation timestamp */
+  createdAt: number;
+}
+
+export interface HandoffRequestOptions {
+  /** Temperature (0-2) */
+  temperature?: number;
+
+  /** Max tokens */
+  maxTokens?: number;
+
+  /** Top-p sampling */
+  topP?: number;
+
+  /** Stop sequences */
+  stop?: string[];
+
+  /** Stream response */
+  stream?: boolean;
+
+  /** Response format */
+  responseFormat?: 'text' | 'json';
+
+  /** Run in background */
+  background?: boolean;
+
+  /** Callback when complete */
+  onComplete?: (response: HandoffResponse) => Promise<void>;
+}
+
+export interface HandoffResponse {
+  /** Request ID */
+  requestId: string;
+
+  /** Provider used */
+  provider: string;
+
+  /** Model used */
+  model: string;
+
+  /** Response content */
+  content: string;
+
+  /** Tokens used */
+  tokens: HandoffTokenUsage;
+
+  /** Duration in ms */
+  durationMs: number;
+
+  /** Status */
+  status: HandoffStatus;
+
+  /** Error if failed */
+  error?: string;
+
+  /** Injected instructions (if any) */
+  injectedInstructions?: string;
+
+  /** Completion timestamp */
+  completedAt: number;
+}
+
+export interface HandoffTokenUsage {
+  /** Prompt tokens */
+  prompt: number;
+
+  /** Completion tokens */
+  completion: number;
+
+  /** Total tokens */
+  total: number;
+
+  /** Estimated cost in USD */
+  estimatedCost?: number;
+}
+
+export type HandoffStatus =
+  | 'pending'     // Waiting to start
+  | 'processing'  // In progress
+  | 'completed'   // Successfully completed
+  | 'failed'      // Failed with error
+  | 'timeout'     // Timed out
+  | 'cancelled';  // Cancelled by user
+
+export interface HandoffQueueItem {
+  /** Request */
+  request: HandoffRequest;
+
+  /** Queue position */
+  position: number;
+
+  /** Added timestamp */
+  addedAt: number;
+
+  /** Started timestamp (if processing) */
+  startedAt?: number;
+
+  /** Status */
+  status: HandoffStatus;
+
+  /** Response (if completed) */
+  response?: HandoffResponse;
+}
+
+export interface HandoffMetrics {
+  /** Total requests */
+  totalRequests: number;
+
+  /** Successful requests */
+  successfulRequests: number;
+
+  /** Failed requests */
+  failedRequests: number;
+
+  /** Average latency in ms */
+  averageLatency: number;
+
+  /** Total tokens used */
+  totalTokens: number;
+
+  /** Requests by provider */
+  byProvider: Record<string, number>;
+
+  /** Queue length */
+  queueLength: number;
+
+  /** Active requests */
+  activeRequests: number;
+}
+
+/** Default handoff configuration */
+export const DEFAULT_HANDOFF_CONFIG: HandoffConfig = {
+  providers: [
+    {
+      name: 'ollama-local',
+      type: 'ollama',
+      endpoint: 'http://localhost:11434',
+      model: 'llama3.2',
+      priority: 1,
+      healthy: true,
+    },
+    {
+      name: 'anthropic',
+      type: 'anthropic',
+      endpoint: 'https://api.anthropic.com/v1/messages',
+      model: 'claude-3-5-haiku-20241022',
+      priority: 2,
+      healthy: true,
+    },
+    {
+      name: 'openai',
+      type: 'openai',
+      endpoint: 'https://api.openai.com/v1/chat/completions',
+      model: 'gpt-4o-mini',
+      priority: 3,
+      healthy: true,
+    },
+  ],
+  defaultProvider: 'auto',
+  background: {
+    enabled: true,
+    maxConcurrent: 3,
+    queueSize: 100,
+    pollInterval: 100,
+    workDir: '/tmp/claude-flow-handoff',
+  },
+  retry: {
+    maxRetries: 3,
+    baseDelay: 1000,
+    maxDelay: 10000,
+    backoffFactor: 2,
+  },
+  timeout: {
+    request: 30000,
+    total: 60000,
+    stream: 5000,
+  },
+};
+
 export const DEFAULT_CONFIG: CacheOptimizerConfig = {
   targetUtilization: 0.75,
   contextWindowSize: 200000,
