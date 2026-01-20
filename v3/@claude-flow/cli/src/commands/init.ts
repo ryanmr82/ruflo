@@ -687,7 +687,7 @@ const upgradeCommand: Command = {
     },
   ],
   action: async (ctx: CommandContext): Promise<CommandResult> => {
-    const addMissing = ctx.flags['add-missing'] as boolean;
+    const addMissing = (ctx.flags['add-missing'] || ctx.flags.addMissing) as boolean;
 
     output.writeln();
     output.writeln(output.bold('Upgrading Claude Flow'));
