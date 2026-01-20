@@ -996,6 +996,7 @@ function generateStatusline() {
   const tests = getTestStats();
   const git = getGitStatus();
   const session = getSessionStats();
+  const integration = getIntegrationStatus();
   const lines = [];
 
   // Calculate intelligence trend
