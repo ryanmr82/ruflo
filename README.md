@@ -4381,7 +4381,7 @@ npx claude-flow@v3alpha pair end
 ---
 
 <details>
-<summary><h2>🛡️ AIDefence Security — Threat Detection, PII Scanning </h2></summary>
+<summary>🛡️ <strong>AIDefence Security</strong> — Threat Detection, PII Scanning</summary>
 
 **AI Manipulation Defense System (AIMDS)** — Protect AI applications from prompt injection, jailbreaks, and data exposure with sub-millisecond detection.
 
