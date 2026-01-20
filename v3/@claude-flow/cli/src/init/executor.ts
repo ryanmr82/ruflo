@@ -209,6 +209,11 @@ export async function executeInit(options: InitOptions): Promise<InitResult> {
       await writeRuntimeConfig(targetDir, options, result);
     }
 
+    // Create initial metrics for statusline (prevents "all zeros" display)
+    if (options.components.statusline) {
+      await writeInitialMetrics(targetDir, options, result);
+    }
+
     // Generate CLAUDE.md
     if (options.components.claudeMd) {
       await writeClaudeMd(targetDir, options, result);
