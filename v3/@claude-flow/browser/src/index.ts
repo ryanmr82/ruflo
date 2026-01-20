@@ -119,6 +119,9 @@ import { BrowserService, createBrowserService, createBrowserSwarm } from './appl
 import { browserTools } from './mcp-tools/browser-tools.js';
 import { browserHooks, preBrowseHook, postBrowseHook } from './infrastructure/hooks-integration.js';
 import { getReasoningBank } from './infrastructure/reasoningbank-adapter.js';
+import { getMemoryAdapter, createMemoryManager } from './infrastructure/memory-integration.js';
+import { getSecurityScanner, isUrlSafe, containsPII } from './infrastructure/security-integration.js';
+import { getWorkflowManager, listWorkflows, getWorkflow } from './infrastructure/workflow-templates.js';
 
 export default {
   // Services
@@ -136,4 +139,18 @@ export default {
 
   // Learning
   getReasoningBank,
+
+  // Memory (HNSW-indexed)
+  getMemoryAdapter,
+  createMemoryManager,
+
+  // Security (AIDefence)
+  getSecurityScanner,
+  isUrlSafe,
+  containsPII,
+
+  // Workflows
+  getWorkflowManager,
+  listWorkflows,
+  getWorkflow,
 };
