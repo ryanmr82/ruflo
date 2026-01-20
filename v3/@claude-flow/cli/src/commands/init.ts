@@ -750,7 +750,7 @@ const upgradeCommand: Command = {
 export const initCommand: Command = {
   name: 'init',
   description: 'Initialize Claude Flow in the current directory',
-  subcommands: [wizardCommand, checkCommand, skillsCommand, hooksCommand],
+  subcommands: [wizardCommand, checkCommand, skillsCommand, hooksCommand, upgradeCommand],
   options: [
     {
       name: 'force',
