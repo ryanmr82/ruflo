@@ -53,7 +53,7 @@ export class AgentBrowserAdapter {
   // Core Command Execution
   // ===========================================================================
 
-  private async exec(args: string[], jsonOutput = true): Promise<ActionResult> {
+  private async exec<T = unknown>(args: string[], jsonOutput = true): Promise<ActionResult<T>> {
     const startTime = Date.now();
     const fullArgs = [
       '--session', this.session,
