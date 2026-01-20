@@ -84,14 +84,14 @@ export class AgentBrowserAdapter {
             const parsed = JSON.parse(result);
             resolve({
               success: parsed.success !== false,
-              data: parsed.data || parsed,
+              data: (parsed.data || parsed) as T,
               duration,
             });
           } catch {
-            resolve({ success: true, data: result.trim(), duration });
+            resolve({ success: true, data: result.trim() as T, duration });
           }
         } else {
-          resolve({ success: true, data: result.trim(), duration });
+          resolve({ success: true, data: result.trim() as T, duration });
         }
       } catch (error) {
         const duration = Date.now() - startTime;
