@@ -448,9 +448,9 @@ function generateSafeMultiline() {
   let securityColor = security.status === 'CLEAN' ? c.brightGreen : security.status === 'IN_PROGRESS' ? c.brightYellow : c.brightRed;
 
   // SAFE LINE: Push content past collision zone with padding
-  // Collision is cols 15-25, so we use fixed-width spacing
+  // Collision is cols 15-25, so we need 24 spaces after emoji (2 cols) to reach col 26
   lines.push(
-    `${c.brightYellow}🤖${c.reset}              ` +  // "🤖" + 14 spaces = content starts at col 16+
+    `${c.brightYellow}🤖${c.reset}                        ` +  // "🤖" (2 cols) + 24 spaces = content starts at col 26+
     `${swarmIndicator} [${agentsColor}${String(swarm.activeAgents).padStart(2)}${c.reset}/${c.brightWhite}${swarm.maxAgents}${c.reset}]  ` +
     `${c.brightPurple}👥 ${system.subAgents}${c.reset}    ` +
     `${securityIcon} ${securityColor}CVE ${security.cvesFixed}${c.reset}/${c.brightWhite}${security.totalCves}${c.reset}    ` +
