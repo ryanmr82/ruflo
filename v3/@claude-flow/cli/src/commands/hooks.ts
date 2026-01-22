@@ -1632,7 +1632,7 @@ const postTaskCommand: Command = {
       }
 
       output.writeln();
-      output.printSuccess(`Task outcome recorded: ${success ? 'SUCCESS' : 'FAILED'}`);
+      output.printSuccess(`Task outcome recorded: ${successValue ? 'SUCCESS' : 'FAILED'}`);
 
       output.writeln();
       output.writeln(output.bold('Learning Updates'));
