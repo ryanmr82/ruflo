@@ -521,6 +521,8 @@
       ]
     }
   },
-  "includeCoAuthoredBy": true,
+  "attribution": {
+    "pr": "🤖 Generated with [claude-flow](https://github.com/ruvnet/claude-flow)"
+  },
   "enabledMcpjsonServers": ["claude-flow", "ruv-swarm"]
 }
