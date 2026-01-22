@@ -34,6 +34,11 @@ export function generateSettings(options: InitOptions): object {
     deny: [],
   };
 
+  // Add claude-flow attribution for git commits and PRs
+  settings.attribution = {
+    pr: '🤖 Generated with [claude-flow](https://github.com/ruvnet/claude-flow)',
+  };
+
   // Note: Claude Code expects 'model' to be a string, not an object
   // Model preferences are stored in claudeFlow settings instead
   // settings.model = 'claude-sonnet-4-20250514'; // Uncomment if you want to set a default model
