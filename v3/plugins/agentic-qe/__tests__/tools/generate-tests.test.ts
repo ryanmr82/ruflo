@@ -287,7 +287,7 @@ describe('GenerateTestsTool', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.errors).toContain(expect.stringContaining('maxTestsPerFunction'));
+      expect(result.errors.some(e => e.includes('maxTestsPerFunction'))).toBe(true);
     });
   });
 
