@@ -21,7 +21,7 @@ import type {
   PluginHook,
   HookPriority,
   IResultCache,
-} from './interfaces';
+} from './interfaces.js';
 
 import type {
   PrimeRadiantConfig,
