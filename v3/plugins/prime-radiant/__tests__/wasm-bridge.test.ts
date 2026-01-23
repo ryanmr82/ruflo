@@ -143,24 +143,21 @@ class MockWasmBridge {
       computeSheafLaplacian: (vectors: Float64Array): number => {
         // Mock Sheaf Laplacian energy computation
         // Low energy = coherent, high energy = contradictory
-        let energy = 0;
-        const dim = Math.sqrt(vectors.length);
+        // Interpret as pairs of vectors (each half of the array)
+        const len = vectors.length;
+        if (len < 2) return 0;
 
-        for (let i = 0; i < dim; i++) {
-          for (let j = i + 1; j < dim; j++) {
-            let diff = 0;
-            for (let k = 0; k < dim; k++) {
-              const idx1 = i * dim + k;
-              const idx2 = j * dim + k;
-              if (idx1 < vectors.length && idx2 < vectors.length) {
-                diff += Math.pow(vectors[idx1] - vectors[idx2], 2);
-              }
-            }
-            energy += Math.sqrt(diff);
-          }
+        // Interpret as 2 vectors, each of length len/2
+        const halfLen = Math.floor(len / 2);
+        let energy = 0;
+
+        for (let i = 0; i < halfLen; i++) {
+          const diff = vectors[i] - vectors[halfLen + i];
+          energy += diff * diff;
         }
 
-        return Math.min(energy / (dim * (dim - 1) / 2), 1);
+        // Normalize to 0-1 range
+        return Math.min(Math.sqrt(energy) / Math.sqrt(halfLen), 1);
       },
 
       checkCoherence: (vectors: Float64Array, threshold: number): { coherent: boolean; energy: number } => {
