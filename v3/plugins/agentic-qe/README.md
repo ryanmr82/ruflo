@@ -47,7 +47,7 @@ npx claude-flow@v3alpha plugins install @claude-flow/plugin-agentic-qe
 
 ## Features
 
-### 51 QE Agents Across 12 Bounded Contexts
+### 58 QE Agents Across 13 Bounded Contexts
 
 | Context | Agents | Description |
 |---------|--------|-------------|
