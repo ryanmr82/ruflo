@@ -48,7 +48,9 @@ function computeSheafLaplacianEnergy(vectors: Float32Array[]): number {
   // Compute pairwise disagreement (1 - cosine_similarity)
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
-      const similarity = cosineSimilarity(vectors[i], vectors[j]);
+      const vi = vectors[i]!;
+      const vj = vectors[j]!;
+      const similarity = cosineSimilarity(vi, vj);
       const disagreement = 1 - Math.max(0, similarity); // Clamp negative similarities
       totalEnergy += disagreement;
       edgeCount++;
