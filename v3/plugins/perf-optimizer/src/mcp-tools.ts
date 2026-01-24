@@ -1065,3 +1065,21 @@ function getConfigInterpretation(
   }
   return `Minor ${objective} improvement of ~${primary.toFixed(0)}% possible. Configuration is already well-tuned`;
 }
+
+// ============================================================================
+// Tool Accessor Functions
+// ============================================================================
+
+/**
+ * Get a tool by name
+ */
+export function getTool(name: string): MCPTool | undefined {
+  return perfOptimizerTools.find(tool => tool.name === name);
+}
+
+/**
+ * Get all tool names
+ */
+export function getToolNames(): string[] {
+  return perfOptimizerTools.map(tool => tool.name);
+}
