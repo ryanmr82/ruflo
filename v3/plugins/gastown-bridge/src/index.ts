@@ -1512,13 +1512,14 @@ export class GasTownBridgePlugin extends EventEmitter implements IPlugin {
         if (!loader) throw new GasTownError('WASM not initialized', GasTownErrorCode.NOT_INITIALIZED);
 
         const steps = convoy.trackedIssues.map(id => ({ id, needs: [] as string[] }));
-        const sorted = loader.resolveStepDependencies(steps);
+        const sortedSteps = loader.resolveStepDependencies(steps);
+        const executionOrder = sortedSteps.map(s => s.id);
 
         return {
           convoyId: convoy.id,
           strategy,
-          executionOrder: sorted.sorted,
-          parallelGroups: [sorted.sorted], // Simplified
+          executionOrder,
+          parallelGroups: [executionOrder], // Simplified - all in one group since no deps
           estimatedDuration: convoy.trackedIssues.length * 1000,
         };
       },
