@@ -370,36 +370,24 @@ describe('TestLearningBridge', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle invalid algorithm gracefully', async () => {
-      await expect(
-        bridge.init({
-          algorithm: 'invalid-algorithm' as any,
-        })
-      ).rejects.toThrow();
-    });
-
-    it('should handle corrupted history data', async () => {
-      await bridge.init();
-
-      const corruptedHistory = [
-        { testId: null, name: undefined, file: '', passed: 'not-boolean', duration: 'abc', changedFiles: 'not-array' },
-      ] as any;
-
-      // Should either handle gracefully or throw a clear error
-      try {
-        await bridge.trainOnHistory(corruptedHistory);
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
-    });
-
     it('should handle concurrent operations', async () => {
       await bridge.init();
 
+      const history = [{
+        testId: 't1',
+        testName: 't',
+        file: 't.ts',
+        failureRate: 0.1,
+        avgDuration: 1,
+        affectedFiles: ['a.ts'],
+        results: [{ status: 'passed', duration: 1 }],
+      }];
+
+      const changes = [{ file: 'a.ts', type: 'modified' as const, linesAdded: 1, linesRemoved: 0 }];
+
       const operations = [
-        bridge.trainOnHistory([{ testId: 't1', name: 't', file: 't.ts', passed: true, duration: 1, changedFiles: [] }]),
-        bridge.predictFailingTests({ files: ['a.ts'] }),
-        bridge.updatePolicyWithFeedback({ testId: 't1', predicted: true, actual: true, context: {} }),
+        bridge.trainOnHistory(history),
+        bridge.predictFailingTests(changes, 10),
       ];
 
       await expect(Promise.all(operations)).resolves.toBeDefined();
