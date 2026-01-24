@@ -875,7 +875,7 @@ function getAffectedTests(filePath: string, graph: DependencyGraph): string[] {
 
 function getSuggestedOrder(
   impactedFiles: FileImpact[],
-  graph: DependencyGraph
+  _graph: DependencyGraph
 ): string[] {
   // Order by dependencies
   return impactedFiles
