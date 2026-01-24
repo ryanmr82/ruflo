@@ -322,6 +322,16 @@ Raw Traces --> Sparse Encoding --> GNN Analysis --> Pattern Match --> Recommenda
 ### Neutral
 - Can provide value even with partial instrumentation
 
+## Related ADRs
+
+| ADR | Relationship |
+|-----|--------------|
+| ADR-004: Plugin Architecture | Foundation - Defines plugin structure |
+| ADR-017: RuVector Integration | Dependency - Provides WASM packages |
+| ADR-035: Code Intelligence | Related - Code analysis integration |
+| ADR-036: Test Intelligence | Related - Test performance metrics |
+| ADR-039: Cognitive Kernel | Related - Cognitive load optimization |
+
 ## References
 
 - OpenTelemetry: https://opentelemetry.io/
