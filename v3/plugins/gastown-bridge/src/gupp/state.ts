@@ -346,10 +346,9 @@ export async function loadState(
 
     // Verify checksum if present
     if (validated.checksum) {
-      const expectedChecksum = calculateChecksum({
-        ...validated,
-        checksum: undefined,
-      });
+      // Destructure to omit checksum for verification
+      const { checksum: _, ...stateWithoutChecksum } = validated;
+      const expectedChecksum = calculateChecksum(stateWithoutChecksum);
       if (validated.checksum !== expectedChecksum) {
         console.warn(
           '[GUPP] State checksum mismatch - possible corruption. Proceeding with caution.'
