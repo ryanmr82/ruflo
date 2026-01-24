@@ -92,12 +92,22 @@ export interface ConvoyObserverConfig {
   tracker: ConvoyTracker;
   /** Optional WASM graph module */
   wasmModule?: WasmGraphModule;
-  /** Polling interval in milliseconds */
+  /** Initial polling interval in milliseconds */
   pollInterval?: number;
   /** Maximum poll attempts before giving up */
   maxPollAttempts?: number;
   /** Enable WASM acceleration (falls back to JS if unavailable) */
   useWasm?: boolean;
+  /** Enable exponential backoff for polling */
+  useExponentialBackoff?: boolean;
+  /** Maximum backoff interval in milliseconds */
+  maxBackoffInterval?: number;
+  /** Backoff multiplier (default: 1.5) */
+  backoffMultiplier?: number;
+  /** Enable delta-based updates (only emit on changes) */
+  deltaUpdatesOnly?: boolean;
+  /** Debounce interval for progress updates in milliseconds */
+  progressDebounceMs?: number;
 }
 
 /**
