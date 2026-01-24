@@ -1187,6 +1187,30 @@ export class FormulaExecutor extends EventEmitter {
       executionId: context.executionId,
     });
 
+    // Generate cache key for step result memoization
+    // Only cache if step is deterministic (no side effects indicator)
+    const isCacheable = step.metadata?.cacheable !== false && !step.metadata?.hasSideEffects;
+    const stepCacheKey = isCacheable
+      ? hashKey([
+          step.id,
+          context.formula.name,
+          JSON.stringify(context.variables),
+          JSON.stringify(step.needs ?? []),
+        ])
+      : null;
+
+    // Check step result cache
+    if (stepCacheKey) {
+      const cachedResult = stepResultCache.get(stepCacheKey);
+      if (cachedResult) {
+        this.logger.debug('Step cache hit', { stepId: step.id });
+        return {
+          ...cachedResult,
+          metadata: { ...cachedResult.metadata, fromCache: true },
+        };
+      }
+    }
+
     try {
       // Check for cancellation
       if (context.signal?.aborted) {
@@ -1209,7 +1233,11 @@ export class FormulaExecutor extends EventEmitter {
 
       // Use custom step handler if provided
       if (options.stepHandler) {
-        return await options.stepHandler(step, context);
+        const result = await options.stepHandler(step, context);
+        if (stepCacheKey && result.success) {
+          stepResultCache.set(stepCacheKey, result);
+        }
+        return result;
       }
 
       // Dry run mode
@@ -1226,12 +1254,19 @@ export class FormulaExecutor extends EventEmitter {
       // Default execution via CLI
       const result = await this.executeStepViaCli(step, context, options);
 
-      return {
+      const stepResult: StepResult = {
         stepId: step.id,
         success: true,
         output: result,
         durationMs: Date.now() - startTime,
       };
+
+      // Cache successful result
+      if (stepCacheKey) {
+        stepResultCache.set(stepCacheKey, stepResult);
+      }
+
+      return stepResult;
     } catch (error) {
       return {
         stepId: step.id,
