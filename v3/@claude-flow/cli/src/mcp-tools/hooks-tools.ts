@@ -792,6 +792,7 @@ export const hooksRoute: MCPTool = {
       task,
       routing: {
         method: routingMethod,
+        backend: backendInfo,
         latencyMs: routingLatencyMs,
         throughput: routingLatencyMs > 0 ? `${Math.round(1000 / routingLatencyMs)} routes/s` : 'N/A',
       },
@@ -803,7 +804,7 @@ export const hooksRoute: MCPTool = {
       primaryAgent: {
         type: agents[0],
         confidence: Math.round(confidence * 100) / 100,
-        reason: routingMethod === 'semantic'
+        reason: routingMethod.startsWith('semantic')
           ? `Semantic similarity to "${matchedPattern}" pattern (${Math.round(confidence * 100)}%)`
           : `Task contains keywords matching ${agents[0]} specialization`,
       },
