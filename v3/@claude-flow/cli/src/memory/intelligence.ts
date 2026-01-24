@@ -679,7 +679,7 @@ export async function findSimilarPatterns(
       usageCount: r.usageCount,
       createdAt: r.createdAt,
       lastUsedAt: r.lastUsedAt,
-      similarity: r.similarity ?? r.confidence ?? 0.5
+      similarity: (r as unknown as { similarity?: number }).similarity ?? r.confidence ?? 0.5
     }));
   } catch {
     return [];
