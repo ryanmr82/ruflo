@@ -838,7 +838,6 @@ const listCommand: Command = {
       }
 
       const registryData = registry as RegistryType;
-      spinner.succeed(`Found ${registryData.models.length} models`);
 
       // Filter by category if specified
       let models = registryData.models;
@@ -848,6 +847,9 @@ const listCommand: Command = {
           m.id.includes(category) ||
           m.name.toLowerCase().includes(category.toLowerCase())
         );
+        spinner.succeed(`Found ${models.length} models matching "${category}"`);
+      } else {
+        spinner.succeed(`Found ${registryData.models.length} models`);
       }
 
       if (models.length === 0) {
