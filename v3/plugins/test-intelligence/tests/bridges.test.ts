@@ -327,7 +327,8 @@ describe('TestLearningBridge', () => {
 
       expect(fallbackBridge.isReady()).toBe(true);
 
-      const predictions = await fallbackBridge.predictFailingTests({ files: ['test.ts'] });
+      const changes = [{ file: 'test.ts', type: 'modified' as const, linesAdded: 1, linesRemoved: 0 }];
+      const predictions = await fallbackBridge.predictFailingTests(changes, 10);
       expect(Array.isArray(predictions)).toBe(true);
 
       await fallbackBridge.destroy();
@@ -337,20 +338,30 @@ describe('TestLearningBridge', () => {
       const bridge1 = new TestLearningBridge();
       const bridge2 = new TestLearningBridge();
 
-      await bridge1.init({ algorithm: 'q-learning' });
-      await bridge2.init({ algorithm: 'q-learning' });
+      await bridge1.init();
+      await bridge2.init();
 
-      const history = [
-        { testId: 'test-1', name: 'test', file: 'test.ts', passed: true, duration: 100, changedFiles: ['src/a.ts'] },
-      ];
+      const history = [{
+        testId: 'test-1',
+        testName: 'test',
+        file: 'test.ts',
+        failureRate: 0.1,
+        avgDuration: 100,
+        affectedFiles: ['src/a.ts'],
+        results: [
+          { status: 'passed', duration: 100 },
+          { status: 'passed', duration: 95 },
+        ],
+      }];
 
       await bridge1.trainOnHistory(history);
       await bridge2.trainOnHistory(history);
 
-      const pred1 = await bridge1.predictFailingTests({ files: ['src/a.ts'] });
-      const pred2 = await bridge2.predictFailingTests({ files: ['src/a.ts'] });
+      const changes = [{ file: 'src/a.ts', type: 'modified' as const, linesAdded: 5, linesRemoved: 2 }];
+      const pred1 = await bridge1.predictFailingTests(changes, 10);
+      const pred2 = await bridge2.predictFailingTests(changes, 10);
 
-      // Both should produce predictions (deterministic with same seed)
+      // Both should produce same number of predictions
       expect(pred1.length).toBe(pred2.length);
 
       await bridge1.destroy();
