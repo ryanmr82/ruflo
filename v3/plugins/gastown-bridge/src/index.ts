@@ -1568,10 +1568,16 @@ export class GasTownBridgePlugin extends EventEmitter implements IPlugin {
 
         return matches;
       },
-      async optimizeConvoy(convoy: { id: string; trackedIssues: string[] }, strategy: string, _constraints?: unknown) {
+      async optimizeConvoy(convoy, strategy, _constraints) {
         if (!loader) throw new GasTownError('WASM not initialized', GasTownErrorCode.NOT_INITIALIZED);
 
-        const steps = convoy.trackedIssues.map(id => ({ id, needs: [] as string[] }));
+        // Convert to Step format with placeholder fields
+        const steps: Step[] = convoy.trackedIssues.map(id => ({
+          id,
+          title: id,
+          description: '',
+          needs: [],
+        }));
         const sortedSteps = loader.resolveStepDependencies(steps);
         const executionOrder = sortedSteps.map(s => s.id);
 
