@@ -866,7 +866,7 @@ const listCommand: Command = {
         }
       } else {
         // Table format
-        output.table({
+        output.printTable({
           columns: [
             { key: 'id', header: 'Model ID', width: 35 },
             { key: 'category', header: 'Category', width: 14 },
