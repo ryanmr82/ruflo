@@ -1126,7 +1126,7 @@ const importCommand: Command = {
 export const neuralCommand: Command = {
   name: 'neural',
   description: 'Neural pattern training, MoE, Flash Attention, pattern learning',
-  subcommands: [trainCommand, statusCommand, patternsCommand, predictCommand, optimizeCommand, exportCommand, importCommand],
+  subcommands: [trainCommand, statusCommand, patternsCommand, predictCommand, optimizeCommand, listCommand, exportCommand, importCommand],
   examples: [
     { command: 'claude-flow neural status', description: 'Check neural system status' },
     { command: 'claude-flow neural train -p coordination', description: 'Train coordination patterns' },
