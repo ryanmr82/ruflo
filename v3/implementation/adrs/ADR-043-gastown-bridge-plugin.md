@@ -1,0 +1,504 @@
+# ADR-043: Gas Town Bridge Plugin for Claude Flow V3
+
+## Status
+**Proposed** - Implementation Plan (2026-01-24)
+
+## Date
+2026-01-24
+
+## Authors
+- Architecture Research Team
+
+## Context
+
+### Problem Statement
+
+[Gas Town](https://github.com/steveyegge/gastown) is Steve Yegge's multi-agent orchestrator with powerful concepts:
+- **Beads**: Git-backed issue tracking with graph semantics
+- **Formulas**: TOML-defined workflows with convoy, workflow, expansion, aspect types
+- **Convoys**: Work-order tracking for slung work
+- **GUPP**: Gastown Universal Propulsion Principle for crash-resilient execution
+- **Molecules/Wisps**: Chained work units for durable workflows
+
+Claude Flow V3 would benefit from:
+1. Interoperability with Gas Town installations
+2. Adopting Gas Town's durable workflow patterns
+3. Bridging Beads with AgentDB for unified work tracking
+
+### Technical Constraints
+
+- Gas Town is written in Go (75k lines) and cannot compile to WASM due to syscall/TTY dependencies
+- Gas Town requires `gt` CLI and `bd` (Beads) CLI installed
+- Gas Town uses tmux as primary UI
+- Beads stores data in `.beads/` as JSONL + SQLite cache
+
+## Decision
+
+Create `@claude-flow/plugin-gastown-bridge` that:
+
+1. **CLI Bridge**: Wraps `gt` and `bd` commands as MCP tools
+2. **Beads Sync**: Bidirectional sync between Beads and AgentDB
+3. **Formula Engine**: Native TypeScript formula parser/executor
+4. **Convoy Tracking**: Implement Gas Town convoy semantics in Claude Flow
+5. **GUPP Adapter**: Translate GUPP hooks to Claude Flow session persistence
+
+## Plugin Specification
+
+### Package Details
+
+```json
+{
+  "name": "@claude-flow/plugin-gastown-bridge",
+  "version": "0.1.0",
+  "description": "Gas Town orchestrator integration for Claude Flow V3",
+  "keywords": ["gastown", "beads", "orchestration", "workflows", "formulas"]
+}
+```
+
+### MCP Tools (15 Tools)
+
+#### Beads Integration (5 tools)
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `gt_beads_create` | Create a bead/issue in Beads | `title`, `description`, `priority`, `labels[]`, `parent?` |
+| `gt_beads_ready` | List ready beads (no blockers) | `rig?`, `limit?`, `labels[]?` |
+| `gt_beads_show` | Show bead details | `bead_id` |
+| `gt_beads_dep` | Manage bead dependencies | `action: add|remove`, `child`, `parent` |
+| `gt_beads_sync` | Sync beads with AgentDB | `direction: pull|push|both`, `rig?` |
+
+#### Convoy Operations (3 tools)
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `gt_convoy_create` | Create a convoy (work order) | `name`, `issues[]`, `description?` |
+| `gt_convoy_status` | Check convoy status | `convoy_id?` (all if omitted) |
+| `gt_convoy_track` | Add/remove issues from convoy | `convoy_id`, `action: add|remove`, `issues[]` |
+
+#### Formula Engine (4 tools)
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `gt_formula_list` | List available formulas | `type?: convoy|workflow|expansion|aspect` |
+| `gt_formula_cook` | Cook formula into protomolecule | `formula`, `vars: Record<string, string>` |
+| `gt_formula_execute` | Execute a formula | `formula`, `vars`, `target_agent?` |
+| `gt_formula_create` | Create custom formula | `name`, `type`, `steps[]`, `vars?` |
+
+#### Orchestration (3 tools)
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `gt_sling` | Sling work to an agent | `bead_id`, `target: polecat|crew|mayor`, `formula?` |
+| `gt_agents` | List Gas Town agents | `rig?`, `role?: mayor|polecat|refinery|witness|deacon|dog|crew` |
+| `gt_mail` | Send/receive Gas Town mail | `action: send|read|list`, `to?`, `subject?`, `body?` |
+
+### TypeScript Implementation
+
+#### Core Types
+
+```typescript
+// Bead types (matching Gas Town's beads.db schema)
+export interface Bead {
+  id: string;           // e.g., "gt-abc12"
+  title: string;
+  description: string;
+  status: 'open' | 'in_progress' | 'closed';
+  priority: number;     // 0 = highest
+  labels: string[];
+  parent_id?: string;   // For epics
+  created_at: Date;
+  updated_at: Date;
+  assignee?: string;
+  rig?: string;
+}
+
+// Convoy types
+export interface Convoy {
+  id: string;
+  name: string;
+  tracked_issues: string[];
+  status: 'active' | 'landed' | 'failed';
+  started_at: Date;
+  completed_at?: Date;
+  progress: {
+    total: number;
+    closed: number;
+    in_progress: number;
+  };
+}
+
+// Formula types (matching Gas Town's formula/types.go)
+export type FormulaType = 'convoy' | 'workflow' | 'expansion' | 'aspect';
+
+export interface Formula {
+  name: string;
+  description: string;
+  type: FormulaType;
+  version: number;
+
+  // Convoy-specific
+  legs?: Leg[];
+  synthesis?: Synthesis;
+
+  // Workflow-specific
+  steps?: Step[];
+  vars?: Record<string, Var>;
+
+  // Expansion-specific
+  template?: Template[];
+
+  // Aspect-specific
+  aspects?: Aspect[];
+}
+
+export interface Step {
+  id: string;
+  title: string;
+  description: string;
+  needs?: string[];  // Dependencies
+}
+
+export interface Leg {
+  id: string;
+  title: string;
+  focus: string;
+  description: string;
+}
+```
+
+#### CLI Bridge
+
+```typescript
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
+
+export class GasTownBridge {
+  private townRoot: string;
+
+  constructor(townRoot: string = '~/gt') {
+    this.townRoot = townRoot;
+  }
+
+  // Execute gt command
+  async gt(args: string[]): Promise<string> {
+    const { stdout } = await execAsync(
+      `gt ${args.join(' ')}`,
+      { cwd: this.townRoot }
+    );
+    return stdout;
+  }
+
+  // Execute bd command
+  async bd(args: string[]): Promise<string> {
+    const { stdout } = await execAsync(
+      `bd ${args.join(' ')} --json`,
+      { cwd: this.townRoot }
+    );
+    return stdout;
+  }
+
+  // Create a bead
+  async createBead(opts: CreateBeadOptions): Promise<Bead> {
+    const args = ['create', `"${opts.title}"`];
+    if (opts.priority !== undefined) args.push('-p', opts.priority.toString());
+    if (opts.labels?.length) args.push('-l', opts.labels.join(','));
+    if (opts.parent) args.push('--parent', opts.parent);
+
+    const result = await this.bd(args);
+    return JSON.parse(result);
+  }
+
+  // Get ready beads
+  async getReady(limit = 10): Promise<Bead[]> {
+    const result = await this.bd(['ready', '--limit', limit.toString()]);
+    return JSON.parse(result);
+  }
+
+  // Sling work to agent
+  async sling(beadId: string, target: string, formula?: string): Promise<void> {
+    const args = ['sling', beadId, target];
+    if (formula) args.push('--formula', formula);
+    await this.gt(args);
+  }
+}
+```
+
+#### Beads-AgentDB Sync
+
+```typescript
+import { AgentDB } from '@claude-flow/agentdb';
+
+export class BeadsSyncService {
+  private bridge: GasTownBridge;
+  private agentdb: AgentDB;
+
+  constructor(bridge: GasTownBridge, agentdb: AgentDB) {
+    this.bridge = bridge;
+    this.agentdb = agentdb;
+  }
+
+  // Sync beads to AgentDB namespace
+  async pullBeads(rig?: string): Promise<number> {
+    const beads = await this.bridge.bd(['list', '--json', rig ? `--rig=${rig}` : '']);
+    const parsed: Bead[] = JSON.parse(beads);
+
+    let synced = 0;
+    for (const bead of parsed) {
+      await this.agentdb.memory.store({
+        namespace: 'gastown:beads',
+        key: bead.id,
+        value: JSON.stringify(bead),
+        metadata: {
+          source: 'gastown',
+          rig: bead.rig || 'town',
+          status: bead.status,
+          priority: bead.priority,
+        }
+      });
+      synced++;
+    }
+
+    return synced;
+  }
+
+  // Push AgentDB tasks to Beads
+  async pushTasks(namespace: string): Promise<number> {
+    const tasks = await this.agentdb.memory.list({ namespace });
+
+    let pushed = 0;
+    for (const task of tasks.entries) {
+      // Check if already exists in Beads
+      const existing = await this.bridge.bd(['show', task.key, '--json']).catch(() => null);
+      if (!existing) {
+        const parsed = JSON.parse(task.value);
+        await this.bridge.createBead({
+          title: parsed.title || task.key,
+          description: parsed.description || '',
+          priority: parsed.priority || 2,
+          labels: ['from-claude-flow'],
+        });
+        pushed++;
+      }
+    }
+
+    return pushed;
+  }
+}
+```
+
+#### Native Formula Parser
+
+```typescript
+import * as TOML from '@iarna/toml';
+
+export class FormulaParser {
+  // Parse formula.toml content
+  parse(content: string): Formula {
+    const parsed = TOML.parse(content) as any;
+
+    return {
+      name: parsed.formula,
+      description: parsed.description,
+      type: parsed.type as FormulaType,
+      version: parsed.version || 1,
+      legs: parsed.legs,
+      synthesis: parsed.synthesis,
+      steps: parsed.steps,
+      vars: parsed.vars,
+      template: parsed.template,
+      aspects: parsed.aspects,
+    };
+  }
+
+  // Cook formula with variable substitution
+  cook(formula: Formula, vars: Record<string, string>): CookedFormula {
+    const substitute = (text: string): string => {
+      return text.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] || `{{${key}}}`);
+    };
+
+    // Deep clone and substitute
+    const cooked = JSON.parse(JSON.stringify(formula));
+
+    if (cooked.steps) {
+      cooked.steps = cooked.steps.map((step: Step) => ({
+        ...step,
+        title: substitute(step.title),
+        description: substitute(step.description),
+      }));
+    }
+
+    // ... similar for legs, aspects, etc.
+
+    return {
+      ...cooked,
+      cookedAt: new Date(),
+      vars,
+    };
+  }
+
+  // Generate molecule (bead chain) from cooked formula
+  async toMolecule(cooked: CookedFormula, bridge: GasTownBridge): Promise<string[]> {
+    const beadIds: string[] = [];
+
+    if (cooked.type === 'workflow' && cooked.steps) {
+      // Create beads for each step
+      for (const step of cooked.steps) {
+        const bead = await bridge.createBead({
+          title: step.title,
+          description: step.description,
+          labels: ['molecule', cooked.name],
+        });
+        beadIds.push(bead.id);
+      }
+
+      // Wire dependencies
+      for (let i = 0; i < cooked.steps.length; i++) {
+        const step = cooked.steps[i];
+        if (step.needs) {
+          for (const dep of step.needs) {
+            const depIndex = cooked.steps.findIndex(s => s.id === dep);
+            if (depIndex >= 0) {
+              await bridge.bd(['dep', 'add', beadIds[i], beadIds[depIndex]]);
+            }
+          }
+        }
+      }
+    }
+
+    return beadIds;
+  }
+}
+```
+
+### Directory Structure
+
+```
+v3/plugins/gastown-bridge/
+├── package.json
+├── tsconfig.json
+├── README.md
+├── src/
+│   ├── index.ts              # Main exports + plugin class
+│   ├── types.ts              # Zod schemas
+│   ├── mcp-tools.ts          # 15 MCP tool definitions
+│   ├── bridges/
+│   │   ├── gt-bridge.ts      # Gas Town CLI bridge
+│   │   ├── bd-bridge.ts      # Beads CLI bridge
+│   │   └── sync-bridge.ts    # Beads-AgentDB sync
+│   ├── formula/
+│   │   ├── parser.ts         # TOML formula parser
+│   │   ├── cooker.ts         # Variable substitution
+│   │   └── executor.ts       # Molecule execution
+│   └── convoy/
+│       ├── tracker.ts        # Convoy lifecycle
+│       └── observer.ts       # Convoy completion detection
+└── tests/
+    ├── bridges.test.ts
+    ├── formula.test.ts
+    └── mcp-tools.test.ts
+```
+
+### Feature Flags
+
+```typescript
+export interface GasTownConfig {
+  // Path to Gas Town installation
+  townRoot: string;
+
+  // Enable Beads sync
+  enableBeadsSync: boolean;
+  syncInterval: number;  // ms
+
+  // Enable native formula execution (vs. shelling to gt)
+  nativeFormulas: boolean;
+
+  // Enable convoy tracking in Claude Flow
+  enableConvoys: boolean;
+
+  // Auto-create beads from Claude Flow tasks
+  autoCreateBeads: boolean;
+
+  // GUPP integration
+  enableGUPP: boolean;
+  guppCheckInterval: number;  // ms
+}
+```
+
+## Implementation Phases
+
+### Phase 1: CLI Bridge (Week 1)
+- Implement `gt` and `bd` CLI wrappers
+- Create 5 Beads MCP tools
+- Basic convoy status tool
+- Tests for CLI integration
+
+### Phase 2: Formula Engine (Week 2)
+- Native TOML formula parser
+- Variable substitution (cooking)
+- Molecule generation from formulas
+- 4 Formula MCP tools
+
+### Phase 3: Sync & Convoys (Week 3)
+- Beads-AgentDB bidirectional sync
+- Convoy tracking with Claude Flow tasks
+- 3 Convoy MCP tools
+- 3 Orchestration MCP tools
+
+### Phase 4: GUPP Adapter (Week 4)
+- Translate GUPP hooks to session persistence
+- Automatic work continuation on restart
+- Integration with Claude Flow daemon
+
+## Dependencies
+
+### Required
+- Gas Town CLI (`gt`) installed
+- Beads CLI (`bd`) installed
+- `@iarna/toml` for formula parsing
+
+### Optional
+- SQLite3 (for direct Beads DB access)
+- tmux (for full Gas Town experience)
+
+## Performance Targets
+
+| Metric | Target |
+|--------|--------|
+| CLI command latency | <500ms |
+| Beads sync throughput | 100 beads/sec |
+| Formula parse time | <50ms |
+| Convoy status check | <100ms |
+
+## Security Considerations
+
+1. **Command Injection**: Sanitize all CLI arguments
+2. **Path Traversal**: Validate townRoot stays within allowed paths
+3. **Credential Isolation**: Don't expose Git credentials from Beads
+4. **Audit Trail**: Log all CLI commands executed
+
+## Alternatives Considered
+
+### 1. Full Gas Town Port to TypeScript
+- **Pros**: Native integration, no CLI dependency
+- **Cons**: 75k lines to port, losing Go performance
+- **Decision**: Too much effort, CLI bridge is sufficient
+
+### 2. WASM Compilation
+- **Pros**: Native browser/Node execution
+- **Cons**: Gas Town uses syscalls incompatible with WASM
+- **Decision**: Not technically feasible
+
+### 3. REST API Wrapper
+- **Pros**: Language-agnostic, could serve multiple clients
+- **Cons**: Gas Town has no built-in server, would need to build one
+- **Decision**: Defer to Gas Town team, use CLI for now
+
+## References
+
+- [Gas Town GitHub](https://github.com/steveyegge/gastown)
+- [Beads GitHub](https://github.com/steveyegge/beads)
+- [ADR-042: Gas Town Analysis](./ADR-042-gas-town-analysis.md)
+- [Gas Town Formula Types](https://github.com/steveyegge/gastown/blob/main/internal/formula/types.go)
+- [Gas Town Plugin System](https://github.com/steveyegge/gastown/blob/main/internal/plugin/types.go)
