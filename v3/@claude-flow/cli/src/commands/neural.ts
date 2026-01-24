@@ -769,13 +769,13 @@ const listCommand: Command = {
   name: 'list',
   description: 'List available pre-trained models from the official registry',
   options: [
-    { name: 'category', short: 'c', type: 'string', description: 'Filter by category (security, quality, performance, etc.)' },
+    { name: 'category', type: 'string', description: 'Filter by category (security, quality, performance, etc.)' },
     { name: 'format', short: 'f', type: 'string', description: 'Output format: table, json, simple', default: 'table' },
     { name: 'cid', type: 'string', description: 'Custom registry CID (default: official registry)' },
   ],
   examples: [
     { command: 'claude-flow neural list', description: 'List all available models' },
-    { command: 'claude-flow neural list -c security', description: 'List only security models' },
+    { command: 'claude-flow neural list --category security', description: 'List only security models' },
     { command: 'claude-flow neural list -f json', description: 'Output as JSON' },
   ],
   action: async (ctx: CommandContext): Promise<CommandResult> => {
