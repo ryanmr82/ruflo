@@ -236,12 +236,22 @@ Suggest test cases for uncovered code.
 
 ## Performance Targets
 
-| Metric | Target |
-|--------|--------|
-| Test selection | <1s for 10K tests |
-| Flaky detection | <5s for 1000 test runs |
-| Coverage gap analysis | <10s for 100K LOC |
-| Mutation optimization | 80% mutation score in 20% time |
+| Metric | Target | Baseline (Traditional) | Improvement |
+|--------|--------|------------------------|-------------|
+| Test selection | <1s for 10K tests | ~10min (full suite) | 600x |
+| Flaky detection | <5s for 1000 test runs | ~1hr (manual analysis) | 720x |
+| Coverage gap analysis | <10s for 100K LOC | ~30min (coverage tools) | 180x |
+| Mutation optimization | 80% mutation score in 20% time | 80% in 100% time | 5x |
+| CI time reduction | 60-80% | N/A (run all tests) | Novel |
+
+## Risk Assessment
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Missing failing tests | Low | High | Confidence thresholds, periodic full runs |
+| Learning period inaccuracy | High | Medium | Fallback to full runs, gradual adoption |
+| Framework incompatibility | Medium | Medium | Tier-based support, custom adapter API |
+| Test history data loss | Low | Medium | Persistent storage, backup strategies |
 
 ## Learning Pipeline
 
