@@ -1211,7 +1211,12 @@ export default {
   getWasmVersions,
   resetWasmCache,
 
-  // Performance
+  // Performance optimization
+  scheduleIdlePreload,
+  getCacheStats,
+  clearAllCaches,
+
+  // Performance logging
   getPerformanceLog,
   clearPerformanceLog,
 };
