@@ -1476,7 +1476,7 @@ export class GasTownBridgePlugin extends EventEmitter implements IPlugin {
             return { action, sorted: sorted.map(s => s.id), hasCycle: false, cycleNodes: undefined };
           } catch (e) {
             if (e instanceof GasTownError && e.code === GasTownErrorCode.DEPENDENCY_CYCLE) {
-              const cycleNodes = (e.details as { cycleNodes?: string[] })?.cycleNodes ?? [];
+              const cycleNodes = (e.context as { cycleNodes?: string[] })?.cycleNodes ?? [];
               return { action, sorted: [], hasCycle: true, cycleNodes };
             }
             throw e;
