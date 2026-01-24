@@ -25,7 +25,7 @@ npm install @claude-flow/plugin-test-intelligence
 ### CLI
 
 ```bash
-npx @claude-flow/cli plugins install test-intelligence
+npx claude-flow plugins install --name @claude-flow/plugin-test-intelligence
 ```
 
 ## Quick Start
