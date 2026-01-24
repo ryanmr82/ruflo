@@ -200,10 +200,21 @@ interface NeuralCoordinationConfig {
 ## Security Considerations
 
 - **Agent Authentication**: Every agent must be authenticated with signed credentials before joining coordination
-- **Message Signing**: All inter-agent messages are cryptographically signed to prevent spoofing
+- **Message Signing**: All inter-agent messages are cryptographically signed (Ed25519) to prevent spoofing
 - **Byzantine Fault Tolerance**: Consensus tolerates up to f < n/3 malicious/faulty agents
 - **Sybil Attack Prevention**: Agent credential verification and rate limiting prevent fake agent multiplication
-- **Memory Encryption**: Collective memory is encrypted at rest with session-specific keys
+- **Memory Encryption**: Collective memory is encrypted at rest (AES-256-GCM) with session-specific keys
+- **Input Validation**: All inputs validated with Zod schemas to prevent injection attacks
+
+### WASM Security Constraints
+
+| Constraint | Value | Rationale |
+|------------|-------|-----------|
+| Memory Limit per Agent | 1GB max | Prevent resource exhaustion |
+| CPU Time per Round | 60 seconds | Prevent consensus deadlock |
+| No External Network | Enforced | Isolated agent communication only |
+| Signed Messages | Ed25519 required | Prevent message tampering |
+| Session Isolation | Per-coordination | Prevent cross-session leakage |
 
 ### Rate Limits
 
