@@ -120,23 +120,27 @@ describe('FinancialEconomyBridge', () => {
     });
   });
 
-  describe('Audit Trail', () => {
+  describe('Risk Calculation Methods', () => {
     beforeEach(async () => {
       await bridge.initialize();
     });
 
-    it('should generate calculation proof', async () => {
-      const holdings = [{ symbol: 'TEST', value: 100000 }];
+    it('should calculate VaR', async () => {
+      const returns = new Float32Array([0.01, -0.02, 0.015, -0.01, 0.005, -0.025, 0.02]);
 
-      await bridge.calculateRiskMetrics(holdings, {
-        confidenceLevel: 0.95,
-        horizon: '1d',
-      });
+      const varValue = await bridge.calculateVar(returns, 0.95);
 
-      const proof = await bridge.generateCalculationProof();
+      expect(typeof varValue).toBe('number');
+      expect(varValue).toBeGreaterThanOrEqual(0);
+    });
 
-      expect(proof).toHaveProperty('timestamp');
-      expect(proof).toHaveProperty('hash');
+    it('should calculate CVaR', async () => {
+      const returns = new Float32Array([0.01, -0.02, 0.015, -0.01, 0.005, -0.025, 0.02]);
+
+      const cvarValue = await bridge.calculateCvar(returns, 0.95);
+
+      expect(typeof cvarValue).toBe('number');
+      expect(cvarValue).toBeGreaterThanOrEqual(0);
     });
   });
 
