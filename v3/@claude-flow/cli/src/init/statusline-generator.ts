@@ -78,11 +78,11 @@ function getUserInfo() {
   let modelName = '🤖 Claude Code';
 
   try {
-    name = execSync('git config user.name 2>/dev/null || echo "user"', { encoding: 'utf-8' }).trim();
-    gitBranch = execSync('git branch --show-current 2>/dev/null || echo ""', { encoding: 'utf-8' }).trim();
-  } catch (e) {
-    // Ignore errors
-  }
+    name = execSync('git config user.name 2>' + nullDev, { encoding: 'utf-8' }).trim() || 'user';
+  } catch (e) { /* ignore */ }
+  try {
+    gitBranch = execSync('git branch --show-current 2>' + nullDev, { encoding: 'utf-8' }).trim();
+  } catch (e) { /* ignore */ }
 
   // Auto-detect model from Claude Code's config
   try {
