@@ -1615,6 +1615,32 @@ function findSourceDir(type: 'skills' | 'commands' | 'agents', sourceBaseDir?: s
 }
 
 /**
+ * Remove nested subdirectories inside agent category dirs.
+ * Old init versions created agents/category/subcategory/file.md (depth 3+).
+ * Current init creates agents/category/file.md (flat).
+ * This removes the orphaned subcategory dirs so /doctor doesn't parse stale files.
+ */
+function cleanNestedAgentDirs(agentsDir: string): void {
+  try {
+    const categories = fs.readdirSync(agentsDir, { withFileTypes: true });
+    for (const cat of categories) {
+      if (!cat.isDirectory()) continue;
+      const catPath = path.join(agentsDir, cat.name);
+      const entries = fs.readdirSync(catPath, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          // This is a nested subdirectory (e.g., agents/testing/unit/) -- remove it
+          const nestedPath = path.join(catPath, entry.name);
+          fs.rmSync(nestedPath, { recursive: true, force: true });
+        }
+      }
+    }
+  } catch {
+    // Non-fatal: if cleanup fails, init continues normally
+  }
+}
+
+/**
  * Copy directory recursively
  */
 function copyDirRecursive(src: string, dest: string): void {
