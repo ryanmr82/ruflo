@@ -22,6 +22,8 @@
     "v3/@claude-flow/cli/dist/**/*.d.ts",
     "!v3/@claude-flow/cli/dist/**/*.map",
     "v3/@claude-flow/cli/package.json",
+    "v3/@claude-flow/cli/.claude/**",
+    "!v3/@claude-flow/cli/.claude/**/*.db",
     "v3/@claude-flow/shared/dist/**/*.js",
     "v3/@claude-flow/shared/dist/**/*.d.ts",
     "!v3/@claude-flow/shared/dist/**/*.map",
