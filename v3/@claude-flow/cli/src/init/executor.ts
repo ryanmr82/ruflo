@@ -688,6 +688,14 @@ async function copyAgents(
     return;
   }
 
+  // When --force is used, clean up stale nested subdirectories from prior inits.
+  // Old versions created agents at agents/category/subcategory/file.md (depth 3+).
+  // Current versions use agents/category/file.md (flat). Orphaned nested dirs
+  // cause /doctor parse errors because the old files persist alongside the new ones.
+  if (options.force && fs.existsSync(targetAgentsDir)) {
+    cleanNestedAgentDirs(targetAgentsDir);
+  }
+
   // Copy each agent category
   for (const agentCategory of [...new Set(agentsToCopy)]) {
     const sourcePath = path.join(sourceAgentsDir, agentCategory);
