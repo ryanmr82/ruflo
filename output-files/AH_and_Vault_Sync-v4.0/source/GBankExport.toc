@@ -1,0 +1,8 @@
+## Interface: 11200
+## Title: GBankExport
+## Notes: Scans guild bank contents and exports item data to SavedVariables for external viewing.
+## Author: Claude-Built
+## Version: 1.0
+## SavedVariables: GBankExport_Data, GBankExport_FlatData
+
+GBankExport.lua
