@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Engineer Formula - HonorSpy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            padding: 10px 15px;
+            font-size: 13px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        h1 { color: #ffd700; font-size: 1.4em; }
+        .subtitle { color: #888; font-size: 0.85em; }
+        .back-link { color: #4fc3f7; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-box.good { border-left: 3px solid #51cf66; }
+        .stat-box.warn { border-left: 3px solid #ffd700; }
+        .stat-box.bad { border-left: 3px solid #ff6b6b; }
+        .stat-label { color: #888; font-size: 0.8em; }
+        .stat-value { color: #ffd700; font-size: 1.4em; font-weight: bold; }
+        .stat-value.good { color: #51cf66; }
+        .stat-value.bad { color: #ff6b6b; }
+
+        .controls {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .control-group label {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+        .control-group input, .control-group select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,215,0,0.5);
+            border-radius: 4px;
+            padding: 4px 8px;
+            color: #fff;
+            font-size: 0.9em;
+        }
+        .control-group select { cursor: pointer; }
+        .control-group select option { background: #1a1a2e; color: #fff; }
+        .control-group input[type="text"] { width: 120px; }
+        .control-group input[type="number"] { width: 70px; }
+        .control-group input:focus, .control-group select:focus { outline: none; border-color: #ffd700; }
+
+        .formula-panel {
+            background: rgba(255,215,0,0.1);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .formula-panel h3 {
+            color: #ffd700;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .bracket-params {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        .bracket-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+        .bracket-row label {
+            color: #ffd700;
+            font-weight: bold;
+            min-width: 35px;
+        }
+        .bracket-row input {
+            width: 65px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 3px;
+            padding: 3px 5px;
+            color: #fff;
+            font-size: 0.85em;
+        }
+        .bracket-row input:focus { border-color: #ffd700; outline: none; }
+        .bracket-row .spread { color: #888; font-size: 0.8em; }
+
+        .btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ff9500 100%);
+            border: none;
+            border-radius: 4px;
+            padding: 6px 15px;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 0.9em;
+        }
+        th {
+            background: rgba(255,215,0,0.2);
+            color: #ffd700;
+            padding: 6px 8px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+        th:hover { background: rgba(255,215,0,0.3); }
+        td {
+            padding: 5px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        tr:hover { background: rgba(255,215,0,0.1); }
+
+        .col-standing { width: 50px; text-align: center; color: #ffd700; font-weight: bold; }
+        .col-bracket { text-align: center; }
+        .col-number { text-align: right; font-family: monospace; }
+        .col-error { text-align: right; font-family: monospace; }
+        .error-good { color: #51cf66; }
+        .error-ok { color: #ffd700; }
+        .error-bad { color: #ff6b6b; }
+
+        .bracket-14 { background: rgba(255,0,0,0.15); }
+        .bracket-13 { background: rgba(255,100,0,0.12); }
+        .bracket-12 { background: rgba(255,150,0,0.10); }
+        .bracket-11 { background: rgba(255,200,0,0.08); }
+        .bracket-10 { background: rgba(200,255,0,0.06); }
+
+        .class-WARRIOR { color: #C79C6E; }
+        .class-PALADIN { color: #F58CBA; }
+        .class-HUNTER { color: #ABD473; }
+        .class-ROGUE { color: #FFF569; }
+        .class-PRIEST { color: #FFFFFF; }
+        .class-SHAMAN { color: #0070DE; }
+        .class-MAGE { color: #69CCF0; }
+        .class-WARLOCK { color: #9482C9; }
+        .class-DRUID { color: #FF7D0A; }
+
+        .loading { text-align: center; padding: 50px; color: #888; }
+        .no-honor { opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Reverse Engineer Formula</h1>
+                <span class="subtitle">Tune projection parameters to match actual awards</span>
+            </div>
+            <a href="index.html" class="back-link">&larr; Back to Dashboard</a>
+        </div>
+
+        <div class="stats-summary" id="statsSummary">
+            <div class="stat-box good">
+                <div class="stat-label">Players with Data</div>
+                <div class="stat-value" id="playerCount">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Pool Size</div>
+                <div class="stat-value" id="poolSize">-</div>
+            </div>
+            <div class="stat-box warn">
+                <div class="stat-label">Avg Error</div>
+                <div class="stat-value" id="avgError">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Max Error</div>
+                <div class="stat-value" id="maxError">-</div>
+            </div>
+            <div class="stat-box good">
+                <div class="stat-label">Exact Matches</div>
+                <div class="stat-value" id="exactMatches">-</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">&lt;50 Error</div>
+                <div class="stat-value" id="under50">-</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Week:</label>
+                <select id="weekSelector" onchange="loadWeekData()">
+                    <option value="dec9">Dec 9, 2025 (Partial ~900)</option>
+                    <option value="dec2">Dec 2, 2025 (Fuller ~1400)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Search:</label>
+                <input type="text" id="playerSearch" placeholder="Player name..." oninput="updateTable()">
+            </div>
+            <div class="control-group">
+                <label>Bracket:</label>
+                <select id="bracketFilter" onchange="updateTable()">
+                    <option value="all">All</option>
+                    <option value="14">B14</option>
+                    <option value="13">B13</option>
+                    <option value="12">B12</option>
+                    <option value="11">B11</option>
+                    <option value="10">B10</option>
+                    <option value="9">B9</option>
+                    <option value="lower">B8 and below</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Show:</label>
+                <input type="number" id="displayCount" value="100" min="1" max="2000" onchange="updateTable()">
+            </div>
+            <div class="control-group">
+                <label><input type="checkbox" id="hideNoHonor" checked onchange="updateTable()"> Hide 0 Honor</label>
+            </div>
+        </div>
+
+        <div class="formula-panel">
+            <h3>Bracket Parameters (Floor / Ceiling) - v1.12 Thresholds with floor() boundaries</h3>
+            <div class="bracket-params">
+                <div class="bracket-row">
+                    <label>B14:</label>
+                    <input type="number" id="b14_floor" value="12957" onchange="recalculate()">
+                    <input type="number" id="b14_ceiling" value="13012" onchange="recalculate()">
+                    <span class="spread" id="b14_spread">=55</span>
+                </div>
+                <div class="bracket-row">
+                    <label>B13:</label>
+                    <input type="number" id="b13_floor" value="11298" onchange="recalculate()">
+                    <input type="number" id="b13_ceiling" value="12408" onchange="recalculate()">
+                    <span class="spread" id="b13_spread">=1110</span>
+                </div>
+                <div class="bracket-row">
+                    <label>B12:</label>
+                    <input type="number" id="b12_floor" value="10219" onchange="recalculate()">
+                    <input type="number" id="b12_ceiling" value="11215" onchange="recalculate()">
+                    <span class="spread" id="b12_spread">=996</span>
+                </div>
+                <div class="bracket-row">
+                    <label>B11:</label>
+                    <input type="number" id="b11_floor" value="9340" onchange="recalculate()">
+                    <input type="number" id="b11_ceiling" value="10157" onchange="recalculate()">
+                    <span class="spread" id="b11_spread">=817</span>
+                </div>
+                <div class="bracket-row">
+                    <label>B10:</label>
+                    <input type="number" id="b10_floor" value="8263" onchange="recalculate()">
+                    <input type="number" id="b10_ceiling" value="9313" onchange="recalculate()">
+                    <span class="spread" id="b10_spread">=1050</span>
+                </div>
+                <div class="bracket-row">
+                    <label>B9:</label>
+                    <input type="number" id="b9_floor" value="7150" onchange="recalculate()">
+                    <input type="number" id="b9_ceiling" value="8000" onchange="recalculate()">
+                    <span class="spread" id="b9_spread">=850</span>
+                </div>
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="btn" onclick="recalculate()">Recalculate All</button>
+                <button class="btn btn-secondary" onclick="autoCalibrate()">Auto-Calibrate from Data</button>
+                <button class="btn btn-secondary" onclick="exportFormula()">Export Formula</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-standing" onclick="sortBy('standing')">#</th>
+                    <th onclick="sortBy('name')">Player</th>
+                    <th onclick="sortBy('bracket')">Bracket</th>
+                    <th class="col-number" onclick="sortBy('honor')">This Week Honor</th>
+                    <th class="col-number" onclick="sortBy('honor_pct')">Honor %</th>
+                    <th class="col-number" onclick="sortBy('pre_rp')">Pre-Reset RP</th>
+                    <th class="col-number" onclick="sortBy('post_rp')">Post-Reset RP</th>
+                    <th class="col-number" onclick="sortBy('actual_award')">ACTUAL Award</th>
+                    <th class="col-number" onclick="sortBy('projected_award')">PROJECTED Award</th>
+                    <th class="col-error" onclick="sortBy('error')">ERROR</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="10" class="loading">Loading data...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // v1.12 Bracket thresholds
+        const BRACKET_THRESHOLDS = {
+            14: 0.003, 13: 0.008, 12: 0.020, 11: 0.035, 10: 0.060,
+            9: 0.100, 8: 0.159, 7: 0.228, 6: 0.327, 5: 0.436,
+            4: 0.566, 3: 0.697, 2: 0.845, 1: 1.000
+        };
+
+        // Week configurations
+        const WEEK_CONFIG = {
+            dec9: {
+                pre: 'pre_reset_2025-12-09_15-55.json',
+                post: 'post_reset_2025-12-09_14-25.json',
+                label: 'Dec 9, 2025'
+            },
+            dec2: {
+                pre: 'pre_reset_2025-12-02_15-55.json',
+                post: 'post_reset_tue_2025-12-02_22-00.json',
+                label: 'Dec 2, 2025'
+            }
+        };
+
+        let allPlayers = [];
+        let poolSize = 0;
+        let bracketHonorRanges = {};
+        let currentSort = { field: 'standing', asc: true };
+
+        // API base detection
+        const apiBase = window.location.hostname === 'honorspy.duckdns.org' ? '' : '/honorspy';
+
+        function getParams() {
+            return {
+                14: { floor: parseInt(document.getElementById('b14_floor').value), ceiling: parseInt(document.getElementById('b14_ceiling').value) },
+                13: { floor: parseInt(document.getElementById('b13_floor').value), ceiling: parseInt(document.getElementById('b13_ceiling').value) },
+                12: { floor: parseInt(document.getElementById('b12_floor').value), ceiling: parseInt(document.getElementById('b12_ceiling').value) },
+                11: { floor: parseInt(document.getElementById('b11_floor').value), ceiling: parseInt(document.getElementById('b11_ceiling').value) },
+                10: { floor: parseInt(document.getElementById('b10_floor').value), ceiling: parseInt(document.getElementById('b10_ceiling').value) },
+                9: { floor: parseInt(document.getElementById('b9_floor').value), ceiling: parseInt(document.getElementById('b9_ceiling').value) }
+            };
+        }
+
+        function updateSpreads() {
+            for (let b = 14; b >= 9; b--) {
+                const floor = parseInt(document.getElementById(`b${b}_floor`).value) || 0;
+                const ceiling = parseInt(document.getElementById(`b${b}_ceiling`).value) || 0;
+                document.getElementById(`b${b}_spread`).textContent = `=${ceiling - floor}`;
+            }
+        }
+
+        function getBracket(standing, pool) {
+            const percentile = standing / pool;
+            for (let b = 14; b >= 1; b--) {
+                if (percentile <= BRACKET_THRESHOLDS[b]) return b;
+            }
+            return 1;
+        }
+
+        function getBracketBoundaries(pool) {
+            const boundaries = {};
+            let prevCutoff = 0;
+            for (let b = 14; b >= 1; b--) {
+                const cutoff = Math.floor(pool * BRACKET_THRESHOLDS[b]);
+                boundaries[b] = { start: prevCutoff + 1, end: cutoff, size: cutoff - prevCutoff };
+                prevCutoff = cutoff;
+            }
+            return boundaries;
+        }
+
+        function calculateHonorRanges(players, boundaries) {
+            const ranges = {};
+            for (let b = 14; b >= 1; b--) {
+                const bracketPlayers = players.filter(p => {
+                    return p.standing >= boundaries[b].start && p.standing <= boundaries[b].end && p.honor > 0;
+                });
+                if (bracketPlayers.length > 0) {
+                    const honors = bracketPlayers.map(p => p.honor);
+                    ranges[b] = { min: Math.min(...honors), max: Math.max(...honors) };
+                } else {
+                    ranges[b] = { min: 0, max: 0 };
+                }
+            }
+            return ranges;
+        }
+
+        function calculateProjection(player, params, honorRanges) {
+            const b = player.bracket;
+            const p = params[b];
+            if (!p) return player.actual_award; // No params for this bracket
+
+            const range = honorRanges[b];
+            if (!range || range.max === range.min) return p.ceiling;
+
+            const honorPct = Math.max(0, Math.min(1, (player.honor - range.min) / (range.max - range.min)));
+            const spread = p.ceiling - p.floor;
+            return Math.round(p.floor + (honorPct * spread));
+        }
+
+        async function loadWeekData() {
+            const week = document.getElementById('weekSelector').value;
+            const config = WEEK_CONFIG[week];
+
+            document.getElementById('tableBody').innerHTML = '<tr><td colspan="10" class="loading">Loading data...</td></tr>';
+
+            try {
+                const response = await fetch(`${apiBase}/api/awards?pre=${config.pre}&post=${config.post}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Get pool size from the data or calculate it
+                const awards = data.awards || [];
+                poolSize = data.pool_size || (awards.length > 0 ? Math.max(...awards.map(p => p.standing || 0)) : 1982);
+                document.getElementById('poolSize').textContent = poolSize.toLocaleString();
+
+                const boundaries = getBracketBoundaries(poolSize);
+
+                allPlayers = awards.map(p => ({
+                    name: p.name,
+                    class: p.class || 'UNKNOWN',
+                    standing: p.standing,
+                    bracket: getBracket(p.standing, poolSize),
+                    honor: p.last_week_honor || p.pre_reset_honor || 0,
+                    pre_rp: p.pre_reset_rp || 0,
+                    post_rp: p.post_reset_rp || 0,
+                    actual_award: p.award || 0,
+                    decay: p.decay || 0
+                }));
+
+                bracketHonorRanges = calculateHonorRanges(allPlayers, boundaries);
+                recalculate();
+
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                document.getElementById('tableBody').innerHTML = `<tr><td colspan="10" class="loading" style="color:#ff6b6b;">Failed to load: ${error.message}</td></tr>`;
+            }
+        }
+
+        function recalculate() {
+            updateSpreads();
+            const params = getParams();
+            const boundaries = getBracketBoundaries(poolSize);
+            bracketHonorRanges = calculateHonorRanges(allPlayers, boundaries);
+
+            // Calculate honor_pct and projected for each player
+            allPlayers.forEach(p => {
+                const range = bracketHonorRanges[p.bracket] || { min: 0, max: 0 };
+                if (range.max > range.min && p.honor > 0) {
+                    p.honor_pct = (p.honor - range.min) / (range.max - range.min);
+                } else {
+                    p.honor_pct = p.honor > 0 ? 1.0 : 0;
+                }
+                p.projected_award = calculateProjection(p, params, bracketHonorRanges);
+                p.error = p.actual_award > 0 ? p.projected_award - p.actual_award : null;
+            });
+
+            updateStats();
+            updateTable();
+        }
+
+        function updateStats() {
+            const validPlayers = allPlayers.filter(p => p.actual_award > 0 && p.honor > 0);
+            const errors = validPlayers.map(p => Math.abs(p.error || 0));
+
+            document.getElementById('playerCount').textContent = validPlayers.length;
+
+            if (errors.length > 0) {
+                const avgError = errors.reduce((a, b) => a + b, 0) / errors.length;
+                const maxError = Math.max(...errors);
+                const exactMatches = errors.filter(e => e === 0).length;
+                const under50 = errors.filter(e => e < 50).length;
+
+                document.getElementById('avgError').textContent = Math.round(avgError) + ' RP';
+                document.getElementById('avgError').className = avgError < 50 ? 'stat-value good' : avgError < 100 ? 'stat-value' : 'stat-value bad';
+
+                document.getElementById('maxError').textContent = maxError + ' RP';
+                document.getElementById('exactMatches').textContent = exactMatches;
+                document.getElementById('under50').textContent = under50 + ' (' + Math.round(under50/errors.length*100) + '%)';
+            }
+        }
+
+        function updateTable() {
+            const search = document.getElementById('playerSearch').value.toLowerCase();
+            const bracketFilter = document.getElementById('bracketFilter').value;
+            const limit = parseInt(document.getElementById('displayCount').value) || 100;
+            const hideNoHonor = document.getElementById('hideNoHonor').checked;
+
+            let filtered = allPlayers.filter(p => {
+                if (search && !p.name.toLowerCase().includes(search)) return false;
+                if (hideNoHonor && p.honor === 0) return false;
+                if (bracketFilter !== 'all') {
+                    if (bracketFilter === 'lower') {
+                        if (p.bracket > 8) return false;
+                    } else {
+                        if (p.bracket !== parseInt(bracketFilter)) return false;
+                    }
+                }
+                return true;
+            });
+
+            // Sort
+            filtered.sort((a, b) => {
+                let aVal = a[currentSort.field];
+                let bVal = b[currentSort.field];
+                if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+                if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+                if (aVal < bVal) return currentSort.asc ? -1 : 1;
+                if (aVal > bVal) return currentSort.asc ? 1 : -1;
+                return 0;
+            });
+
+            filtered = filtered.slice(0, limit);
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = filtered.map(p => {
+                const errorClass = p.error === null ? '' :
+                    Math.abs(p.error) === 0 ? 'error-good' :
+                    Math.abs(p.error) < 50 ? 'error-ok' : 'error-bad';
+                const bracketClass = p.bracket >= 10 ? `bracket-${p.bracket}` : '';
+                const noHonorClass = p.honor === 0 ? 'no-honor' : '';
+
+                return `<tr class="${bracketClass} ${noHonorClass}">
+                    <td class="col-standing">${p.standing}</td>
+                    <td class="class-${p.class}">${p.name}</td>
+                    <td class="col-bracket">B${p.bracket}</td>
+                    <td class="col-number">${p.honor.toLocaleString()}</td>
+                    <td class="col-number">${p.honor > 0 ? (p.honor_pct * 100).toFixed(1) + '%' : '-'}</td>
+                    <td class="col-number">${p.pre_rp.toLocaleString()}</td>
+                    <td class="col-number">${p.post_rp.toLocaleString()}</td>
+                    <td class="col-number">${p.actual_award > 0 ? p.actual_award.toLocaleString() : '-'}</td>
+                    <td class="col-number">${p.honor > 0 ? p.projected_award.toLocaleString() : '-'}</td>
+                    <td class="col-error ${errorClass}">${p.error !== null ? (p.error >= 0 ? '+' : '') + p.error : '-'}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function sortBy(field) {
+            if (currentSort.field === field) {
+                currentSort.asc = !currentSort.asc;
+            } else {
+                currentSort = { field, asc: true };
+            }
+            updateTable();
+        }
+
+        function autoCalibrate() {
+            // Find actual floor/ceiling for each bracket from the data
+            const boundaries = getBracketBoundaries(poolSize);
+
+            for (let b = 14; b >= 9; b--) {
+                const bracketPlayers = allPlayers.filter(p =>
+                    p.bracket === b && p.actual_award > 0 && p.honor > 0
+                );
+
+                if (bracketPlayers.length >= 2) {
+                    // Find player with min and max honor in bracket
+                    const sortedByHonor = [...bracketPlayers].sort((a, b) => a.honor - b.honor);
+                    const minHonorPlayer = sortedByHonor[0];
+                    const maxHonorPlayer = sortedByHonor[sortedByHonor.length - 1];
+
+                    document.getElementById(`b${b}_floor`).value = minHonorPlayer.actual_award;
+                    document.getElementById(`b${b}_ceiling`).value = maxHonorPlayer.actual_award;
+                }
+            }
+
+            recalculate();
+            alert('Auto-calibrated floor/ceiling values from actual award data!');
+        }
+
+        function exportFormula() {
+            const params = getParams();
+            const code = `// Calibrated Bracket Parameters (${new Date().toISOString().split('T')[0]})
+// Pool size: ${poolSize}
+const refinedBrackets = {
+    14: { floor: ${params[14].floor}, ceiling: ${params[14].ceiling}, spread: ${params[14].ceiling - params[14].floor} },
+    13: { floor: ${params[13].floor}, ceiling: ${params[13].ceiling}, spread: ${params[13].ceiling - params[13].floor} },
+    12: { floor: ${params[12].floor}, ceiling: ${params[12].ceiling}, spread: ${params[12].ceiling - params[12].floor} },
+    11: { floor: ${params[11].floor}, ceiling: ${params[11].ceiling}, spread: ${params[11].ceiling - params[11].floor} },
+    10: { floor: ${params[10].floor}, ceiling: ${params[10].ceiling}, spread: ${params[10].ceiling - params[10].floor} },
+    9:  { floor: ${params[9].floor}, ceiling: ${params[9].ceiling}, spread: ${params[9].ceiling - params[9].floor} }
+};
+
+// v1.12 Bracket Thresholds (use Math.floor for boundaries!)
+const BRACKET_THRESHOLDS = {
+    14: 0.003, 13: 0.008, 12: 0.020, 11: 0.035, 10: 0.060,
+    9: 0.100, 8: 0.159, 7: 0.228, 6: 0.327, 5: 0.436,
+    4: 0.566, 3: 0.697, 2: 0.845, 1: 1.000
+};`;
+
+            const blob = new Blob([code], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'calibrated-formula.js';
+            a.click();
+        }
+
+        // Initialize
+        loadWeekData();
+    </script>
+</body>
+</html>

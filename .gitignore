@@ -133,3 +133,11 @@ claude-flow
 claude-flow.bat
 claude-flow.ps1
 hive-mind-prompt-*.txt
+
+# Credentials & secrets
+credentials/
+*CREDENTIALS*
+
+# Windows reserved filenames
+nul
+NUL

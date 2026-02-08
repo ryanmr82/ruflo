@@ -1,0 +1,41 @@
+{
+  "output": {
+    "defaultDirectory": "C:\\Claude-Flow\\output-files",
+    "enforceDefaultForGenerated": true,
+    "allowExternalWrites": true,
+    "createBackups": true,
+    "organizationRules": {
+      "codeFiles": "generated-code",
+      "reports": "reports",
+      "dataFiles": "data",
+      "temporaryFiles": "temp",
+      "backups": "backups",
+      "swarmOutputs": "swarm-outputs",
+      "hiveOutputs": "hive-outputs"
+    },
+    "backupSettings": {
+      "enabled": true,
+      "backupBeforeModify": true,
+      "backupLocation": "C:\\Claude-Flow\\output-files\\backups",
+      "keepVersions": 5,
+      "timestampFormat": "YYYYMMDD-HHmmss"
+    },
+    "externalPathRules": {
+      "allowList": ["*"],
+      "requireExplicitPath": true,
+      "confirmBeforeWrite": false,
+      "backupExternalFiles": true
+    }
+  },
+  "workingDirectories": {
+    "default": "C:\\Claude-Flow\\output-files",
+    "projects": "C:\\Claude-Flow\\output-files",
+    "scratch": "C:\\Claude-Flow\\output-files\\temp"
+  },
+  "fileHandling": {
+    "defaultBehavior": "output-to-default",
+    "explicitPathOverride": true,
+    "preserveOriginalOnEdit": true,
+    "autoCreateDirectories": true
+  }
+}

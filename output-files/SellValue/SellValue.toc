@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: SellValue
+## Notes: Display the sell value of an item when not at a vendor
+## Author: CapnBry & Greenman & kebabstorm
+## Version: 1.0
+## SavedVariables: SellValues
+## LoadOnDemand: 0
+
+SellValue.lua

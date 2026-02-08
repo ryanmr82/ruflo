@@ -1,0 +1,136 @@
+===============================================
+TURTLE WOW ADDON QUICK REFERENCE
+Installation Date: 2025-10-20
+===============================================
+
+🎯 INSTALLED ADDONS (4 TOTAL)
+===============================================
+
+1. MinimapButtonBag (v0.508)
+   - Organizes minimap buttons
+   - Commands: /mbb, /mbb buttons, /mbb reset position
+   - Ctrl+Right-Click to move button
+
+2. AutoBar (v1.17.01.2 beta)
+   - Auto-populating consumable bars
+   - 211 quest items + 92 quest-use items
+   - Turtle WoW compatible (Goblins/High Elves)
+
+3. GarbageProtector ⚠️
+   - Prevents garbage collection freezes
+   - WARNING: WotLK version (may not work on Vanilla)
+   - Monitor for errors on first login
+
+4. pfDebug (v0.1)
+   - Memory usage monitor
+   - Left-click to reset peak
+   - Right-click to open analyzer
+   - Works with pfUI
+
+
+🔄 ROLLBACK INSTRUCTIONS
+===============================================
+
+IF SOMETHING BREAKS:
+
+Option 1 (EASIEST):
+   Run: C:\Claude-Flow\output-files\TURTLEWOW_ADDON_ROLLBACK.bat
+
+Option 2 (MANUAL):
+   Delete these folders from C:\turtlewow\Interface\AddOns\
+   - MinimapButtonBag
+   - AutoBar
+   - !!!GarbageProtector
+   - pfDebug
+
+Option 3 (FULL RESTORE):
+   Copy backup from:
+   C:\turtlewow\backups\AddOns_backup_2025-10-20_042511\
+
+
+📋 TESTING CHECKLIST
+===============================================
+
+□ Launch Turtle WoW
+□ Check for addon loading errors
+□ Type /mbb buttons (MinimapButtonBag test)
+□ Look for AutoBar action bars
+□ Right-click pfDebug widget
+□ Watch for GarbageProtector errors
+□ Enter combat and test AutoBar consumables
+□ Check for freezing/lag
+□ Type /reload to test reload
+
+
+⚠️ KNOWN ISSUES
+===============================================
+
+1. GarbageProtector Compatibility
+   - Built for WotLK (3.3.0), not Vanilla (1.12)
+   - May show "Interface too old" error
+   - If errors occur, remove it using rollback script
+
+2. If You See Red Errors
+   - Note which addon is mentioned
+   - Disable that addon immediately
+   - Use rollback script or rename folder to "_disabled"
+
+
+📞 NEED HELP?
+===============================================
+
+Full Documentation:
+   C:\Claude-Flow\output-files\TURTLEWOW_ADDONS_INSTALLATION_GUIDE.md
+
+Backup Location:
+   C:\turtlewow\backups\AddOns_backup_2025-10-20_042511\
+
+Rollback Script:
+   C:\Claude-Flow\output-files\TURTLEWOW_ADDON_ROLLBACK.bat
+
+
+💾 IMPORTANT FILE LOCATIONS
+===============================================
+
+Addons Folder:
+   C:\turtlewow\Interface\AddOns\
+
+Saved Variables:
+   C:\turtlewow\WTF\Account\[YourAccount]\SavedVariables\
+
+Config Files:
+   - MinimapButtonBag.lua
+   - AutoBar_Config.lua
+   - GarbageProtectorDB.lua
+
+
+🔗 ADDON SOURCES (for updates)
+===============================================
+
+MinimapButtonBag:
+   https://github.com/McPewPew/MinimapButtonBag-TurtleWoW
+
+AutoBar:
+   https://github.com/ahhh-reptar/AutoBar-for-Turtle-WoW
+
+GarbageProtector:
+   https://github.com/bkader/GarbageProtector
+
+pfDebug:
+   https://github.com/shagu/pfDebug
+
+
+✅ INSTALLATION VERIFIED
+===============================================
+✓ Backup created successfully
+✓ 4 addons downloaded from GitHub
+✓ All .toc files verified
+✓ Addons copied to correct locations
+✓ Folder names match .toc requirements
+✓ Rollback script created
+✓ Documentation completed
+
+===============================================
+Ready to test in-game!
+Launch Turtle WoW and check for errors.
+===============================================

@@ -1,0 +1,131 @@
+/* Navigation - FIXED VERSION */
+.nav {
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--border-light);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 16px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 18px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.nav-brand img {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    list-style: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    background: var(--background-tertiary);
+}
+
+.nav-link.active {
+    color: var(--apple-blue);
+    background: rgba(87, 148, 242, 0.1);
+}
+
+.nav-external {
+    color: var(--apple-orange);
+}
+
+.nav-external:hover {
+    color: var(--apple-orange);
+    background: rgba(255, 152, 48, 0.1);
+}
+
+/* Mobile Nav */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+    .nav-link {
+        padding: 8px 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--background-secondary);
+        flex-direction: column;
+        padding: 16px;
+        border-bottom: 1px solid var(--border-light);
+        overflow-x: visible;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,121 @@
+╔══════════════════════════════════════════════════════════╗
+║   🐢 TURTLE WOW COMBAT LOG PROCESSOR v2.0               ║
+║      QUICK START CARD                                    ║
+╚══════════════════════════════════════════════════════════╝
+
+📍 LOCATION: C:\turtlewow\Logs\
+
+⚡ QUICK START (3 STEPS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Double-click: start_web_app.bat
+2. Fill out form in browser
+3. Click "Process" → Download ZIP
+
+That's it! Upload ZIP to Legacy Logs.
+
+📋 WHAT YOU NEED TO KNOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Player Name:   Your character name
+Raid:          MC, BWL, AQ40, etc. (dropdown)
+Start Time:    When raid started (e.g., 4:00 PM)
+End Detection: Auto (recommended) or Manual
+
+🎯 END TIME AUTO-DETECTION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Priority 1: Boss Death (e.g., "Ragnaros dies")
+Priority 2: Raid Exodus (3+ people hearthing/portaling)
+Priority 3: Manual Entry (you specify end time)
+
+📦 WHAT IT CREATES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TurtLog-MC-2025-10-20-Ragnaros.txt      ← Formatted log
+TurtLog-MC-2025-10-20-Ragnaros.txt.zip  ← Upload this!
+WoWCombatLog.archived.TIMESTAMP.txt     ← Backup
+WoWCombatLog.txt (cleared for next raid) ← Fresh
+
+✅ WHAT IT DOES AUTOMATICALLY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Extracts ONLY your raid timeframe (not entire log)
+✓ Detects when boss dies
+✓ Detects when raid ends (people leaving)
+✓ Converts "You/Your" to player name
+✓ Credits pet damage to owners
+✓ Archives original log with timestamp
+✓ Clears log for next raid
+✓ Creates ZIP ready for upload
+
+🎮 SUPPORTED RAIDS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MC      - Molten Core (Ragnaros)
+BWL     - Blackwing Lair (Nefarian)
+ONY     - Onyxia's Lair (Onyxia)
+ZG      - Zul'Gurub (Hakkar)
+AQ20    - Ruins of Ahn'Qiraj (Ossirian)
+AQ40    - Temple of Ahn'Qiraj (C'Thun)
+NAXX    - Naxxramas (Kel'Thuzad)
+EMERALD - Emerald Sanctum (Eranikus)
+
+🔧 TROUBLESHOOTING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problem: Flask not found
+Fix:     pip install -r requirements.txt
+
+Problem: Python not found
+Fix:     Install from python.org
+
+Problem: No boss death detected
+Fix:     Use manual end time
+
+Problem: Web app won't start
+Fix:     Check Python installed, port 5000 free
+
+💾 FILES CREATED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+raids.json           - Raid configuration
+format_log_v2.py     - Enhanced processor
+flask_app.py         - Web server
+start_web_app.bat    - Launcher
+requirements.txt     - Dependencies
+
+🔄 ORIGINAL FILES BACKED UP:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+format_log_for_upload.py.backup_TIMESTAMP
+run_format_log.bat.backup_TIMESTAMP
+
+📖 FULL DOCS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+C:\Claude-Flow\output-files\COMBAT_LOG_PROCESSOR_V2_GUIDE.md
+
+🎯 EXAMPLE WORKFLOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tonight's MC Run:
+1. Double-click start_web_app.bat
+2. Enter: PlayerName = "Yourname"
+3. Select: Raid = "MC - Molten Core"
+4. Enter: Start = "10/20/2025" "4:00 PM"
+5. Select: Auto-detect
+6. Click: Process
+7. Watch: "✅ Found: Ragnaros dies at 6:03:03 PM"
+8. Click: Download ZIP
+9. Upload to Legacy Logs
+10. View your parse! 📊
+
+══════════════════════════════════════════════════════════════
+
+💡 TIP: Process each raid right after it ends while the
+         timestamps are fresh in your memory!
+
+══════════════════════════════════════════════════════════════
+
+Ready? Launch start_web_app.bat and let's go! 🚀

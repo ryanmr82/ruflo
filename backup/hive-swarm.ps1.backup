@@ -1,0 +1,134 @@
+#!/usr/bin/env pwsh
+<#
+.SYNOPSIS
+    HIVE-SWARM - Windows implementation matching Linux functionality
+    
+.DESCRIPTION
+    Handles long documents by creating a prompt file that Claude can read
+    Works around Windows raw mode issues with piped stdin
+#>
+
+param(
+    [Parameter(Position=0, ValueFromRemainingArguments=$true)]
+    [string[]]$AdditionalContext
+)
+
+# Configuration
+$HIVE_PROMPT_FILE = "C:\claude-flow\hive_prompt.txt"
+$WORKSPACE_DIR = "C:\claude-flow\output-files"
+
+# Main execution
+Write-Host ""
+Write-Host "🎯 Executing Hive-Swarm..." -ForegroundColor Cyan
+Write-Host "📦 Using latest claude-flow version via npx" -ForegroundColor Green
+Write-Host "📂 Workspace: $WORKSPACE_DIR" -ForegroundColor Green
+
+# Check if hive_prompt.txt exists
+if (-not (Test-Path $HIVE_PROMPT_FILE)) {
+    Write-Host "Error: $HIVE_PROMPT_FILE not found" -ForegroundColor Red
+    exit 1
+}
+
+# Read the full content
+$fullContent = Get-Content $HIVE_PROMPT_FILE -Raw
+
+# Get file size
+$fileSize = (Get-Item $HIVE_PROMPT_FILE).Length
+Write-Host "📊 Task file: $fileSize bytes" -ForegroundColor Yellow
+
+# Extract a short summary for the command line (first 80 chars or first line)
+$lines = $fullContent -split "`n"
+$shortObjective = if ($lines[0].Length -gt 80) {
+    $lines[0].Substring(0, 77) + "..."
+} else {
+    $lines[0]
+}
+$shortObjective = $shortObjective -replace '"', '\"'  # Escape quotes
+
+Write-Host "📋 Summary: $shortObjective" -ForegroundColor Cyan
+
+# Ensure workspace exists
+if (-not (Test-Path $WORKSPACE_DIR)) {
+    New-Item -ItemType Directory -Path $WORKSPACE_DIR -Force | Out-Null
+}
+
+# Create sessions directory
+$sessionsDir = "$WORKSPACE_DIR\.hive-mind\sessions"
+if (-not (Test-Path $sessionsDir)) {
+    New-Item -ItemType Directory -Path $sessionsDir -Force | Out-Null
+}
+
+# Create a combined prompt file with swarm instructions and full content
+$timestamp = Get-Date -Format "yyyyMMddHHmmss"
+$promptFile = "$sessionsDir\swarm-prompt-$timestamp.txt"
+
+$combinedPrompt = @"
+🎯 SWARM COORDINATION PROMPT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are coordinating a development swarm with the following configuration:
+- Strategy: development
+- Max Agents: 10
+- Mode: parallel
+- Workspace: $WORKSPACE_DIR
+
+OBJECTIVE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+$fullContent
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Please analyze and execute this objective using swarm coordination.
+"@
+
+# Save the combined prompt
+Set-Content -Path $promptFile -Value $combinedPrompt -Encoding UTF8
+Write-Host "✅ Created prompt file: $promptFile" -ForegroundColor Green
+
+# Change to workspace
+Push-Location $WORKSPACE_DIR
+
+try {
+    Write-Host ""
+    Write-Host "Executing swarm spawn..." -ForegroundColor Cyan
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+    
+    # Spawn swarm with short objective (avoids command line limit)
+    $arguments = @(
+        "claude-flow@latest",
+        "swarm",
+        "`"$shortObjective`"",
+        "--claude",
+        "--max-agents", "10",
+        "--strategy", "development",
+        "--parallel",
+        "--monitor",
+        "--workspace", "`"$WORKSPACE_DIR`""
+    )
+    
+    # Create a temporary script to handle the execution
+    $tempScript = "$env:TEMP\swarm_exec_$timestamp.ps1"
+    @"
+# Temporary execution script
+cd '$WORKSPACE_DIR'
+& npx $($arguments -join ' ')
+
+# If that worked, we're done
+# If it failed due to raw mode, try alternate approach
+if (`$LASTEXITCODE -ne 0) {
+    Write-Host "Attempting alternate execution method..." -ForegroundColor Yellow
+    Get-Content '$promptFile' | claude --dangerously-skip-permissions
+}
+"@ | Out-File -FilePath $tempScript -Encoding UTF8
+    
+    # Execute the temporary script
+    & $tempScript
+    
+    # Clean up
+    Remove-Item $tempScript -ErrorAction SilentlyContinue
+    
+} catch {
+    Write-Host "Primary execution failed. Attempting fallback..." -ForegroundColor Yellow
+    Write-Host "You can manually run: claude < `"$promptFile`"" -ForegroundColor Cyan
+} finally {
+    Pop-Location
+}

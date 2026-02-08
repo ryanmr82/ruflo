@@ -1,0 +1,644 @@
+{
+  "lastUpdated": "2026-02-04T10:00:00-08:00",
+  "title": "VaultSync — Guild Data Pipeline",
+  "subtitle": "Unified architecture for auction price sync, guild bank export, and website integration",
+  "description": "Complete design specification for VaultSync: the guild's automated data pipeline connecting TurtleWoW game client data to the tbcguild.duckdns.org website. VaultSync is the umbrella name for two production subsystems — GuildShopSync (auction house price scanning + upload) and GBankExport (guild bank inventory scanning + local export) — plus the server-side API and website components that consume their data. This document covers existing working artifacts, their architecture, data flow, and a phased plan for future enhancements including server-side guild bank API integration.",
+  "projectOverview": {
+    "projectName": "VaultSync",
+    "investigationDate": "February 4, 2026",
+    "guild": "Thralls Book Club",
+    "primaryGoal": "Automate the flow of game data (AH prices, guild bank contents) from client to website with zero manual steps after initial install",
+    "techStack": "TurtleWoW 1.12.1 Lua addons | .NET WinForms C# tray app | PowerShell file watcher | Deno Fresh API | Inno Setup installer",
+    "serverApi": "PUT https://tbcguild.duckdns.org/api/consumes/prices",
+    "status": "GuildShopSync v3.1 — PRODUCTION | GBankExport v3.0 — LOCAL EXPORT WORKING",
+    "totalArtifacts": "8 files across 2 subsystems + installer"
+  },
+  "urlStructure": {
+    "title": "VaultSync — Complete Artifact Inventory",
+    "description": "Every file in the VaultSync pipeline, its role, version, and line count. All artifacts are built, tested, and deployed.",
+    "diagram": [
+      "╔══════════════════════════════════════════════════════════════════════════════════╗",
+      "║                    VAULTSYNC — ARTIFACT INVENTORY                               ║",
+      "╠══════════════════════════════════════════════════════════════════════════════════╣",
+      "║                                                                                  ║",
+      "║  ┌─── SUBSYSTEM 1: GuildShopSync v3.1 (Auction Price Pipeline) ───────────────┐ ║",
+      "║  │                                                                             │ ║",
+      "║  │  FILE                          LINES  TYPE        STATUS                    │ ║",
+      "║  │  ────────────────────────────  ─────  ──────────  ──────────────────────     │ ║",
+      "║  │  GuildShopSync.lua              285   WoW Addon   PRODUCTION                │ ║",
+      "║  │  GuildShopSync.toc                7   TOC         PRODUCTION                │ ║",
+      "║  │  GuildShopSyncTray.cs           438   C# WinForms PRODUCTION (compiled)     │ ║",
+      "║  │  GuildShopSyncTray.exe          16KB  .NET EXE    PRODUCTION (GUI subsys)   │ ║",
+      "║  │  GuildShopSync.iss              261   Inno Setup  PRODUCTION                │ ║",
+      "║  │  GuildShopSync-Setup-v3.1.exe  2.0MB  Installer   PRODUCTION (distributable)│ ║",
+      "║  │                                                                             │ ║",
+      "║  └─────────────────────────────────────────────────────────────────────────────┘ ║",
+      "║                                                                                  ║",
+      "║  ┌─── SUBSYSTEM 2: GBankExport v3.0 (Guild Bank Inventory) ───────────────────┐ ║",
+      "║  │                                                                             │ ║",
+      "║  │  FILE                          LINES  TYPE        STATUS                    │ ║",
+      "║  │  ────────────────────────────  ─────  ──────────  ──────────────────────     │ ║",
+      "║  │  GBankExport.lua                553   WoW Addon   PRODUCTION                │ ║",
+      "║  │  GBankExport.toc                  8   TOC         PRODUCTION                │ ║",
+      "║  │  AutoExport.ps1                 295   PowerShell  PRODUCTION (local only)   │ ║",
+      "║  │                                                                             │ ║",
+      "║  │  Working output: 158 unique items, 5528 total, 5 tabs scanned              │ ║",
+      "║  │  Guild: Thralls Book Club                                                   │ ║",
+      "║  │                                                                             │ ║",
+      "║  └─────────────────────────────────────────────────────────────────────────────┘ ║",
+      "║                                                                                  ║",
+      "╚══════════════════════════════════════════════════════════════════════════════════╝"
+    ],
+    "routes": [
+      {
+        "path": "GuildShopSync.lua (285 lines)",
+        "status": "PRODUCTION",
+        "purpose": "TurtleWoW addon — scans 68 consume items at the Auction House. Queries each item by name via QueryAuctionItems(), processes AUCTION_ITEM_LIST_UPDATE events, stores lowest buyout-per-unit in SavedVariables as GuildShopSyncDB.prices. Sets triggerUpload=true flag when scan completes. Shows 'Sync Prices' button on AH frame. Popup prompts ReloadUI to flush SavedVariables to disk.",
+        "access": "/gss scan | /gss debug | /gss stop | 'Sync Prices' button on AH"
+      },
+      {
+        "path": "GuildShopSyncTray.cs (438 lines)",
+        "status": "PRODUCTION",
+        "purpose": "Compiled .NET WinForms system tray application. Polls WTF/Account/**/GuildShopSync.lua every 3 seconds for triggerUpload=true. Parses Lua table via regex, builds JSON payload, HTTP PUTs to API. Clears trigger flag on success. Named mutex (Global\\GuildShopSyncTray) prevents duplicates. Registry Run key for auto-start. SessionEnding handler for clean shutdown. Balloon notifications on upload. Context menu with status, log folder, exit.",
+        "access": "System tray icon — auto-starts at login via HKCU\\...\\Run"
+      },
+      {
+        "path": "GuildShopSync.iss (261 lines)",
+        "status": "PRODUCTION",
+        "purpose": "Inno Setup 6 installer script. Detects TurtleWoW path (registry, env var, common paths). Copies EXE to Program Files, addon to WoW/Interface/AddOns. Sets Registry Run key for auto-start. Cleans up all previous versions (PowerShell scripts, Task Scheduler tasks, env vars, VBS startup scripts). Handles upgrade from v2.x/v3.0 gracefully.",
+        "access": "GuildShopSync-Setup-v3.1.exe"
+      },
+      {
+        "path": "GBankExport.lua (553 lines)",
+        "status": "PRODUCTION",
+        "purpose": "TurtleWoW addon — hooks GuildBankFrame OnShow/OnHide. Auto-scans all unlocked tabs when bank opens. Reads GuildBankFrameItem{1-98} button properties (.occupied, .itemID, .count, .tab). Resolves names via GetItemInfo(). Builds per-tab item lists + cross-tab summary. Exports both structured (GBankExport_Data) and flat pipe-delimited (GBankExport_FlatData) to SavedVariables.",
+        "access": "/gbe scan | /gbe status | /gbe list | /gbe tabs | /gbe debug | auto-scan on bank open"
+      },
+      {
+        "path": "AutoExport.ps1 (295 lines)",
+        "status": "PRODUCTION (local only)",
+        "purpose": "PowerShell background watcher. Polls WTF/Account/**/SavedVariables/GBankExport.lua every 5 seconds. Parses GBankExport_FlatData (GBANKEXPORT_V1 pipe-delimited format). Exports to GuildBank_{Account}.json and GuildBank_{Account}.txt. Named mutex prevents duplicates. Log rotation at 2MB. Debounce wait (1.5s) after detecting changes to let WoW finish writing.",
+        "access": "Background process — started manually or via Windows Startup"
+      },
+      {
+        "path": "Server API: PUT /api/consumes/prices",
+        "status": "PRODUCTION",
+        "purpose": "Deno Fresh API endpoint. Receives JSON price payload from GuildShopSyncTray.exe. Stores prices in Deno KV under ['consumes','prices']. Returns {success:true} on valid write. Website reads these prices to display current AH market values on the /consumes shop page.",
+        "access": "HTTPS PUT from tray app only"
+      }
+    ]
+  },
+  "navigationFlow": {
+    "title": "VaultSync — Complete System Architecture",
+    "diagram": [
+      "╔══════════════════════════════════════════════════════════════════════════════════╗",
+      "║                      VAULTSYNC — SYSTEM ARCHITECTURE                            ║",
+      "╠══════════════════════════════════════════════════════════════════════════════════╣",
+      "║                                                                                  ║",
+      "║   GAME CLIENT (TurtleWoW 1.12.1)         WINDOWS HOST              SERVER       ║",
+      "║   ═══════════════════════════════         ════════════              ══════       ║",
+      "║                                                                                  ║",
+      "║   ┌──────────────────────┐                                                      ║",
+      "║   │  GuildShopSync.lua   │ ── /reload ──> SavedVariables/                       ║",
+      "║   │  (AH price scanner)  │                GuildShopSync.lua                     ║",
+      "║   │  68 items, lowest    │                     │                                ║",
+      "║   │  buyout per unit     │                     │ 3s poll                         ║",
+      "║   │  triggerUpload=true  │                     ▼                                ║",
+      "║   └──────────────────────┘         ┌──────────────────┐    HTTPS PUT            ║",
+      "║                                    │ GuildShopSyncTray│ ──────────────>          ║",
+      "║                                    │ (.NET tray app)  │     JSON       ┌───────┐║",
+      "║                                    │ Parse Lua → JSON │     payload    │ Deno  │║",
+      "║                                    │ Clear trigger    │                │ Fresh │║",
+      "║                                    └──────────────────┘                │ API   │║",
+      "║                                      Registry Run auto-start          │       │║",
+      "║                                      Named mutex singleton            │ PUT   │║",
+      "║                                                                       │/api/  │║",
+      "║   ┌──────────────────────┐                                            │consu- │║",
+      "║   │  GBankExport.lua     │ ── /reload ──> SavedVariables/             │mes/   │║",
+      "║   │  (Guild bank scanner)│                GBankExport.lua             │prices │║",
+      "║   │  5 tabs, 98 slots ea │                     │                      │       │║",
+      "║   │  FlatData pipe fmt   │                     │ 5s poll              │ Deno  │║",
+      "║   │  Auto-scan on open   │                     ▼                      │ KV    │║",
+      "║   └──────────────────────┘         ┌──────────────────┐               │       │║",
+      "║                                    │ AutoExport.ps1   │               │ ──>   │║",
+      "║                                    │ (PowerShell)     │  (LOCAL ONLY) │Website│║",
+      "║                                    │ Parse FlatData   │  JSON + TXT   │/consu-│║",
+      "║                                    │ → JSON + TXT     │  exports      │mes    │║",
+      "║                                    └──────────────────┘               └───────┘║",
+      "║                                      Mutex singleton                            ║",
+      "║                                      Log rotation 2MB                           ║",
+      "║                                                                                  ║",
+      "╚══════════════════════════════════════════════════════════════════════════════════╝"
+    ]
+  },
+  "dataFlowDiagrams": {
+    "currentArchitecture": {
+      "title": "Data Flow 1: GuildShopSync — AH Price Pipeline",
+      "description": "How auction house prices flow from game client to guild website. The addon scans, saves to disk via ReloadUI, the tray app detects the change, parses prices, and uploads via HTTPS PUT.",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────┐",
+        "│              GUILDSHOPSYNC — AH PRICE DATA FLOW                             │",
+        "├─────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                             │",
+        "│   STEP 1: Player opens Auction House                                        │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  GuildShopSync.lua detects AUCTION_HOUSE_SHOW    │                      │",
+        "│   │  Creates 'Sync Prices' button on aux_frame       │                      │",
+        "│   │  Player clicks button → StartScan()              │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼                                                 │",
+        "│   STEP 2: Sequential AH queries (68 items)                                  │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  For each item in ITEMS table:                   │                      │",
+        "│   │    Wait for CanSendAuctionQuery() == true        │                      │",
+        "│   │    QueryAuctionItems(item.name, ...)             │                      │",
+        "│   │    Wait for AUCTION_ITEM_LIST_UPDATE event       │                      │",
+        "│   │    Loop GetAuctionItemInfo → find lowest buyout  │                      │",
+        "│   │    Store: scanPrices[item.id] = lowest per-unit  │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼                                                 │",
+        "│   STEP 3: Scan complete → write to SavedVariables                           │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  GuildShopSyncDB.prices = { GFPP=1500, ... }    │                      │",
+        "│   │  GuildShopSyncDB.triggerUpload = true            │                      │",
+        "│   │  Show popup: 'Click to Reload UI & Sync'        │                      │",
+        "│   │  Player clicks → ReloadUI() → flushes to disk   │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼                                                 │",
+        "│   STEP 4: Tray app detects change (3s poll)                                 │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  GuildShopSyncTray.exe polls all                 │                      │",
+        "│   │    WTF/Account/**/GuildShopSync.lua files        │                      │",
+        "│   │  Detects LastWriteTime change                    │                      │",
+        "│   │  Reads file, checks: triggerUpload = true        │                      │",
+        "│   │  Regex-parses [\"prices\"] = { ... } table        │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼                                                 │",
+        "│   STEP 5: HTTP PUT to server                                                │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  PUT https://tbcguild.duckdns.org/api/prices     │                      │",
+        "│   │  Body: {\"prices\":{GFPP:1500,...},                │                      │",
+        "│   │         \"source\":\"GuildShopSync-addon\",          │                      │",
+        "│   │         \"updatedBy\":\"GuildShopSync\"}             │                      │",
+        "│   │  On success: clear triggerUpload → false in file │                      │",
+        "│   │  Balloon notification: 'Uploaded 68 prices!'     │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                                                                             │",
+        "└─────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "targetArchitecture": {
+      "title": "Data Flow 2: GBankExport — Guild Bank Inventory Pipeline",
+      "description": "How guild bank contents flow from TurtleWoW's custom guild bank UI to local JSON/TXT exports. Currently local-only; Phase 6 will add server upload.",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────┐",
+        "│              GBANKEXPORT — GUILD BANK DATA FLOW                             │",
+        "├─────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                             │",
+        "│   STEP 1: Player opens Guild Bank NPC                                       │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  GBankExport.lua hooks GuildBankFrame:OnShow     │                      │",
+        "│   │  Sets bankIsOpen = true                          │                      │",
+        "│   │  Starts 2.0s initial wait (INITIAL_WAIT)         │                      │",
+        "│   │  Waits for server data to populate frame items   │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼                                                 │",
+        "│   STEP 2: Auto-scan all tabs                                                │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  GetTabCount() → count unlocked tabs (up to 5)   │                      │",
+        "│   │  For each tab:                                   │                      │",
+        "│   │    GuildBankFrameTab_OnClick(tabIdx) to switch   │                      │",
+        "│   │    Wait 1.5s (TAB_DELAY) for server data         │                      │",
+        "│   │    ScanCurrentTabSlots():                        │                      │",
+        "│   │      Read GuildBankFrameItem{1-98} props         │                      │",
+        "│   │      .occupied, .itemID, .count, .tab            │                      │",
+        "│   │      GetItemInfo(itemID) → name, quality, link   │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼                                                 │",
+        "│   STEP 3: Build export data structures                                      │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  GBankExport_Data = {                            │                      │",
+        "│   │    scanTime, guildName, playerName,              │                      │",
+        "│   │    tabs: [{tabName, tabIndex, items: [...]}],    │                      │",
+        "│   │    summary: {itemName: {count, quality, itemId}},│                      │",
+        "│   │    totalItems: 5528, uniqueItems: 158            │                      │",
+        "│   │  }                                               │                      │",
+        "│   │  BuildFlatData() → pipe-delimited string:        │                      │",
+        "│   │    GBANKEXPORT_V1 | SCAN_TIME | GUILD |          │                      │",
+        "│   │    TAB|idx|name | ITEM|name|count|quality|id|slot│                      │",
+        "│   │    SUMMARY | TOTAL_ITEMS | UNIQUE_ITEMS | END    │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                           │                                                 │",
+        "│                           ▼ (on /reload or logout)                          │",
+        "│                                                                             │",
+        "│   STEP 4: AutoExport.ps1 detects change (5s poll)                           │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  Polls WTF/Account/*/SavedVariables/GBankExport  │                      │",
+        "│   │  1.5s debounce after detecting LastWriteTime Δ   │                      │",
+        "│   │  Parses GBankExport_FlatData string from Lua     │                      │",
+        "│   │  Exports:                                        │                      │",
+        "│   │    GuildBank_{Account}.json  (structured)        │                      │",
+        "│   │    GuildBank_{Account}.txt   (human-readable)    │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                                                                             │",
+        "│   ┌──────────────────────────────────────────────────┐                      │",
+        "│   │  FUTURE (Phase 6): Add HTTP upload to server     │                      │",
+        "│   │  Either: integrate into GuildShopSyncTray.exe    │                      │",
+        "│   │  Or: add PUT to AutoExport.ps1                   │                      │",
+        "│   │  Server API: PUT /api/guild-bank/inventory       │                      │",
+        "│   └──────────────────────────────────────────────────┘                      │",
+        "│                                                                             │",
+        "└─────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    }
+  },
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Lua Addon Expansion",
+      "status": "Completed",
+      "estimatedTime": "Completed",
+      "description": "Build both WoW addons that scan game data and write to SavedVariables. GuildShopSync scans 68 auction items. GBankExport scans all 5 guild bank tabs (98 slots each). Both are fully operational.",
+      "features": [
+        "GuildShopSync.lua (285 lines) — 68 items across 7 categories, sequential AH queries with rate limiting, OnUpdate state machine, 'Sync Prices' button on aux_frame, ReloadUI popup, triggerUpload flag",
+        "GBankExport.lua (553 lines) — hooks GuildBankFrame OnShow/OnHide, auto-scans on bank open with 2s + 1.5s/tab delays, reads GuildBankFrameItem{1-98} frame properties, dual export (structured table + flat pipe-delimited string)"
+      ],
+      "successCriteria": [
+        "GuildShopSync scans all 68 items at AH and stores prices in SavedVariables",
+        "GBankExport auto-scans all unlocked tabs and stores inventory in SavedVariables",
+        "Both addons produce correct data verified by /gss debug and /gbe status"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "TOC & Addon Metadata",
+      "status": "Completed",
+      "estimatedTime": "Completed",
+      "description": "Both addons have proper TOC files for TurtleWoW's 1.12.1 interface (## Interface: 11200). SavedVariables declarations enable WoW to persist data to disk on logout/reload.",
+      "features": [
+        "GuildShopSync.toc — Interface 11200, SavedVariables: GuildShopSyncDB, Version: 3.1",
+        "GBankExport.toc — Interface 11200, SavedVariables: GBankExport_Data + GBankExport_FlatData, Version: 1.0 (addon is v3.0 internally)"
+      ],
+      "successCriteria": [
+        "Both addons load without errors in TurtleWoW",
+        "SavedVariables persist across /reload and logout"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Server API — Price Ingestion",
+      "status": "Completed",
+      "estimatedTime": "Completed",
+      "description": "Server-side Deno Fresh API endpoint that receives price data from the tray app and stores it in Deno KV for the website's /consumes shop page to display.",
+      "features": [
+        "PUT /api/consumes/prices — receives {prices:{GFPP:1500,...}, source, updatedBy}",
+        "Validates payload structure, writes to Deno KV under ['consumes','prices']",
+        "Returns {success:true}, consumed by ConsumesShop.tsx for market price display"
+      ],
+      "successCriteria": [
+        "PUT request from tray app returns {success:true}",
+        "Website /consumes page shows updated prices after upload"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Compiled Desktop Application",
+      "status": "Completed",
+      "estimatedTime": "Completed",
+      "description": "Replaced unreliable PowerShell service with a compiled .NET WinForms tray application. Critical fix — all PowerShell versions (v2.0-v3.0) died silently due to console CTRL_LOGOFF_EVENT signals during Windows logout. The compiled EXE runs as a GUI subsystem process, immune to console control signals.",
+      "features": [
+        "GuildShopSyncTray.cs (438 lines C#) — compiled .NET WinForms system tray application",
+        "Named mutex Global\\GuildShopSyncTray prevents duplicate instances",
+        "Registry Run key auto-start replaces unreliable schtasks from v2.6-v3.0",
+        "3-second poll timer scans all WTF/Account/**/GuildShopSync.lua files",
+        "Regex Lua parsing extracts triggerUpload flag and prices table",
+        "HttpWebRequest PUT uploads JSON to API with TLS 1.2, clears trigger on success",
+        "SystemEvents.SessionEnding handler for clean shutdown on logoff",
+        "Tray icon context menu: status, last upload time, upload count, log folder, exit",
+        "Balloon notifications on upload/failure, global exception handlers",
+        "AutoExport.ps1 (295 lines) — guild bank local exporter, 5s poll + 1.5s debounce, FlatData parser, JSON/TXT output, mutex, log rotation"
+      ],
+      "successCriteria": [
+        "GuildShopSyncTray.exe starts at login, survives logoff/restart cycles",
+        "No more STATUS_CONTROL_C_EXIT errors (PowerShell elimination)",
+        "AutoExport.ps1 produces correct JSON/TXT from live scan data"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Installer & Distribution",
+      "status": "Completed",
+      "estimatedTime": "Completed",
+      "description": "Professional Inno Setup installer that handles detection of TurtleWoW path, addon deployment, tray app installation, auto-start setup, and cleanup of all previous versions.",
+      "features": [
+        "GuildShopSync.iss (261 lines) — Inno Setup 6 installer script",
+        "WoW path detection: registry, env var, 7 common TurtleWoW paths",
+        "Copies EXE to Program Files, addon to WoW/Interface/AddOns/GuildShopSync",
+        "Registry Run key for auto-start at login",
+        "Cleanup: kills old PowerShell processes, removes schtasks, deletes env vars, removes VBS startup scripts",
+        "Upgrade: detects previous installs via UninstallString, offers silent uninstall",
+        "Uninstall: removes addon folder, log folder, all registry entries",
+        "GuildShopSync-Setup-v3.1.exe — 2.0MB LZMA-compressed distributable"
+      ],
+      "successCriteria": [
+        "Fresh install on new machine: addon loads, tray app auto-starts, prices upload",
+        "Upgrade from v2.x: old PowerShell processes killed, scheduled task removed, clean transition",
+        "Uninstall: all files, registry keys, addon folder, and logs removed cleanly"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "AH & Vault Sync — Unified Installer + Tray App (v4.0)",
+      "status": "In Progress",
+      "estimatedTime": "Next Build",
+      "description": "Rebrand and unify both subsystems under 'AH & Vault Sync'. Build a single compiled C# tray app that watches for BOTH GuildShopSync price scans AND GBankExport guild bank scans. Build a single Inno Setup installer that deploys both addons + the unified tray app. Eliminates AutoExport.ps1 (PowerShell has the same CTRL_LOGOFF_EVENT reliability problem we already solved for price sync). Decision made: Option A — fold all watching into one compiled EXE.",
+      "features": [
+        "DECIDED: App name = 'AH & Vault Sync' (display), file prefix = 'AH_and_Vault_Sync', version 4.0",
+        "DECIDED: Option A chosen — fold GBankExport watching into compiled C# tray app (eliminates PowerShell reliability problem)",
+        "DECIDED: In-game addons keep their names (GuildShopSync /gss, GBankExport /gbe) — only the Windows-side umbrella is renamed",
+        "AH_and_VaultSyncTray.cs — unified C# WinForms tray app combining GuildShopSyncTray.cs (438 lines) + AutoExport.ps1 (295 lines) logic",
+        "  Polls for GuildShopSync.lua changes (triggerUpload=true) → HTTP PUT prices to API (existing behavior)",
+        "  Polls for GBankExport.lua changes (FlatData) → parses GBANKEXPORT_V1 pipe format → exports JSON + TXT locally",
+        "  Single tray icon, combined context menu showing status for both AH prices and guild bank",
+        "  Named mutex: Global\\AH_and_VaultSyncTray",
+        "  Registry Run key: HKCU\\...\\Run\\AH_and_Vault_Sync",
+        "  Registry config: HKCU\\Software\\AH_and_Vault_Sync (WoWPath, Version)",
+        "  Logs to %LocalAppData%\\AH_and_Vault_Sync\\service.log",
+        "AH_and_Vault_Sync.iss — Inno Setup installer script",
+        "  Installs AH_and_VaultSyncTray.exe to {app} (Program Files\\AH_and_Vault_Sync)",
+        "  Installs GuildShopSync addon (lua + toc) to WoW/Interface/AddOns/GuildShopSync/",
+        "  Installs GBankExport addon (lua + toc) to WoW/Interface/AddOns/GBankExport/",
+        "  Detects TurtleWoW path (registry → env var → 7 common paths → browse dialog)",
+        "  Cleans up old GuildShopSync v2.x/v3.x installs (PowerShell processes, schtasks, env vars, VBS scripts, old installer)",
+        "  Kills old GuildShopSyncTray.exe on upgrade",
+        "  Output: AH_and_Vault_Sync-Setup-v4.0.exe",
+        "SOURCE FILES (to build from):",
+        "  GuildShopSyncTray.cs: C:\\Claude-Flow\\output-files\\GuildShopSync-v3.1\\source\\GuildShopSyncTray.cs (438 lines — base for unified app)",
+        "  AutoExport.ps1: C:\\turtlewow\\Interface\\AddOns\\GBankExport\\AutoExport.ps1 (295 lines — logic to port to C#)",
+        "  GuildShopSync.iss: C:\\Claude-Flow\\output-files\\GuildShopSync-v3.1\\GuildShopSync.iss (261 lines — base for unified installer)",
+        "  GuildShopSync.lua: C:\\Claude-Flow\\output-files\\GuildShopSync-v3.1\\source\\GuildShopSync.lua (285 lines — addon, unchanged)",
+        "  GuildShopSync.toc: C:\\Claude-Flow\\output-files\\GuildShopSync-v3.1\\source\\GuildShopSync.toc (7 lines — addon, unchanged)",
+        "  GBankExport.lua: C:\\turtlewow\\Interface\\AddOns\\GBankExport\\GBankExport.lua (553 lines — addon, unchanged)",
+        "  GBankExport.toc: C:\\turtlewow\\Interface\\AddOns\\GBankExport\\GBankExport.toc (8 lines — addon, unchanged)"
+      ],
+      "successCriteria": [
+        "Single tray app watches for both price scans and guild bank scans",
+        "Price upload works identically to GuildShopSync v3.1 (PUT to /api/consumes/prices)",
+        "Guild bank export produces identical JSON + TXT to AutoExport.ps1",
+        "Installer deploys both addons + tray app in one click",
+        "Upgrade from GuildShopSync v3.1: old tray app killed, old registry cleaned, seamless transition",
+        "No PowerShell processes involved — fully compiled .NET",
+        "Survives logoff/restart cycles (GUI subsystem, SessionEnding handler)"
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Guild Bank Server Upload + Website Page",
+      "status": "Not Started",
+      "estimatedTime": "After Phase 6",
+      "description": "After the unified tray app is working (Phase 6), add HTTP upload of guild bank data to the server and build a /guild-bank browse page on the website. The tray app already has the parsed data from Phase 6 — just needs an additional PUT call.",
+      "features": [
+        "Server API: PUT /api/guild-bank/inventory — new Deno Fresh endpoint, Deno KV under ['guild-bank','inventory']",
+        "Add HTTP PUT to AH_and_VaultSyncTray.exe after local JSON/TXT export (minimal code addition)",
+        "Website: /guild-bank page — GuildBankBrowser.tsx island with tab view, search, quality colors, scan timestamp"
+      ],
+      "successCriteria": [
+        "Guild bank data uploads to server after every scan",
+        "Website shows current guild bank contents",
+        "Data is less than 10 minutes stale after a bank visit"
+      ]
+    }
+  ],
+  "uiDesignDecisions": [
+    {
+      "feature": "Watcher Service",
+      "optionsPresented": "PowerShell vs Compiled .NET EXE",
+      "userChoice": "Compiled .NET WinForms EXE",
+      "rationale": "PowerShell dies on logoff (STATUS_CONTROL_C_EXIT 0xC000013A) because it's a console subsystem process. WinForms apps are GUI subsystem — handle WM_QUERYENDSESSION gracefully via SystemEvents.SessionEnding."
+    },
+    {
+      "feature": "Auto-Start Method",
+      "optionsPresented": "Task Scheduler vs Registry Run Key",
+      "userChoice": "Registry Run Key (HKCU\\...\\Run)",
+      "rationale": "Task Scheduler had issues: wouldn't restart after sleep, required password re-entry after updates. Registry Run is the standard method for per-user tray apps."
+    },
+    {
+      "feature": "Single Instance",
+      "optionsPresented": "PID Files vs Named Mutex",
+      "userChoice": "Named Mutex (Global\\)",
+      "rationale": "Kernel-level mutex auto-releases on crash. PID files go stale. Global prefix works across RDP + console sessions."
+    },
+    {
+      "feature": "File Change Detection",
+      "optionsPresented": "FileSystemWatcher vs Polling",
+      "userChoice": "3-second Polling with LastWriteTime",
+      "rationale": "FileSystemWatcher misses events with WoW's atomic rename-into-place write pattern. Polling is simple, reliable, negligible CPU."
+    },
+    {
+      "feature": "GBankExport Data Format",
+      "optionsPresented": "Parse Lua Tables vs Flat Pipe-Delimited",
+      "userChoice": "GBANKEXPORT_V1 Pipe-Delimited Format",
+      "rationale": "TurtleWoW Lua 5.0 has no JSON library. Flat format is trivial to parse externally: split by newline, split by pipe, switch on tag."
+    },
+    {
+      "feature": "Guild Bank Data Source",
+      "optionsPresented": "C-side API vs UI Frame Properties",
+      "userChoice": "Read GuildBankFrameItem{1-98} Properties",
+      "rationale": "TurtleWoW's guild bank is 100% custom Lua with no C-side API. Frame property reading (.occupied, .itemID, .count, .tab) is the only approach."
+    }
+  ],
+  "uatChecklist": [
+    {
+      "test": 1,
+      "name": "GuildShopSync Addon — In-Game Price Scanning",
+      "page": "TurtleWoW — Auction House",
+      "actions": [
+        "Open AH → 'Sync Prices' button appears on auction frame",
+        "✅ /gss scan → scans all 68 items sequentially, shows price for each",
+        "✅ Scan complete → popup appears with item count",
+        "✅ Click 'Reload UI & Sync' → UI reloads, triggerUpload set in SavedVariables",
+        "✅ /gss debug → shows aux_frame, scanning state, item count",
+        "✅ /gss stop → halts mid-scan cleanly"
+      ]
+    },
+    {
+      "test": 2,
+      "name": "Tray App — Price Upload & Monitoring",
+      "page": "Windows System Tray",
+      "actions": [
+        "Tray icon visible with green circle after login",
+        "✅ Right-click → context menu shows version, status, last upload, count",
+        "✅ Double-click → balloon tooltip with status info",
+        "✅ After /reload with triggerUpload=true → balloon: 'Uploaded N prices!'",
+        "✅ triggerUpload flag cleared to false in SavedVariables after upload",
+        "✅ Open Log Folder → opens %LocalAppData%\\GuildShopSync in Explorer",
+        "✅ service.log shows timestamped entries for each upload",
+        "✅ Exit → tray icon disappears, process ends cleanly",
+        "✅ Logoff → no STATUS_CONTROL_C_EXIT in Event Viewer",
+        "✅ Login → tray app auto-starts (Registry Run key)",
+        "✅ Second launch → exits immediately (named mutex)"
+      ]
+    },
+    {
+      "test": 3,
+      "name": "Installer — Fresh Install & Upgrade",
+      "page": "Windows — GuildShopSync-Setup-v3.1.exe",
+      "actions": [
+        "Fresh install: detects TurtleWoW path, copies addon + EXE",
+        "✅ Custom WoW path: browse dialog pre-fills detected path, validates WoW.exe exists",
+        "✅ Post-install: addon in WoW/Interface/AddOns, EXE in Program Files",
+        "✅ Auto-start: HKCU\\...\\Run key created with EXE path",
+        "✅ Upgrade from v2.x: old PowerShell killed, schtasks removed, env var cleaned",
+        "✅ Uninstall: addon folder, logs, registry entries all removed"
+      ]
+    },
+    {
+      "test": 4,
+      "name": "GBankExport Addon — Guild Bank Scanning",
+      "page": "TurtleWoW — Guild Bank NPC",
+      "actions": [
+        "Open guild bank → auto-scan starts after 2s delay",
+        "✅ All unlocked tabs scanned with 1.5s delay between switches",
+        "✅ Chat shows item count per tab during scan",
+        "✅ /gbe status → shows last scan time, guild, unique/total counts",
+        "✅ /gbe list → alphabetical list with quality-colored names",
+        "✅ /gbe tabs → per-tab breakdown",
+        "✅ /gbe debug → full diagnostics (frame state, tab buttons, sample slots)",
+        "✅ Close bank mid-scan → partial data saved cleanly"
+      ]
+    },
+    {
+      "test": 5,
+      "name": "AutoExport — Local File Export",
+      "page": "Windows — AutoExport.ps1",
+      "actions": [
+        "Start script → initial export of existing data",
+        "✅ Player /reloads after bank scan → JSON + TXT exported within 7s",
+        "✅ JSON file matches GBankExport_Data structure",
+        "✅ TXT file is human-readable with formatted tab sections",
+        "✅ Second instance → exits immediately (named mutex)",
+        "✅ Log rotation at 2MB → old log renamed to _prev.log"
+      ]
+    },
+    {
+      "test": 6,
+      "name": "Server API — Price Ingestion",
+      "page": "https://tbcguild.duckdns.org/api/consumes/prices",
+      "actions": [
+        "PUT with valid payload → {success:true}",
+        "✅ Website /consumes shows updated prices after upload",
+        "✅ Invalid/empty payload → appropriate error response",
+        "✅ HTTPS with TLS 1.2 → connection succeeds from tray app"
+      ]
+    }
+  ],
+  "itemCatalog": {
+    "title": "GuildShopSync — Complete Item Scan List (68 items)",
+    "description": "All items scanned by GuildShopSync.lua at the Auction House. Each item is queried individually via QueryAuctionItems() and the lowest buyout-per-unit is recorded.",
+    "categories": [
+      {
+        "name": "Protection & Utility (16)",
+        "items": [
+          {"id": "GFPP", "name": "Greater Fire Protection Potion"},
+          {"id": "GAPP", "name": "Greater Arcane Protection Potion"},
+          {"id": "GNPP", "name": "Greater Nature Protection Potion"},
+          {"id": "GFROP", "name": "Greater Frost Protection Potion"},
+          {"id": "GSPP", "name": "Greater Shadow Protection Potion"},
+          {"id": "SPP", "name": "Shadow Protection Potion"},
+          {"id": "LIP", "name": "Limited Invulnerability Potion"},
+          {"id": "FAP", "name": "Free Action Potion"},
+          {"id": "LAP", "name": "Living Action Potion"},
+          {"id": "Restorative", "name": "Restorative Potion"},
+          {"id": "Invisibility", "name": "Invisibility Potion"},
+          {"id": "Swiftness", "name": "Swiftness Potion"},
+          {"id": "Purification", "name": "Purification Potion"},
+          {"id": "Quickness", "name": "Potion of Quickness"},
+          {"id": "MagicResistance", "name": "Magic Resistance Potion"},
+          {"id": "MajorHealing", "name": "Major Healing Potion"}
+        ]
+      },
+      {
+        "name": "Tank & Melee (13)",
+        "items": [
+          {"id": "Mongoose", "name": "Elixir of the Mongoose"},
+          {"id": "GreaterAgility", "name": "Elixir of Greater Agility"},
+          {"id": "Giants", "name": "Elixir of Giants"},
+          {"id": "MightyRage", "name": "Mighty Rage Potion"},
+          {"id": "GreaterStoneshield", "name": "Greater Stoneshield Potion"},
+          {"id": "Fortitude", "name": "Elixir of Fortitude"},
+          {"id": "SuperiorDefense", "name": "Elixir of Superior Defense"},
+          {"id": "TrollsBlood", "name": "Major Troll's Blood Potion"},
+          {"id": "GiftOfArthas", "name": "Gift of Arthas"},
+          {"id": "OilOfImmolation", "name": "Oil of Immolation"},
+          {"id": "ThistleTea", "name": "Thistle Tea"},
+          {"id": "GoblinSapper", "name": "Goblin Sapper Charge"},
+          {"id": "WinterfallFirewater", "name": "Winterfall Firewater"}
+        ]
+      },
+      {
+        "name": "Caster (11)",
+        "items": [
+          {"id": "Mageblood", "name": "Mageblood Potion"},
+          {"id": "GAE", "name": "Greater Arcane Elixir"},
+          {"id": "ArcaneElixir", "name": "Arcane Elixir"},
+          {"id": "MajorMana", "name": "Major Mana Potion"},
+          {"id": "GFW", "name": "Elixir of Greater Firepower"},
+          {"id": "GSP", "name": "Elixir of Shadow Power"},
+          {"id": "GFrostP", "name": "Elixir of Frost Power"},
+          {"id": "GNP", "name": "Elixir of Greater Nature Power"},
+          {"id": "Dreamshard", "name": "Dreamshard Elixir"},
+          {"id": "DarkRune", "name": "Dark Rune"},
+          {"id": "Dreamtonic", "name": "Dreamtonic"}
+        ]
+      },
+      {
+        "name": "Weapon Buffs (6)",
+        "items": [
+          {"id": "BrilliantManaOil", "name": "Brilliant Mana Oil"},
+          {"id": "BlessedWizardOil", "name": "Blessed Wizard Oil"},
+          {"id": "FrostOil", "name": "Frost Oil"},
+          {"id": "ElementalStone", "name": "Elemental Sharpening Stone"},
+          {"id": "BrilliantWizardOil", "name": "Brilliant Wizard Oil"},
+          {"id": "DenseSharpeningStone", "name": "Dense Sharpening Stone"}
+        ]
+      },
+      {
+        "name": "Food & Drink (15)",
+        "items": [
+          {"id": "GrilledSquid", "name": "Grilled Squid"},
+          {"id": "HerbalSalad", "name": "Empowering Herbal Salad"},
+          {"id": "NightfinSoup", "name": "Nightfin Soup"},
+          {"id": "HardenedMushroom", "name": "Hardened Mushroom"},
+          {"id": "LeFishe", "name": "Le Fishe Au Chocolat"},
+          {"id": "MedivhMerlot", "name": "Medivh's Merlot"},
+          {"id": "MedivhMerlotBlue", "name": "Medivh's Merlot Blue"},
+          {"id": "DragonbreathChili", "name": "Dragonbreath Chili"},
+          {"id": "DanozoDelight", "name": "Danonzo's Tel'Abim Delight"},
+          {"id": "DanozoSurprise", "name": "Danonzo's Tel'Abim Surprise"},
+          {"id": "DanozoMedley", "name": "Danonzo's Tel'Abim Medley"},
+          {"id": "PowerMushroom", "name": "Power Mushroom"},
+          {"id": "SmokedDesertDumplings", "name": "Smoked Desert Dumplings"},
+          {"id": "GilneasHotStew", "name": "Gilneas Hot Stew"},
+          {"id": "RumseyRumBlackLabel", "name": "Rumsey Rum Black Label"}
+        ]
+      },
+      {
+        "name": "Concoctions — TurtleWoW Custom (7)",
+        "items": [
+          {"id": "EmeraldMongoose", "name": "Concoction of the Emerald Mongoose"},
+          {"id": "ArcaneGiant", "name": "Concoction of the Arcane Giant"},
+          {"id": "Dreamwater", "name": "Concoction of the Dreamwater"},
+          {"id": "ElixirOfDemonslaying", "name": "Elixir of Demonslaying"},
+          {"id": "ElixirOfBruteForce", "name": "Elixir of Brute Force"},
+          {"id": "Dreamtonic", "name": "Dreamtonic"}
+        ]
+      }
+    ]
+  }
+}

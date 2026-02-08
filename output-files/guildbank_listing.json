@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Turtle_GuildBankUI.lua",
+    "path": "Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.lua",
+    "sha": "0afe0214a39aeeaf575345cdae7b1f242972f15a",
+    "size": 67301,
+    "url": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/contents/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.lua?ref=master",
+    "html_url": "https://github.com/refaim/Turtle-WoW-UI-Source/blob/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.lua",
+    "git_url": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/git/blobs/0afe0214a39aeeaf575345cdae7b1f242972f15a",
+    "download_url": "https://raw.githubusercontent.com/refaim/Turtle-WoW-UI-Source/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.lua",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/contents/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.lua?ref=master",
+      "git": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/git/blobs/0afe0214a39aeeaf575345cdae7b1f242972f15a",
+      "html": "https://github.com/refaim/Turtle-WoW-UI-Source/blob/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.lua"
+    }
+  },
+  {
+    "name": "Turtle_GuildBankUI.xml",
+    "path": "Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.xml",
+    "sha": "7e71e1d4f6abe19b51f270d87dd38cd3af9099a0",
+    "size": 25240,
+    "url": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/contents/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.xml?ref=master",
+    "html_url": "https://github.com/refaim/Turtle-WoW-UI-Source/blob/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.xml",
+    "git_url": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/git/blobs/7e71e1d4f6abe19b51f270d87dd38cd3af9099a0",
+    "download_url": "https://raw.githubusercontent.com/refaim/Turtle-WoW-UI-Source/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.xml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/contents/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.xml?ref=master",
+      "git": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/git/blobs/7e71e1d4f6abe19b51f270d87dd38cd3af9099a0",
+      "html": "https://github.com/refaim/Turtle-WoW-UI-Source/blob/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUI.xml"
+    }
+  },
+  {
+    "name": "Turtle_GuildBankUITemplates.xml",
+    "path": "Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUITemplates.xml",
+    "sha": "1f53d17203df41899dd882ab2c69c2ef6439948a",
+    "size": 11724,
+    "url": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/contents/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUITemplates.xml?ref=master",
+    "html_url": "https://github.com/refaim/Turtle-WoW-UI-Source/blob/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUITemplates.xml",
+    "git_url": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/git/blobs/1f53d17203df41899dd882ab2c69c2ef6439948a",
+    "download_url": "https://raw.githubusercontent.com/refaim/Turtle-WoW-UI-Source/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUITemplates.xml",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/contents/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUITemplates.xml?ref=master",
+      "git": "https://api.github.com/repos/refaim/Turtle-WoW-UI-Source/git/blobs/1f53d17203df41899dd882ab2c69c2ef6439948a",
+      "html": "https://github.com/refaim/Turtle-WoW-UI-Source/blob/master/Interface/FrameXML/Turtle_GuildBankUI/Turtle_GuildBankUITemplates.xml"
+    }
+  }
+]

@@ -1,0 +1,5 @@
+## Interface: 11200
+## Title: GuildShopSync
+## Notes: Syncs AH prices to TBC Guild consume shop
+## SavedVariables: GuildShopSyncDB
+GuildShopSync.lua

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TurtleWoW Log Rotator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #ffffff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .header {
+      text-align: center;
+      padding: 25px 20px 15px;
+      border-bottom: 1px solid #2a3f5f;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    
+    .content {
+      flex: 1;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .path-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+    }
+
+    .path-section label {
+      display: block;
+      font-size: 12px;
+      color: #8892a0;
+      margin-bottom: 8px;
+    }
+
+    .path-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .path-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #2a3f5f;
+      border-radius: 4px;
+      padding: 10px 12px;
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .path-input:focus {
+      outline: none;
+      border-color: #4a9eff;
+    }
+
+    .browse-btn {
+      background: #2a3f5f;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 15px;
+      color: #ffffff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .browse-btn:hover {
+      background: #3a5070;
+    }
+
+    .rotate-btn {
+      background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 20px;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+    }
+
+    .rotate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+    }
+
+    .rotate-btn:active {
+      transform: translateY(0);
+    }
+
+    .rotate-btn:disabled {
+      background: #3a3a4a;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .status-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .status-section h3 {
+      font-size: 12px;
+      color: #8892a0;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .status-log {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .status-log .success {
+      color: #4ade80;
+    }
+
+    .status-log .error {
+      color: #f87171;
+    }
+
+    .status-log .skipped {
+      color: #fbbf24;
+    }
+
+    .status-log .warning {
+      color: #fb923c;
+    }
+
+    .status-log .info {
+      color: #8892a0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>TurtleWoW Log Rotator</h1>
+  </div>
+
+  <div class="content">
+    <div class="path-section">
+      <label>TurtleWoW Logs Folder</label>
+      <div class="path-row">
+        <input type="text" class="path-input" id="logsPath" placeholder="C:\TurtleWoW\Logs" readonly>
+        <button class="browse-btn" id="browseBtn">Browse</button>
+      </div>
+    </div>
+
+    <button class="rotate-btn" id="rotateBtn">Rotate Logs</button>
+
+    <div class="status-section">
+      <h3>Status</h3>
+      <div class="status-log" id="statusLog">
+        <div class="info">Ready. Select your Logs folder and click Rotate.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+## Interface: 11200
+## Title: pfQuest [|cffff6600Turtle|r]
+## Author: Shagu, TurtleWoW Community
+## Notes: A vanilla questhelper and database - TurtleWoW Edition
+## Version: 4.7.5-turtle
+## RequiredDeps: pfQuest
+## SavedVariablesPerCharacter: pfTurtle_chars
+## SavedVariables: pfTurtle
+
+init.lua
+turtle-compat.lua
+turtle-db.lua
+turtle-quests.lua
+turtle-zones.lua
+turtle-npcs.lua
+
+data\turtle-quest-data.lua
+data\turtle-zone-data.lua
+data\turtle-npc-data.lua

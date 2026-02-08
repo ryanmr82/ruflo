@@ -1,0 +1,35 @@
+﻿12/8 17:50:37.004  Healsforblow suffers 250 Nature damage from Chromaggus 's Brood Affliction: Green.
+12/8 17:52:26.614  Chromaggus 's Frost Burn hits Healsforblow for 4574 Frost damage.
+12/8 18:04:22.000  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:04:23.061  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:04:23.998  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:06:01.623  Healsforblow suffers 100 Fire damage from Chromaggus 's Brood Affliction: Red.
+12/8 18:06:04.638  Healsforblow suffers 50 Fire damage from Chromaggus 's Brood Affliction: Red.
+12/8 18:06:07.623  Healsforblow suffers 50 Fire damage from Chromaggus 's Brood Affliction: Red.
+12/8 18:06:15.456  Chromaggus 's Frost Burn hits Healsforblow for 4573 Frost damage.
+12/8 18:06:59.746  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:07:00.778  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:07:01.754  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:07:02.795  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:07:03.793  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:08:07.434  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:08:15.486  Chromaggus 's Frost Burn hits Healsforblow for 3552 Frost damage. (1431 absorbed)
+12/8 18:40:32.437  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:33.429  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:34.453  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:35.439  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:36.435  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:37.429  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:38.440  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:40:39.453  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:41:06.510  Healsforblow suffers 0 Nature damage from Chromaggus 's Brood Affliction: Green. (250 absorbed)
+12/8 18:41:32.572  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:41:33.558  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:41:40.133  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:42:25.205  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:42:26.210  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:43:10.304  Healsforblow suffers 0 Frost damage from Chromaggus 's Brood Affliction: Blue.
+12/8 18:43:19.870  Healsforblow suffers 50 Fire damage from Chromaggus 's Brood Affliction: Red.
+12/8 18:43:47.035  Healsforblow 's Psychic Scream fails. Chromaggus is immune.
+12/8 18:44:06.785  Healsforblow suffers 0 Nature damage from Chromaggus 's Brood Affliction: Green. (250 absorbed)
+12/8 18:44:10.939  Chromaggus 's Frost Burn hits Healsforblow for 4341 Frost damage.

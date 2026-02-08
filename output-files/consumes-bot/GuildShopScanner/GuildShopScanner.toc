@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: GuildShopScanner
+## Notes: Scans AH prices for TBC Guild Consume Shop
+## Author: TBC Guild
+## Version: 1.0
+## SavedVariables: GuildShopScannerDB
+
+Items.lua
+GuildShopScanner.lua

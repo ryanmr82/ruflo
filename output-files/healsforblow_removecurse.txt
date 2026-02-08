@@ -1,0 +1,75 @@
+﻿12/5 17:30:41.416  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:30:55.939  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:31:03.945  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:31:19.374  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:32:39.452  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:48:32.077  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:48:46.420  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:48:54.376  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:49:11.492  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:49:52.869  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:50:03.815  Healsforblow 's Poison Bolt Volley is removed.
+12/5 17:50:18.908  Healsforblow 's Poison Bolt Volley is removed.
+12/6 16:11:33.951  Healsforblow 's Ancient Hysteria is removed.
+12/6 16:11:33.951  Whora casts Remove Lesser Curse on Healsforblow.
+12/6 16:24:29.652  Healsforblow is afflicted by Lucifron's Curse (1).
+12/6 16:24:41.734  Healsforblow 's Lucifron's Curse is removed.
+12/6 16:24:41.734  Motguts casts Remove Lesser Curse on Healsforblow.
+12/6 16:24:41.755  Lucifron's Curse fades from Healsforblow.
+12/6 16:24:43.587  Healsforblow 's Impending Doom is removed.
+12/6 16:24:44.652  Healsforblow is afflicted by Lucifron's Curse (1).
+12/6 16:24:55.466  Healsforblow 's Lucifron's Curse is removed.
+12/6 16:24:55.466  Motguts casts Remove Lesser Curse on Healsforblow.
+12/6 16:24:55.466  Lucifron's Curse fades from Healsforblow.
+12/6 16:35:40.517  Healsforblow 's Wildfire is removed.
+12/6 16:36:14.969  Healsforblow 's Shadow Word: Pain is removed.
+12/6 16:38:38.092  Healsforblow 's Shadow Word: Pain is removed.
+12/6 17:17:43.897  Healsforblow 's Incite Flames is removed.
+12/6 17:29:13.082  Healsforblow 's Ignite Mana is removed.
+12/6 17:37:42.797  Healsforblow 's Ignite Mana is removed.
+12/6 17:38:17.557  Healsforblow 's Ignite Mana is removed.
+12/6 17:39:08.011  Healsforblow 's Ignite Mana is removed.
+12/6 17:54:15.496  Healsforblow 's Fade is removed.
+12/6 17:54:35.508  Healsforblow 's Inner Fire is removed.
+12/6 17:54:55.541  Healsforblow 's Prayer of Fortitude is removed.
+12/6 17:55:15.565  Healsforblow 's Arcane Intellect is removed.
+12/6 18:14:51.043  Healsforblow is afflicted by Shazzrah's Curse (1).
+12/6 18:14:54.550  Healsforblow 's Shazzrah's Curse is removed.
+12/6 18:14:54.550  Whora casts Remove Lesser Curse on Healsforblow.
+12/6 18:14:54.550  Shazzrah's Curse fades from Healsforblow.
+12/6 18:15:11.047  Healsforblow is afflicted by Shazzrah's Curse (1).
+12/6 18:15:40.532  Healsforblow 's Shazzrah's Curse is removed.
+12/6 18:15:40.542  Whora casts Remove Lesser Curse on Healsforblow.
+12/6 18:15:40.542  Shazzrah's Curse fades from Healsforblow.
+12/8 17:50:37.359  Healsforblow 's Brood Affliction: Green is removed.
+12/8 17:51:11.849  Healsforblow 's Brood Affliction: Black is removed.
+12/8 17:51:11.849  Gobsta casts Remove Lesser Curse on Healsforblow.
+12/8 17:52:02.369  Healsforblow 's Brood Affliction: Green is removed.
+12/8 17:52:12.417  Healsforblow 's Brood Affliction: Green is removed.
+12/8 18:04:24.354  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:04:29.159  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:04:44.153  Healsforblow 's Brood Affliction: Red is removed.
+12/8 18:05:58.607  Healsforblow 's Brood Affliction: Red is removed.
+12/8 18:06:03.631  Healsforblow 's Brood Affliction: Red is removed.
+12/8 18:06:08.621  Healsforblow 's Brood Affliction: Red is removed.
+12/8 18:06:09.548  Healsforblow 's Brood Affliction: Green is removed.
+12/8 18:06:46.284  Healsforblow 's Brood Affliction: Green is removed.
+12/8 18:06:51.284  Healsforblow 's Brood Affliction: Green is removed.
+12/8 18:07:03.899  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:07:32.234  Healsforblow 's Brood Affliction: Green is removed.
+12/8 18:07:37.306  Healsforblow 's Brood Affliction: Red is removed.
+12/8 18:08:08.139  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:40:17.957  Healsforblow 's Brood Affliction: Black is removed.
+12/8 18:40:17.957  Chauncey casts Remove Curse on Healsforblow.
+12/8 18:40:39.599  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:40:54.781  Healsforblow 's Brood Affliction: Red is removed.
+12/8 18:41:09.030  Healsforblow 's Brood Affliction: Green is removed.
+12/8 18:41:17.653  Healsforblow 's Brood Affliction: Black is removed.
+12/8 18:41:17.653  Boomkha casts Remove Curse on Healsforblow.
+12/8 18:41:33.983  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:41:40.350  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:42:10.864  Healsforblow 's Brood Affliction: Black is removed.
+12/8 18:42:10.864  Gobsta casts Remove Lesser Curse on Healsforblow.
+12/8 18:42:26.669  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:43:11.086  Healsforblow 's Brood Affliction: Blue is removed.
+12/8 18:43:21.466  Healsforblow 's Brood Affliction: Red is removed.

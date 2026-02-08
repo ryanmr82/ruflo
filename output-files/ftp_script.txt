@@ -1,0 +1,6 @@
+open 144.24.24.215
+opc
+binary
+hash
+put C:\TurtleWoW.7z
+quit

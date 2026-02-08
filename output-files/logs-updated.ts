@@ -1,0 +1,717 @@
+import { Handlers } from "$fresh/server.ts";
+
+interface LogSubmission {
+  raidType: string;
+  raidName: string;
+  bossKilled: string | null;
+  startTime: string;
+  endTime: string;
+  lineCount: number;
+  content: string;
+}
+
+interface PlayerStats {
+  name: string;
+  deaths: number;
+  totalConsumables: number;
+  food: Record<string, number>;
+  potions: Record<string, number>;
+  elixirs: Record<string, number>;
+  flasks: Record<string, number>;
+  jujus: Record<string, number>;
+  scrolls: Record<string, number>;
+  weaponEnhancements: Record<string, number>;
+  worldBuffs: Record<string, number>;
+  misc: Record<string, number>;
+  dispels: Record<string, number>;
+  protective: Record<string, number>;
+}
+
+// === LOOT TRACKING ===
+interface LootDrop {
+  timestamp: string;
+  player: string;
+  itemId: number;
+  itemName: string;
+  quality: string;
+}
+
+// Quality color codes from WoW
+const QUALITY_COLORS: Record<string, string> = {
+  'ff9d9d9d': 'poor',
+  'ffffffff': 'common',
+  'ff1eff00': 'uncommon',
+  'ff0070dd': 'rare',
+  'ffa335ee': 'epic',
+  'ffff8000': 'legendary',
+};
+
+interface StoredLog {
+  id: string;
+  raidType: string;
+  raidName: string;
+  bossKilled: string | null;
+  startTime: string;
+  endTime: string;
+  lineCount: number;
+  uploadedAt: string;
+  fileSize: number;
+  playerStats: PlayerStats[];
+  loot: LootDrop[];
+  summary: {
+    totalPlayers: number;
+    totalDeaths: number;
+    totalConsumables: number;
+    totalDispels: number;
+    mostDeaths: { player: string; count: number };
+    mostConsumables: { player: string; count: number };
+    mostDispels: { player: string; count: number };
+    totalLootDrops: number;
+    epicDrops: number;
+  };
+}
+
+// NPC/Enemy exclusion list - EXACT from analyze_player_behavior.py
+const ENEMY_MOBS = new Set([
+  // MC Bosses (full names)
+  'Lucifron', 'Magmadar', 'Gehennas', 'Garr', 'Shazzrah', 'Baron Geddon',
+  'Sulfuron Harbinger', 'Golemagg the Incinerator', 'Majordomo Executus', 'Ragnaros',
+  // MC Trash (full multi-word names from log)
+  'Ancient Core Hound', 'Core Hound', 'Core Rager',
+  'Flame Imp', 'Flameskin Incendosaur',
+  'Flamewaker Elite', 'Flamewaker Healer', 'Flamewaker Priest', 'Flamewaker Protector',
+  'Lava Annihilator', 'Lava Elemental', 'Lava Reaver', 'Lava Spawn', 'Lava Surger',
+  'Molten Destroyer', 'Molten Giant',
+  'Shadowforge Blazeweaver', 'Shadowforge Guardian', 'Shadowforge Hierophant',
+  'Small Incendic Egg', 'Large Incendic Egg',
+  'Son of Flame', 'Spawn of Incindis',
+  // Partial names (last word only - what \w+ regex captures)
+  'Geddon', 'Harbinger', 'Incinerator', 'Executus',
+  'Hound', 'Rager',
+  'Imp', 'Incendosaur',
+  'Elite', 'Healer', 'Protector',
+  'Annihilator', 'Elemental', 'Reaver', 'Spawn', 'Surger',
+  'Destroyer', 'Giant',
+  'Blazeweaver', 'Guardian', 'Hierophant',
+  'Egg',
+  'Flame', 'Incindis',
+  // Other MC mobs
+  'Firelord', 'Firewalker', 'Flameguard',
+  'Incendius',
+  // BWL
+  'Razorgore', 'Vaelastrasz', 'Broodlord', 'Lashlayer',
+  'Firemaw', 'Ebonroc', 'Flamegor', 'Chromaggus', 'Nefarian',
+  // Pets
+  'Greater Feral Spirit', 'Spirit Wolf', 'Dire Wolf',
+]);
+
+// EXACT consumables database from consumables_database.json
+const CONSUMABLES_DB: Record<string, Record<string, { effect: string; category: string }>> = {
+  food: {
+    "Danonzos Tel'Abim Medley": { effect: "+2% Haste for 15 min", category: "food" },
+    "Danonzos Tel'Abim Delight": { effect: "+15 Stamina and Spirit for 15 min", category: "food" },
+    "Danonzos Tel'Abim Surprise": { effect: "+12 Stamina and Spirit for 15 min", category: "food" },
+    "Blessed Sunfruit": { effect: "+10 Strength for 10 min", category: "food" },
+    "Dirge's Kickin' Chimaerok Chops": { effect: "+25 Stamina for 1 hour", category: "food" },
+    "Smoked Desert Dumplings": { effect: "+20 Strength for 15 min", category: "food" },
+    "Runn Tum Tuber Surprise": { effect: "+10 Intellect for 10 min", category: "food" },
+    "Nightfin Soup": { effect: "+8 MP5 for 10 min", category: "food" },
+    "Sagefish Delight": { effect: "+6 MP5 for 10 min", category: "food" },
+    "Grilled Squid": { effect: "+10 Agility for 10 min", category: "food" },
+    "Rumsey Rum Black Label": { effect: "+15 Stamina for 15 min", category: "food" },
+    "Morning Glory Dew": { effect: "Restores health and mana over time", category: "food" },
+    "Power Mushroom": { effect: "Restores health/mana (custom Turtle WoW)", category: "food" },
+    "Juicy Striped Melon": { effect: "Restores health over time", category: "food" },
+    "Well Fed": { effect: "Generic food buff (various effects)", category: "food" },
+  },
+  potions: {
+    "Fire Protection Potion": { effect: "Absorbs 975-1625 Fire damage for 1 hour", category: "potion" },
+    "Greater Fire Protection Potion": { effect: "Absorbs 1950-3250 Fire damage for 2 min", category: "potion" },
+    "Greater Arcane Protection Potion": { effect: "Absorbs 1950-3250 Arcane damage for 2 min", category: "potion" },
+    "Greater Frost Protection Potion": { effect: "Absorbs 1950-3250 Frost damage for 2 min", category: "potion" },
+    "Greater Nature Protection Potion": { effect: "Absorbs 1950-3250 Nature damage for 2 min", category: "potion" },
+    "Greater Shadow Protection Potion": { effect: "Absorbs 1950-3250 Shadow damage for 2 min", category: "potion" },
+    "Major Healing Potion": { effect: "Restores 1050-1750 health (instant)", category: "potion" },
+    "Major Mana Potion": { effect: "Restores 1350-2251 mana (instant)", category: "potion" },
+    "Greater Mana Potion": { effect: "Restores 1050-1751 mana (instant)", category: "potion" },
+    "Mageblood Potion": { effect: "+12 MP5 for 20 seconds", category: "potion" },
+    "Mighty Rage Potion": { effect: "+45-75 Rage (instant)", category: "potion" },
+    "Thistle Tea": { effect: "+100 Energy for Rogues (instant)", category: "potion" },
+    "Combat Healing Potion": { effect: "Restores health (usable in combat)", category: "potion" },
+    "Combat Mana Potion": { effect: "Restores mana (usable in combat)", category: "potion" },
+    "Limited Invulnerability Potion": { effect: "Immune to physical damage for 6 seconds", category: "potion" },
+    "Major Trolls Blood Potion": { effect: "Regenerates health over time", category: "potion" },
+    "Greater Stoneshield Potion": { effect: "+2000 Armor for 90 seconds", category: "potion" },
+    "Swiftness Potion": { effect: "+50% Movement Speed for 15 seconds", category: "potion" },
+    "Free Action Potion": { effect: "Immune to Stun/Movement Impair for 30 seconds", category: "potion" },
+    "Swiftness of Zanza": { effect: "+20% Run Speed for 2 hours", category: "potion" },
+  },
+  elixirs: {
+    "Elixir of the Mongoose": { effect: "+25 Agility, +2% Critical Strike for 1 hour", category: "elixir" },
+    "Elixir of Giants": { effect: "+25 Strength for 1 hour", category: "elixir" },
+    "Elixir of Greater Agility": { effect: "+25 Agility for 1 hour", category: "elixir" },
+    "Elixir of Brute Force": { effect: "+18 Strength, +18 Stamina for 1 hour", category: "elixir" },
+    "Winterfall Firewater": { effect: "+35 Attack Power for 20 min", category: "elixir" },
+    "Elixir of Greater Firepower": { effect: "+40 Fire Spell Damage for 30 min", category: "elixir" },
+    "Elixir of Shadow Power": { effect: "+40 Shadow Spell Damage for 30 min", category: "elixir" },
+    "Elixir of Frost Power": { effect: "+15 Frost Spell Damage for 30 min", category: "elixir" },
+    "Elixir of the Sages": { effect: "+18 Intellect, +18 Spirit for 1 hour", category: "elixir" },
+    "Elixir of Greater Intellect": { effect: "+25 Intellect for 1 hour", category: "elixir" },
+    "Elixir of Fortitude": { effect: "+120 Health for 1 hour", category: "elixir" },
+    "Gift of Arthas": { effect: "+10 Shadow Spell Damage, -5 Spirit for 30 min", category: "elixir" },
+    "Dreamshard Elixir": { effect: "+2% Spell Critical Strike, +15 Spell Power for 1 hour", category: "elixir" },
+    "Arcane Elixir": { effect: "+20 Spell Damage for 30 min", category: "elixir" },
+    "Greater Arcane Elixir": { effect: "+35 Spell Damage for 1 hour", category: "elixir" },
+    "Elixir of Superior Defense": { effect: "+450 Armor for 1 hour", category: "elixir" },
+    "Elixir of Giant Growth": { effect: "Increases size (cosmetic)", category: "elixir" },
+    "Ground Scorpok Assay": { effect: "+25 Agility for 1 hour", category: "elixir" },
+  },
+  flasks: {
+    "Flask of Supreme Power": { effect: "+150 Spell Damage for 2 hours (persists through death)", category: "flask" },
+    "Flask of the Titans": { effect: "+400 Health for 2 hours (persists through death)", category: "flask" },
+    "Flask of Distilled Wisdom": { effect: "+2000 Mana for 2 hours (persists through death)", category: "flask" },
+    "Flask of Chromatic Resistance": { effect: "+25 All Resistances for 2 hours (persists through death)", category: "flask" },
+  },
+  jujus: {
+    "Juju Flurry": { effect: "+3% Attack Speed for 20 seconds", category: "juju" },
+    "Juju Might": { effect: "+40 Attack Power for 20 min", category: "juju" },
+    "Juju Power": { effect: "+30 Strength for 30 min", category: "juju" },
+    "Juju Ember": { effect: "+15 Fire Resistance for 20 min", category: "juju" },
+    "Spirit of Zanza": { effect: "+50 Spirit, +50 Stamina for 2 hours", category: "juju" },
+  },
+  scrolls: {
+    "Scroll of Agility IV": { effect: "+17 Agility for 30 min", category: "scroll" },
+    "Scroll of Strength IV": { effect: "+17 Strength for 30 min", category: "scroll" },
+    "Scroll of Intellect IV": { effect: "+17 Intellect for 30 min", category: "scroll" },
+    "Scroll of Protection IV": { effect: "+300 Armor for 30 min", category: "scroll" },
+  },
+  weaponEnhancements: {
+    "Brilliant Wizard Oil": { effect: "+36 Spell Damage, +1% Spell Critical Strike for 30 min", category: "weapon_oil" },
+    "Wizard Oil": { effect: "+8 Spell Damage for 30 min", category: "weapon_oil" },
+    "Lesser Wizard Oil": { effect: "+4 Spell Damage for 30 min", category: "weapon_oil" },
+    "Brilliant Mana Oil": { effect: "+25 Healing, +12 MP5 for 1 hour", category: "weapon_oil" },
+    "Mana Oil": { effect: "+12 MP5 for 30 min", category: "weapon_oil" },
+    "Blessed Wizard Oil": { effect: "+60 Spell Damage vs Undead for 1 hour", category: "weapon_oil" },
+    "Elemental Sharpening Stone": { effect: "+2% Critical Strike for 30 min", category: "sharpening_stone" },
+    "Dense Sharpening Stone": { effect: "+8 Weapon Damage for 30 min", category: "sharpening_stone" },
+    "Consecrated Sharpening Stone": { effect: "+100 Attack Power vs Undead for 1 hour", category: "sharpening_stone" },
+    "Deadly Poison": { effect: "Weapon coated with poison (Rogue only)", category: "poison" },
+    "Instant Poison": { effect: "Weapon coated with poison (Rogue only)", category: "poison" },
+  },
+  worldBuffs: {
+    "Rallying Cry of the Dragonslayer": { effect: "+140 Attack Power, +5% Critical Strike, +10% Spell Critical Strike for 2 hours", category: "world_buff" },
+    "Warchief's Blessing": { effect: "+300 Health, +15% Melee Haste for 2 hours", category: "world_buff" },
+    "Spirit of Zandalar": { effect: "+15% Stats, +10% Movement Speed for 2 hours", category: "world_buff" },
+    "Songflower Serenade": { effect: "+15 All Stats, +5% Critical Strike for 1 hour", category: "world_buff" },
+    "Fengus' Ferocity": { effect: "+200 Attack Power for 2 hours", category: "world_buff" },
+    "Mol'dar's Moxie": { effect: "+15% Stamina for 2 hours", category: "world_buff" },
+    "Slip'kik's Savvy": { effect: "+3% Spell Critical Strike for 2 hours", category: "world_buff" },
+    "Sayge's Dark Fortune of Damage": { effect: "+10% Damage for 2 hours", category: "world_buff" },
+  },
+  misc: {
+    "Demonic Rune": { effect: "Restore mana at cost of health (instant)", category: "misc" },
+    "Dark Rune": { effect: "Restore mana (instant)", category: "misc" },
+    "Goblin Sapper Charge": { effect: "AoE damage bomb (instant)", category: "misc" },
+    "Rage of Ages": { effect: "+25 Agility, +60 Strength for 15 seconds (ROIDS)", category: "misc" },
+    "Dreamtonic": { effect: "Unknown (Turtle WoW custom)", category: "misc" },
+  },
+};
+
+// Dispel and protective spells - EXACT from consumables_database.json
+const DISPEL_SPELLS = new Set([
+  "Remove Curse", "Remove Lesser Curse", "Cure Disease", "Abolish Disease",
+  "Cure Poison", "Abolish Poison", "Cleanse", "Purify", "Dispel Magic",
+]);
+
+const PROTECTIVE_SPELLS = new Set([
+  "Fear Ward", "Power Word: Shield",
+]);
+
+// Build lookup for all consumables
+const ALL_BUFFS = new Map<string, { category: string; type: string }>();
+for (const [typeName, items] of Object.entries(CONSUMABLES_DB)) {
+  for (const [buffName, info] of Object.entries(items)) {
+    ALL_BUFFS.set(buffName, { category: info.category, type: typeName });
+  }
+}
+
+/**
+ * Parse loot drops from combat log
+ * Format: 12/6 16:12:02.002  LOOT: 06.12.25 16:12:02&PlayerName receives loot: |cCOLORCODE|Hitem:ITEMID:...|h[Item Name]|h|r.
+ */
+function parseLoot(content: string): LootDrop[] {
+  const lines = content.split('\n');
+  const lootDrops: LootDrop[] = [];
+
+  // Regex to match loot lines - more flexible pattern
+  // Actual format: 12/6 16:12:02.002  LOOT: 06.12.25 16:12:02&Fieldwalker receives loot: |cffa335ee|Hitem:16817:0:0:0|h[Girdle of Prophecy]|h|r.
+  const lootRegex = /LOOT:\s*([\d.]+\s+[\d:]+)&(\w+)\s+receives\s+loot:\s*\|c([a-f0-9]{8})\|Hitem:(\d+):[^|]*\|h\[([^\]]+)\]\|h\|r/i;
+
+  for (const line of lines) {
+    if (!line.includes('receives loot:')) continue;
+
+    const match = line.match(lootRegex);
+    if (match) {
+      const [, timestamp, player, colorCode, itemId, itemName] = match;
+
+      // Determine quality from color code
+      const quality = QUALITY_COLORS[colorCode.toLowerCase()] || 'unknown';
+
+      lootDrops.push({
+        timestamp: timestamp.trim(),
+        player: player.trim(),
+        itemId: parseInt(itemId, 10),
+        itemName: itemName.trim(),
+        quality,
+      });
+    }
+  }
+
+  return lootDrops;
+}
+
+/**
+ * Parse combat log to extract player statistics
+ * IMPROVED: Only count players who use KNOWN raid consumables
+ * This filters out BG enemies and random players
+ */
+function parsePlayerStats(content: string): PlayerStats[] {
+  const lines = content.split("\n");
+  const confirmedPlayers = new Set<string>();
+  const potentialPlayers = new Set<string>(); // Players who cast/use anything
+
+  // FIRST PASS: Identify confirmed raid members
+  // Only count players who use items from our CONSUMABLES database
+  // This filters out random BG enemies who might cast spells
+  for (const line of lines) {
+    // Pattern: "PlayerName uses ItemName."
+    const usesMatch = line.match(/(\w+) uses (.+?)(?:\son\s|\.)/);
+    if (usesMatch) {
+      const [, name, itemName] = usesMatch;
+      if (ENEMY_MOBS.has(name)) continue;
+
+      potentialPlayers.add(name);
+
+      // Only confirm if they use a KNOWN consumable
+      const trimmedItem = itemName.trim();
+      if (ALL_BUFFS.has(trimmedItem)) {
+        confirmedPlayers.add(name);
+      }
+    }
+
+    // Pattern: "PlayerName casts SpellName on Target"
+    // Count dispels/protective casts - these indicate raid healers
+    const castMatch = line.match(/(\w+) casts (.+?) on (\w+)\./);
+    if (castMatch) {
+      const [, caster, spellName, target] = castMatch;
+      if (ENEMY_MOBS.has(caster)) continue;
+
+      potentialPlayers.add(caster);
+      if (!ENEMY_MOBS.has(target)) potentialPlayers.add(target);
+
+      // Dispelling/shielding = definitely a raid healer
+      if (DISPEL_SPELLS.has(spellName) || PROTECTIVE_SPELLS.has(spellName)) {
+        confirmedPlayers.add(caster);
+        if (!ENEMY_MOBS.has(target)) confirmedPlayers.add(target); // Target is a raid member too
+      }
+    }
+  }
+
+  // SECOND PASS: Add players who received heals/buffs from confirmed players
+  // This catches players who didn't use consumables but are clearly in the raid
+  for (const line of lines) {
+    // Pattern: "PlayerName 's SpellName heals Target for X."
+    const healMatch = line.match(/(\w+) 's .+ heals (\w+)/);
+    if (healMatch) {
+      const [, healer, target] = healMatch;
+      // If healer is confirmed, their heal targets are also raiders
+      if (confirmedPlayers.has(healer) && potentialPlayers.has(target)) {
+        if (!ENEMY_MOBS.has(target)) confirmedPlayers.add(target);
+      }
+    }
+
+    // Pattern: "Target gains BuffName from PlayerName"
+    const buffFromMatch = line.match(/(\w+) gains .+ from (\w+)/);
+    if (buffFromMatch) {
+      const [, target, source] = buffFromMatch;
+      if (confirmedPlayers.has(source) && potentialPlayers.has(target)) {
+        if (!ENEMY_MOBS.has(target)) confirmedPlayers.add(target);
+      }
+    }
+  }
+
+  // Initialize stats for confirmed players only
+  const playerStats = new Map<string, PlayerStats>();
+  for (const name of confirmedPlayers) {
+    playerStats.set(name, {
+      name,
+      deaths: 0,
+      totalConsumables: 0,
+      food: {},
+      potions: {},
+      elixirs: {},
+      flasks: {},
+      jujus: {},
+      scrolls: {},
+      weaponEnhancements: {},
+      worldBuffs: {},
+      misc: {},
+      dispels: {},
+      protective: {},
+    });
+  }
+
+  // SECOND PASS: Parse stats for confirmed players only
+  for (const line of lines) {
+    // Pattern 1: "PlayerName uses ItemName." or "PlayerName uses ItemName on Target."
+    const usesMatch = line.match(/(\w+) uses (.+?)(?:\son\s|\.)/);
+    if (usesMatch) {
+      const [, playerName, itemName] = usesMatch;
+      const trimmedItem = itemName.trim();
+
+      if (!confirmedPlayers.has(playerName)) continue;
+
+      const buffInfo = ALL_BUFFS.get(trimmedItem);
+      if (buffInfo) {
+        const stats = playerStats.get(playerName)!;
+        const category = buffInfo.category;
+
+        // Categorize the consumable by actual type
+        if (category === "food") {
+          stats.food[trimmedItem] = (stats.food[trimmedItem] || 0) + 1;
+        } else if (category === "potion") {
+          stats.potions[trimmedItem] = (stats.potions[trimmedItem] || 0) + 1;
+        } else if (category === "elixir") {
+          stats.elixirs[trimmedItem] = (stats.elixirs[trimmedItem] || 0) + 1;
+        } else if (category === "flask") {
+          stats.flasks[trimmedItem] = (stats.flasks[trimmedItem] || 0) + 1;
+        } else if (category === "juju") {
+          stats.jujus[trimmedItem] = (stats.jujus[trimmedItem] || 0) + 1;
+        } else if (category === "scroll") {
+          stats.scrolls[trimmedItem] = (stats.scrolls[trimmedItem] || 0) + 1;
+        } else if (category === "weapon_oil" || category === "sharpening_stone" || category === "poison") {
+          stats.weaponEnhancements[trimmedItem] = (stats.weaponEnhancements[trimmedItem] || 0) + 1;
+        } else if (category === "world_buff") {
+          stats.worldBuffs[trimmedItem] = (stats.worldBuffs[trimmedItem] || 0) + 1;
+        } else if (category === "misc") {
+          stats.misc[trimmedItem] = (stats.misc[trimmedItem] || 0) + 1;
+        }
+
+        stats.totalConsumables += 1;
+      }
+    }
+
+    // Pattern 2: "PlayerName gains BuffName (1)."
+    // NOTE: Most consumables show BOTH "uses" and "gains" on same timestamp
+    // We count via "uses" to avoid double-counting, so skip gains for items that can be "used"
+    const buffMatch = line.match(/(\w+) gains (.+?) \(\d+\)\./);
+    if (buffMatch) {
+      const [, playerName, buffName] = buffMatch;
+
+      if (!confirmedPlayers.has(playerName)) continue;
+
+      const buffInfo = ALL_BUFFS.get(buffName);
+      if (buffInfo) {
+        const stats = playerStats.get(playerName)!;
+        const category = buffInfo.category;
+
+        // Skip items that are counted via "uses" pattern to avoid double-counting
+        // Flasks, elixirs, potions, food, jujus, scrolls - all show both "uses" and "gains"
+        if (["flask", "elixir", "potion", "food", "juju", "scroll", "misc"].includes(category)) {
+          continue;
+        }
+
+        // Only count buffs that DON'T have a "uses" pattern (world buffs, weapon enhancements)
+        if (category === "weapon_oil" || category === "sharpening_stone" || category === "poison") {
+          stats.weaponEnhancements[buffName] = (stats.weaponEnhancements[buffName] || 0) + 1;
+          stats.totalConsumables += 1;
+        } else if (category === "world_buff") {
+          stats.worldBuffs[buffName] = (stats.worldBuffs[buffName] || 0) + 1;
+          stats.totalConsumables += 1;
+        }
+      }
+    }
+
+    // Pattern 3: "PlayerName dies."
+    const deathMatch = line.match(/(\w+) dies\./);
+    if (deathMatch) {
+      const [, playerName] = deathMatch;
+      if (confirmedPlayers.has(playerName)) {
+        playerStats.get(playerName)!.deaths += 1;
+      }
+    }
+
+    // Pattern 4: "PlayerName casts SpellName on Target." - for dispels/protective
+    const castMatch = line.match(/(\w+) casts (.+?) on (\w+)\./);
+    if (castMatch) {
+      const [, caster, spellName] = castMatch;
+
+      if (!confirmedPlayers.has(caster)) continue;
+
+      const stats = playerStats.get(caster)!;
+
+      if (DISPEL_SPELLS.has(spellName)) {
+        stats.dispels[spellName] = (stats.dispels[spellName] || 0) + 1;
+      }
+
+      if (PROTECTIVE_SPELLS.has(spellName)) {
+        stats.protective[spellName] = (stats.protective[spellName] || 0) + 1;
+      }
+    }
+  }
+
+  // Sort by total consumables (most active players first)
+  return Array.from(playerStats.values())
+    .filter(p => p.totalConsumables > 0 || p.deaths > 0 || Object.keys(p.dispels).length > 0)
+    .sort((a, b) => b.totalConsumables - a.totalConsumables);
+}
+
+/**
+ * Generate summary statistics for all players
+ */
+function generateSummary(players: PlayerStats[], loot: LootDrop[]) {
+  const totalPlayers = players.length;
+  const totalDeaths = players.reduce((sum, p) => sum + p.deaths, 0);
+  const totalConsumables = players.reduce((sum, p) => sum + p.totalConsumables, 0);
+  const totalDispels = players.reduce((sum, p) => sum + Object.values(p.dispels).reduce((a, b) => a + b, 0), 0);
+
+  const mostDeathsPlayer = players.reduce((max, p) => p.deaths > max.deaths ? p : max, { name: "None", deaths: 0 } as PlayerStats);
+  const mostConsumablesPlayer = players.reduce((max, p) => p.totalConsumables > max.totalConsumables ? p : max, { name: "None", totalConsumables: 0 } as PlayerStats);
+  const mostDispelsPlayer = players.reduce((max, p) => {
+    const dispelCount = Object.values(p.dispels).reduce((a, b) => a + b, 0);
+    const maxDispelCount = Object.values(max.dispels || {}).reduce((a: number, b: number) => a + b, 0);
+    return dispelCount > maxDispelCount ? p : max;
+  }, { name: "None", dispels: {} } as PlayerStats);
+
+  // Loot summary
+  const totalLootDrops = loot.length;
+  const epicDrops = loot.filter(l => l.quality === 'epic').length;
+
+  return {
+    totalPlayers,
+    totalDeaths,
+    totalConsumables,
+    totalDispels,
+    mostDeaths: { player: mostDeathsPlayer.name, count: mostDeathsPlayer.deaths },
+    mostConsumables: { player: mostConsumablesPlayer.name, count: mostConsumablesPlayer.totalConsumables },
+    mostDispels: {
+      player: mostDispelsPlayer.name,
+      count: Object.values(mostDispelsPlayer.dispels || {}).reduce((a: number, b: number) => a + b, 0),
+    },
+    totalLootDrops,
+    epicDrops,
+  };
+}
+
+export const handler: Handlers = {
+  // GET - List stored logs
+  async GET(req) {
+    const url = new URL(req.url);
+    const raidType = url.searchParams.get("raid");
+    const limit = parseInt(url.searchParams.get("limit") || "50");
+
+    try {
+      const kv = await Deno.openKv("/home/opc/tbc-website/data.db");
+      const logs: StoredLog[] = [];
+
+      const iter = kv.list<StoredLog>({ prefix: ["combat_logs"] });
+      for await (const entry of iter) {
+        if (raidType && entry.value.raidType !== raidType) continue;
+        logs.push(entry.value);
+        if (logs.length >= limit) break;
+      }
+
+      // Sort by upload date descending
+      logs.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
+
+      return new Response(JSON.stringify({ logs }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Failed to fetch logs:", error);
+      return new Response(JSON.stringify({ error: "Failed to fetch logs" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+
+  // POST - Store new log
+  async POST(req) {
+    try {
+      const data: LogSubmission = await req.json();
+
+      // Validate required fields
+      if (!data.content || !data.raidType) {
+        return new Response(JSON.stringify({ error: "Missing required fields" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      // Generate unique ID
+      const id = `${data.raidType}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+
+      // Parse player statistics using the EXACT method (ported from Python)
+      const playerStats = parsePlayerStats(data.content);
+
+      // Parse loot drops
+      const loot = parseLoot(data.content);
+
+      const summary = generateSummary(playerStats, loot);
+
+      // Create stored log entry
+      const storedLog: StoredLog = {
+        id,
+        raidType: data.raidType,
+        raidName: data.raidName,
+        bossKilled: data.bossKilled,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        lineCount: data.lineCount,
+        uploadedAt: new Date().toISOString(),
+        fileSize: new Blob([data.content]).size,
+        playerStats,
+        loot,
+        summary,
+      };
+
+      const kv = await Deno.openKv("/home/opc/tbc-website/data.db");
+
+      // Store log metadata and stats
+      await kv.set(["combat_logs", id], storedLog);
+
+      // Save raw content to disk (Deno KV has 64KB limit per value)
+      const logsDir = "/home/opc/tbc-website/raw-logs";
+      try {
+        await Deno.mkdir(logsDir, { recursive: true });
+        await Deno.writeTextFile(logsDir + "/" + id + ".txt", data.content);
+      } catch (err) {
+        console.error("Failed to save raw log to disk:", err);
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        id,
+        playerCount: playerStats.length,
+        lootCount: loot.length,
+        epicCount: loot.filter(l => l.quality === 'epic').length,
+      }), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Failed to store log:", error);
+      return new Response(JSON.stringify({ error: "Failed to store log" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+
+  // PATCH - Re-parse all existing logs with fixed parser
+  async PATCH(_req) {
+    try {
+      const kv = await Deno.openKv("/home/opc/tbc-website/data.db");
+      const reprocessed: string[] = [];
+      const skipped: string[] = [];
+      const allLogIds: string[] = [];
+
+      // Get all stored logs
+      const logsIter = kv.list({ prefix: ["combat_logs"] });
+
+      for await (const entry of logsIter) {
+        // Skip raw content entries
+        const key = entry.key as string[];
+        if (key[0] === "combat_logs_raw") continue;
+
+        const oldLog = entry.value as StoredLog;
+        const logId = oldLog.id;
+        allLogIds.push(logId);
+
+        // Try to read raw content from disk
+        let rawContent = "";
+        try {
+          rawContent = await Deno.readTextFile(`/home/opc/tbc-website/raw-logs/${logId}.txt`);
+        } catch {
+          // Try KV as fallback
+          const rawEntry = await kv.get<string>(["combat_logs_raw", logId]);
+          if (!rawEntry.value) {
+            skipped.push(logId + " (no raw content)");
+            continue;
+          }
+          rawContent = rawEntry.value;
+        }
+
+        // Re-parse with fixed parser
+        const playerStats = parsePlayerStats(rawContent);
+        const loot = parseLoot(rawContent);
+        const summary = generateSummary(playerStats, loot);
+
+        // Update the stored log with new parsed data
+        const updatedLog: StoredLog = {
+          ...oldLog,
+          playerStats,
+          loot,
+          summary,
+        };
+
+        await kv.set(["combat_logs", logId], updatedLog);
+        reprocessed.push(logId);
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        reprocessed: reprocessed.length,
+        skipped: skipped.length,
+        skippedIds: skipped,
+        allLogIds,
+        ids: reprocessed
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Failed to reprocess logs:", error);
+      return new Response(JSON.stringify({ error: "Failed to reprocess logs", details: String(error) }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+
+  // DELETE - Remove a log
+  async DELETE(req) {
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
+
+    if (!id) {
+      return new Response(JSON.stringify({ error: "Missing log ID" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    try {
+      const kv = await Deno.openKv("/home/opc/tbc-website/data.db");
+      await kv.delete(["combat_logs", id]);
+      await kv.delete(["combat_logs_raw", id]);
+
+      // Also try to delete raw file from disk
+      try {
+        await Deno.remove(`/home/opc/tbc-website/raw-logs/${id}.txt`);
+      } catch {
+        // File might not exist, ignore
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Failed to delete log:", error);
+      return new Response(JSON.stringify({ error: "Failed to delete log" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+};

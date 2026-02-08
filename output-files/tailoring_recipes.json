@@ -1,0 +1,4900 @@
+{
+  "TailoringApprentice1": [
+    {
+      "spell_id": "2963",
+      "name": "Bolt of Linen Cloth",
+      "icon": "inv_fabric_linen_02",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 1,
+        "yellow": 25,
+        "green": 37,
+        "gray": 50
+      }
+    },
+    {
+      "spell_id": "3915",
+      "name": "Brown Linen Shirt",
+      "icon": "inv_shirt_02",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 1,
+        "yellow": 35,
+        "green": 47,
+        "gray": 60
+      }
+    },
+    {
+      "spell_id": "2387",
+      "name": "Linen Cloak",
+      "icon": "inv_misc_cape_14",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 1,
+        "yellow": 35,
+        "green": 47,
+        "gray": 60
+      }
+    },
+    {
+      "spell_id": "12044",
+      "name": "Simple Linen Pants",
+      "icon": "inv_pants_11",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 1,
+        "yellow": 35,
+        "green": 47,
+        "gray": 60
+      }
+    },
+    {
+      "spell_id": "2393",
+      "name": "White Linen Shirt",
+      "icon": "inv_shirt_white_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 1,
+        "yellow": 35,
+        "green": 47,
+        "gray": 60
+      }
+    },
+    {
+      "spell_id": "2385",
+      "name": "Brown Linen Vest",
+      "icon": "inv_shirt_05",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 10,
+        "yellow": 45,
+        "green": 57,
+        "gray": 70
+      }
+    },
+    {
+      "spell_id": "8776",
+      "name": "Linen Belt",
+      "icon": "inv_belt_05",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 15,
+        "yellow": 50,
+        "green": 67,
+        "gray": 85
+      }
+    },
+    {
+      "spell_id": "12045",
+      "name": "Simple Linen Boots",
+      "icon": "inv_boots_05",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 20,
+        "yellow": 50,
+        "green": 67,
+        "gray": 85
+      }
+    },
+    {
+      "spell_id": "3914",
+      "name": "Brown Linen Pants",
+      "icon": "inv_pants_06",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 30,
+        "yellow": 55,
+        "green": 72,
+        "gray": 90
+      }
+    },
+    {
+      "spell_id": "7623",
+      "name": "Brown Linen Robe",
+      "icon": "inv_chest_cloth_21",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 30,
+        "yellow": 55,
+        "green": 72,
+        "gray": 90
+      }
+    },
+    {
+      "spell_id": "7624",
+      "name": "White Linen Robe",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 30,
+        "yellow": 55,
+        "green": 72,
+        "gray": 90
+      }
+    },
+    {
+      "spell_id": "3840",
+      "name": "Heavy Linen Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 35,
+        "yellow": 60,
+        "green": 77,
+        "gray": 95
+      }
+    },
+    {
+      "spell_id": "2394",
+      "name": "Blue Linen Shirt",
+      "icon": "inv_shirt_blue_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 40,
+        "yellow": 65,
+        "green": 82,
+        "gray": 100
+      }
+    },
+    {
+      "spell_id": "2392",
+      "name": "Red Linen Shirt",
+      "icon": "inv_shirt_red_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 40,
+        "yellow": 65,
+        "green": 82,
+        "gray": 100
+      }
+    },
+    {
+      "spell_id": "8465",
+      "name": "Simple Dress",
+      "icon": "inv_shirt_12",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 40,
+        "yellow": 65,
+        "green": 82,
+        "gray": 100
+      }
+    },
+    {
+      "spell_id": "2389",
+      "name": "Red Linen Robe",
+      "icon": "inv_chest_cloth_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 40,
+        "yellow": 65,
+        "green": 82,
+        "gray": 100
+      }
+    },
+    {
+      "spell_id": "3755",
+      "name": "Linen Bag",
+      "icon": "inv_misc_bag_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 45,
+        "yellow": 70,
+        "green": 87,
+        "gray": 105
+      }
+    },
+    {
+      "spell_id": "7630",
+      "name": "Blue Linen Vest",
+      "icon": "inv_chest_cloth_37",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 55,
+        "yellow": 80,
+        "green": 97,
+        "gray": 115
+      }
+    },
+    {
+      "spell_id": "7629",
+      "name": "Red Linen Vest",
+      "icon": "inv_chest_cloth_40",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 55,
+        "yellow": 80,
+        "green": 97,
+        "gray": 115
+      }
+    },
+    {
+      "spell_id": "3841",
+      "name": "Green Linen Bracers",
+      "icon": "inv_bracer_12",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 60,
+        "yellow": 85,
+        "green": 102,
+        "gray": 120
+      }
+    },
+    {
+      "spell_id": "2397",
+      "name": "Reinforced Linen Cape",
+      "icon": "inv_misc_cape_07",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 60,
+        "yellow": 85,
+        "green": 102,
+        "gray": 120
+      }
+    },
+    {
+      "spell_id": "2386",
+      "name": "Linen Boots",
+      "icon": "inv_boots_09",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 65,
+        "yellow": 90,
+        "green": 107,
+        "gray": 125
+      }
+    },
+    {
+      "spell_id": "2396",
+      "name": "Green Linen Shirt",
+      "icon": "inv_shirt_green_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "6686",
+      "name": "Red Linen Bag",
+      "icon": "inv_misc_bag_02",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "2395",
+      "name": "Barbaric Linen Vest",
+      "icon": "inv_chest_fur",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "7633",
+      "name": "Blue Linen Robe",
+      "icon": "inv_chest_cloth_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "3842",
+      "name": "Handstitched Linen Britches",
+      "icon": "inv_pants_07",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "2964",
+      "name": "Bolt of Woolen Cloth",
+      "icon": "inv_fabric_wool_03",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 75,
+        "yellow": 90,
+        "green": 97,
+        "gray": 105
+      }
+    },
+    {
+      "spell_id": "12046",
+      "name": "Simple Kilt",
+      "icon": "inv_pants_11",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 75,
+        "yellow": 100,
+        "green": 117,
+        "gray": 135
+      }
+    },
+    {
+      "spell_id": "2402",
+      "name": "Woolen Cape",
+      "icon": "inv_misc_cape_10",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 75,
+        "yellow": 100,
+        "green": 117,
+        "gray": 135
+      }
+    }
+  ],
+  "TailoringApprentice2": [
+    {
+      "spell_id": "45066",
+      "name": "Gloves of Manathirst",
+      "icon": "inv_gauntlets_19",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 75,
+        "yellow": 150,
+        "green": 167,
+        "gray": 185
+      }
+    }
+  ],
+  "TailoringJourneyman1": [
+    {
+      "spell_id": "3757",
+      "name": "Woolen Bag",
+      "icon": "inv_misc_bag_10",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 80,
+        "yellow": 105,
+        "green": 122,
+        "gray": 140
+      }
+    },
+    {
+      "spell_id": "3845",
+      "name": "Soft-soled Linen Boots",
+      "icon": "inv_boots_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 80,
+        "yellow": 105,
+        "green": 122,
+        "gray": 140
+      }
+    },
+    {
+      "spell_id": "2399",
+      "name": "Green Woolen Vest",
+      "icon": "inv_chest_cloth_39",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 85,
+        "yellow": 110,
+        "green": 127,
+        "gray": 145
+      }
+    },
+    {
+      "spell_id": "3843",
+      "name": "Heavy Woolen Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 85,
+        "yellow": 110,
+        "green": 127,
+        "gray": 145
+      }
+    },
+    {
+      "spell_id": "6521",
+      "name": "Pearl-clasped Cloak",
+      "icon": "inv_misc_cape_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 90,
+        "yellow": 115,
+        "green": 132,
+        "gray": 150
+      }
+    },
+    {
+      "spell_id": "3758",
+      "name": "Green Woolen Bag",
+      "icon": "inv_misc_bag_10_green",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 95,
+        "yellow": 120,
+        "green": 137,
+        "gray": 155
+      }
+    },
+    {
+      "spell_id": "3847",
+      "name": "Red Woolen Boots",
+      "icon": "inv_boots_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 95,
+        "yellow": 120,
+        "green": 137,
+        "gray": 155
+      }
+    },
+    {
+      "spell_id": "2401",
+      "name": "Woolen Boots",
+      "icon": "inv_boots_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 95,
+        "yellow": 120,
+        "green": 137,
+        "gray": 155
+      }
+    },
+    {
+      "spell_id": "2406",
+      "name": "Gray Woolen Shirt",
+      "icon": "inv_shirt_grey_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 100,
+        "yellow": 110,
+        "green": 120,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "7639",
+      "name": "Blue Overalls",
+      "icon": "inv_shirt_13",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 100,
+        "yellow": 125,
+        "green": 142,
+        "gray": 160
+      }
+    },
+    {
+      "spell_id": "3844",
+      "name": "Heavy Woolen Cloak",
+      "icon": "inv_misc_cape_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 100,
+        "yellow": 125,
+        "green": 142,
+        "gray": 160
+      }
+    },
+    {
+      "spell_id": "2403",
+      "name": "Gray Woolen Robe",
+      "icon": "inv_chest_cloth_13",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 105,
+        "yellow": 130,
+        "green": 147,
+        "gray": 165
+      }
+    },
+    {
+      "spell_id": "3848",
+      "name": "Double-stitched Woolen Shoulders",
+      "icon": "inv_shoulder_06",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 110,
+        "yellow": 135,
+        "green": 152,
+        "gray": 170
+      }
+    },
+    {
+      "spell_id": "3866",
+      "name": "Stylish Red Shirt",
+      "icon": "inv_shirt_red_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 110,
+        "yellow": 135,
+        "green": 152,
+        "gray": 170
+      }
+    },
+    {
+      "spell_id": "8467",
+      "name": "White Woolen Dress",
+      "icon": "inv_shirt_12",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 110,
+        "yellow": 135,
+        "green": 152,
+        "gray": 170
+      }
+    },
+    {
+      "spell_id": "3850",
+      "name": "Heavy Woolen Pants",
+      "icon": "inv_pants_01",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 110,
+        "yellow": 135,
+        "green": 152,
+        "gray": 170
+      }
+    },
+    {
+      "spell_id": "6688",
+      "name": "Red Woolen Bag",
+      "icon": "inv_misc_bag_10_red",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 115,
+        "yellow": 140,
+        "green": 157,
+        "gray": 175
+      }
+    },
+    {
+      "spell_id": "7643",
+      "name": "Greater Adept's Robe",
+      "icon": "inv_chest_cloth_24",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 115,
+        "yellow": 140,
+        "green": 157,
+        "gray": 175
+      }
+    },
+    {
+      "spell_id": "3849",
+      "name": "Reinforced Woolen Shoulders",
+      "icon": "inv_shoulder_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 120,
+        "yellow": 145,
+        "green": 162,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "7892",
+      "name": "Stylish Blue Shirt",
+      "icon": "inv_shirt_blue_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 120,
+        "yellow": 145,
+        "green": 162,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "7893",
+      "name": "Stylish Green Shirt",
+      "icon": "inv_shirt_green_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 120,
+        "yellow": 145,
+        "green": 162,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "12047",
+      "name": "Colorful Kilt",
+      "icon": "inv_pants_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 120,
+        "yellow": 145,
+        "green": 162,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "3839",
+      "name": "Bolt of Silk Cloth",
+      "icon": "inv_fabric_silk_03",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 125,
+        "yellow": 135,
+        "green": 140,
+        "gray": 145
+      }
+    },
+    {
+      "spell_id": "3868",
+      "name": "Phoenix Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 125,
+        "yellow": 150,
+        "green": 167,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "3851",
+      "name": "Phoenix Pants",
+      "icon": "inv_pants_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 125,
+        "yellow": 150,
+        "green": 167,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "3855",
+      "name": "Spidersilk Boots",
+      "icon": "inv_boots_05",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 125,
+        "yellow": 150,
+        "green": 167,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "3852",
+      "name": "Gloves of Meditation",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 130,
+        "yellow": 150,
+        "green": 165,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "3869",
+      "name": "Bright Yellow Shirt",
+      "icon": "inv_shirt_yellow_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 135,
+        "yellow": 145,
+        "green": 150,
+        "gray": 155
+      }
+    },
+    {
+      "spell_id": "6690",
+      "name": "Lesser Wizard's Robe",
+      "icon": "inv_chest_cloth_17",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 135,
+        "yellow": 155,
+        "green": 170,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "8758",
+      "name": "Azure Silk Pants",
+      "icon": "inv_pants_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 140,
+        "yellow": 160,
+        "green": 175,
+        "gray": 190
+      }
+    }
+  ],
+  "TailoringJourneyman2": [
+    {
+      "spell_id": "3856",
+      "name": "Spider Silk Slippers",
+      "icon": "inv_boots_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 140,
+        "yellow": 160,
+        "green": 175,
+        "gray": 190
+      }
+    },
+    {
+      "spell_id": "8778",
+      "name": "Boots of Darkness",
+      "icon": "INV_Boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 140,
+        "yellow": 160,
+        "green": 175,
+        "gray": 190
+      }
+    },
+    {
+      "spell_id": "8760",
+      "name": "Azure Silk Hood",
+      "icon": "inv_helmet_29",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 145,
+        "yellow": 155,
+        "green": 160,
+        "gray": 165
+      }
+    },
+    {
+      "spell_id": "3854",
+      "name": "Azure Silk Gloves",
+      "icon": "inv_gauntlets_17",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 145,
+        "yellow": 165,
+        "green": 180,
+        "gray": 195
+      }
+    },
+    {
+      "spell_id": "8780",
+      "name": "Hands of Darkness",
+      "icon": "inv_gauntlets_22",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 145,
+        "yellow": 165,
+        "green": 180,
+        "gray": 195
+      }
+    },
+    {
+      "spell_id": "3813",
+      "name": "Small Silk Pack",
+      "icon": "inv_misc_bag_07",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "3859",
+      "name": "Azure Silk Vest",
+      "icon": "inv_chest_cloth_37",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "6692",
+      "name": "Robes of Arcana",
+      "icon": "inv_chest_cloth_29",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "8782",
+      "name": "Truefaith Gloves",
+      "icon": "inv_gauntlets_16",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    }
+  ],
+  "TailoringExpert1": [
+    {
+      "spell_id": "3870",
+      "name": "Dark Silk Shirt",
+      "icon": "inv_shirt_black_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 155,
+        "yellow": 165,
+        "green": 170,
+        "gray": 175
+      }
+    },
+    {
+      "spell_id": "8762",
+      "name": "Silk Headband",
+      "icon": "inv_misc_bandana_01",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 160,
+        "yellow": 170,
+        "green": 175,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "8483",
+      "name": "White Swashbuckler's Shirt",
+      "icon": "inv_shirt_white_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 160,
+        "yellow": 170,
+        "green": 175,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "3857",
+      "name": "Enchanter's Cowl",
+      "icon": "inv_helmet_31",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 165,
+        "yellow": 185,
+        "green": 200,
+        "gray": 215
+      }
+    },
+    {
+      "spell_id": "8784",
+      "name": "Green Silk Armor",
+      "icon": "inv_chest_cloth_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 165,
+        "yellow": 185,
+        "green": 200,
+        "gray": 215
+      }
+    },
+    {
+      "spell_id": "3871",
+      "name": "Formal White Shirt",
+      "icon": "inv_shirt_08",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 170,
+        "yellow": 180,
+        "green": 185,
+        "gray": 190
+      }
+    },
+    {
+      "spell_id": "8764",
+      "name": "Earthen Vest",
+      "icon": "inv_shirt_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 170,
+        "yellow": 190,
+        "green": 205,
+        "gray": 220
+      }
+    },
+    {
+      "spell_id": "3858",
+      "name": "Shadow Hood",
+      "icon": "inv_helmet_27",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 170,
+        "yellow": 190,
+        "green": 205,
+        "gray": 220
+      }
+    },
+    {
+      "spell_id": "3865",
+      "name": "Bolt of Mageweave",
+      "icon": "inv_fabric_mageweave_03",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 180,
+        "green": 182,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "8489",
+      "name": "Red Swashbuckler's Shirt",
+      "icon": "inv_shirt_red_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 185,
+        "green": 190,
+        "gray": 195
+      }
+    },
+    {
+      "spell_id": "6693",
+      "name": "Green Silk Pack",
+      "icon": "inv_misc_bag_07_green",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 195,
+        "green": 210,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "8766",
+      "name": "Azure Silk Belt",
+      "icon": "inv_belt_22",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 195,
+        "green": 210,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "8786",
+      "name": "Azure Silk Cloak",
+      "icon": "inv_chest_cloth_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 195,
+        "green": 210,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "3860",
+      "name": "Boots of the Enchanter",
+      "icon": "inv_boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 195,
+        "green": 210,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "8772",
+      "name": "Crimson Silk Belt",
+      "icon": "inv_belt_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 195,
+        "green": 210,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "8789",
+      "name": "Crimson Silk Cloak",
+      "icon": "inv_chest_cloth_16",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 180,
+        "yellow": 200,
+        "green": 215,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "8774",
+      "name": "Green Silken Shoulders",
+      "icon": "inv_shoulder_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 180,
+        "yellow": 200,
+        "green": 215,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "3863",
+      "name": "Spider Belt",
+      "icon": "inv_belt_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 180,
+        "yellow": 200,
+        "green": 215,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "3872",
+      "name": "Rich Purple Silk Shirt",
+      "icon": "inv_shirt_16",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 185,
+        "yellow": 195,
+        "green": 200,
+        "gray": 205
+      }
+    },
+    {
+      "spell_id": "8791",
+      "name": "Crimson Silk Vest",
+      "icon": "inv_shirt_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 185,
+        "yellow": 205,
+        "green": 215,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "6695",
+      "name": "Black Silk Pack",
+      "icon": "inv_misc_bag_07_black",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 185,
+        "yellow": 205,
+        "green": 220,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "3861",
+      "name": "Long Silken Cloak",
+      "icon": "inv_misc_cape_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 185,
+        "yellow": 205,
+        "green": 220,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "21945",
+      "name": "Green Holiday Shirt",
+      "icon": "inv_shirt_green_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 200,
+        "green": 205,
+        "gray": 210
+      }
+    },
+    {
+      "spell_id": "8795",
+      "name": "Azure Shoulders",
+      "icon": "inv_shoulder_27",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 210,
+        "green": 225,
+        "gray": 240
+      }
+    },
+    {
+      "spell_id": "8793",
+      "name": "Crimson Silk Shoulders",
+      "icon": "inv_shoulder_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 210,
+        "green": 225,
+        "gray": 240
+      }
+    },
+    {
+      "spell_id": "8770",
+      "name": "Robe of Power",
+      "icon": "inv_chest_cloth_02",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 210,
+        "green": 225,
+        "gray": 240
+      }
+    },
+    {
+      "spell_id": "8799",
+      "name": "Crimson Silk Pantaloons",
+      "icon": "inv_pants_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 195,
+        "yellow": 215,
+        "green": 225,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "8797",
+      "name": "Earthen Silk Belt",
+      "icon": "inv_belt_24",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 195,
+        "yellow": 215,
+        "green": 230,
+        "gray": 245
+      }
+    },
+    {
+      "spell_id": "3873",
+      "name": "Black Swashbuckler's Shirt",
+      "icon": "inv_shirt_black_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 210,
+        "green": 215,
+        "gray": 220
+      }
+    },
+    {
+      "spell_id": "3864",
+      "name": "Star Belt",
+      "icon": "inv_belt_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    }
+  ],
+  "TailoringExpert2": [
+    {
+      "spell_id": "3862",
+      "name": "Icy Cloak",
+      "icon": "inv_misc_cape_04",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "46644",
+      "name": "Augerer's Boots",
+      "icon": "INV_Boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 200,
+        "green": 200,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "46643",
+      "name": "Augerer's Gloves",
+      "icon": "INV_Gauntlets_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 200,
+        "green": 200,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "46642",
+      "name": "Augerer's Mantle",
+      "icon": "INV_Shoulder_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 205,
+        "green": 205,
+        "gray": 205
+      }
+    },
+    {
+      "spell_id": "46641",
+      "name": "Augerer's Trousers",
+      "icon": "INV_Pants_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 205,
+        "green": 205,
+        "gray": 205
+      }
+    },
+    {
+      "spell_id": "46639",
+      "name": "Augerer's Hat",
+      "icon": "INV_Helmet_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 205,
+        "green": 205,
+        "gray": 205
+      }
+    },
+    {
+      "spell_id": "12049",
+      "name": "Black Mageweave Leggings",
+      "icon": "inv_pants_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "12048",
+      "name": "Black Mageweave Vest",
+      "icon": "inv_chest_leather_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "8802",
+      "name": "Crimson Silk Robe",
+      "icon": "inv_chest_cloth_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "46640",
+      "name": "Augerer's Robe",
+      "icon": "inv_chest_cloth_22",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 210,
+        "green": 210,
+        "gray": 210
+      }
+    },
+    {
+      "spell_id": "12050",
+      "name": "Black Mageweave Robe",
+      "icon": "inv_chest_cloth_13",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 225,
+        "green": 240,
+        "gray": 255
+      }
+    },
+    {
+      "spell_id": "8804",
+      "name": "Crimson Silk Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 225,
+        "green": 240,
+        "gray": 255
+      }
+    },
+    {
+      "spell_id": "12052",
+      "name": "Shadoweave Pants",
+      "icon": "inv_pants_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 225,
+        "green": 240,
+        "gray": 255
+      }
+    },
+    {
+      "spell_id": "12061",
+      "name": "Orange Mageweave Shirt",
+      "icon": "inv_shirt_orange_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 220,
+        "green": 225,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "12059",
+      "name": "White Bandit Mask",
+      "icon": "inv_misc_cape_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 220,
+        "green": 225,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "12053",
+      "name": "Black Mageweave Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 230,
+        "green": 245,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12060",
+      "name": "Red Mageweave Pants",
+      "icon": "inv_pants_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 230,
+        "green": 245,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12056",
+      "name": "Red Mageweave Vest",
+      "icon": "inv_shirt_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 230,
+        "green": 245,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12055",
+      "name": "Shadoweave Robe",
+      "icon": "inv_chest_cloth_38",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 230,
+        "green": 245,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12064",
+      "name": "Orange Martial Shirt",
+      "icon": "inv_shirt_orange_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 220,
+        "yellow": 225,
+        "green": 230,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "12063",
+      "name": "Stormcloth Gloves",
+      "icon": "INV_Gauntlets_17",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 220,
+        "yellow": 235,
+        "green": 250,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "12062",
+      "name": "Stormcloth Pants",
+      "icon": "INV_Pants_13",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 220,
+        "yellow": 235,
+        "green": 250,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "12065",
+      "name": "Mageweave Bag",
+      "icon": "inv_misc_bag_10_black",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12069",
+      "name": "Cindercloth Robe",
+      "icon": "inv_chest_cloth_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "27658",
+      "name": "Enchanted Mageweave Pouch",
+      "icon": "inv_misc_bag_enchantedmageweave",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12066",
+      "name": "Red Mageweave Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12071",
+      "name": "Shadoweave Gloves",
+      "icon": "inv_gauntlets_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12067",
+      "name": "Dreamweave Gloves",
+      "icon": "inv_gauntlets_18",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12070",
+      "name": "Dreamweave Vest",
+      "icon": "inv_chest_cloth_42",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "46636",
+      "name": "Diviner's Boots",
+      "icon": "inv_boots_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 225,
+        "green": 225,
+        "gray": 225
+      }
+    }
+  ],
+  "TailoringExpert3": [
+    {
+      "spell_id": "46637",
+      "name": "Diviner's Mitts",
+      "icon": "inv_gauntlets_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 225,
+        "green": 225,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "12068",
+      "name": "Stormcloth Vest",
+      "icon": "INV_Chest_Cloth_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    }
+  ],
+  "TailoringArtisan1": [
+    {
+      "spell_id": "46638",
+      "name": "Diviner's Epaulets",
+      "icon": "inv_shoulder_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 230,
+        "green": 230,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "46633",
+      "name": "Diviner's Pantaloons",
+      "icon": "inv_pants_07",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 230,
+        "green": 230,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "46635",
+      "name": "Diviner's Cowl",
+      "icon": "inv_helmet_33",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 230,
+        "green": 230,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "12075",
+      "name": "Lavender Mageweave Shirt",
+      "icon": "inv_shirt_purple_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 235,
+        "green": 240,
+        "gray": 245
+      }
+    },
+    {
+      "spell_id": "12073",
+      "name": "Black Mageweave Boots",
+      "icon": "inv_boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 245,
+        "green": 260,
+        "gray": 275
+      }
+    },
+    {
+      "spell_id": "12072",
+      "name": "Black Mageweave Headband",
+      "icon": "inv_misc_bandana_01",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 245,
+        "green": 260,
+        "gray": 275
+      }
+    },
+    {
+      "spell_id": "12074",
+      "name": "Black Mageweave Shoulders",
+      "icon": "inv_shoulder_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 245,
+        "green": 260,
+        "gray": 275
+      }
+    },
+    {
+      "spell_id": "46634",
+      "name": "Diviner's Robes",
+      "icon": "inv_chest_cloth_22",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 235,
+        "green": 235,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "12080",
+      "name": "Pink Mageweave Shirt",
+      "icon": "inv_shirt_red_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 240,
+        "green": 245,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "12077",
+      "name": "Simple Black Dress",
+      "icon": "inv_chest_cloth_21",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 240,
+        "green": 245,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "12079",
+      "name": "Red Mageweave Bag",
+      "icon": "inv_misc_bag_10_red",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 250,
+        "green": 265,
+        "gray": 280
+      }
+    },
+    {
+      "spell_id": "12078",
+      "name": "Red Mageweave Shoulders",
+      "icon": "inv_shoulder_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 250,
+        "green": 265,
+        "gray": 280
+      }
+    },
+    {
+      "spell_id": "12076",
+      "name": "Shadoweave Shoulders",
+      "icon": "inv_shoulder_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 250,
+        "green": 265,
+        "gray": 280
+      }
+    },
+    {
+      "spell_id": "12083",
+      "name": "Stormcloth Headband",
+      "icon": "INV_Helmet_30",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 255,
+        "green": 270,
+        "gray": 285
+      }
+    },
+    {
+      "spell_id": "12087",
+      "name": "Stormcloth Shoulders",
+      "icon": "INV_Shoulder_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 245,
+        "yellow": 260,
+        "green": 275,
+        "gray": 290
+      }
+    },
+    {
+      "spell_id": "12085",
+      "name": "Tuxedo Shirt",
+      "icon": "inv_shirt_08",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 245,
+        "green": 250,
+        "gray": 255
+      }
+    },
+    {
+      "spell_id": "12081",
+      "name": "Admiral's Hat",
+      "icon": "inv_helmet_29",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 255,
+        "green": 270,
+        "gray": 285
+      }
+    },
+    {
+      "spell_id": "12084",
+      "name": "Red Mageweave Headband",
+      "icon": "inv_misc_bandana_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 255,
+        "green": 270,
+        "gray": 285
+      }
+    },
+    {
+      "spell_id": "12082",
+      "name": "Shadoweave Boots",
+      "icon": "inv_boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 255,
+        "green": 270,
+        "gray": 285
+      }
+    },
+    {
+      "spell_id": "12089",
+      "name": "Tuxedo Pants",
+      "icon": "inv_pants_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 245,
+        "yellow": 250,
+        "green": 255,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12088",
+      "name": "Cindercloth Boots",
+      "icon": "inv_boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 245,
+        "yellow": 260,
+        "green": 275,
+        "gray": 290
+      }
+    },
+    {
+      "spell_id": "12086",
+      "name": "Shadoweave Mask",
+      "icon": "inv_helmet_27",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 245,
+        "yellow": 260,
+        "green": 275,
+        "gray": 290
+      }
+    },
+    {
+      "spell_id": "18401",
+      "name": "Bolt of Runecloth",
+      "icon": "inv_fabric_purplefire_02",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 255,
+        "green": 257,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12091",
+      "name": "White Wedding Dress",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 255,
+        "green": 260,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "26403",
+      "name": "Festival Dress",
+      "icon": "inv_chest_cloth_56",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "26407",
+      "name": "Festive Red Pant Suit",
+      "icon": "inv_chest_cloth_55",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "12093",
+      "name": "Tuxedo Jacket",
+      "icon": "inv_shirt_black_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "12090",
+      "name": "Stormcloth Boots",
+      "icon": "INV_Boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "12092",
+      "name": "Dreamweave Circlet",
+      "icon": "inv_crown_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "18560",
+      "name": "Mooncloth",
+      "icon": "inv_fabric_moonrag_01",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    }
+  ],
+  "TailoringArtisan2": [
+    {
+      "spell_id": "18404",
+      "name": "Frostweave Robe",
+      "icon": "inv_chest_cloth_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 255,
+        "yellow": 270,
+        "green": 285,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "18403",
+      "name": "Frostweave Tunic",
+      "icon": "inv_chest_cloth_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 255,
+        "yellow": 270,
+        "green": 285,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "18402",
+      "name": "Runecloth Belt",
+      "icon": "inv_belt_15",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 255,
+        "yellow": 270,
+        "green": 285,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "46649",
+      "name": "Pillager's Shoes",
+      "icon": "inv_boots_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 260,
+        "green": 260,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "46648",
+      "name": "Pillager's Grips",
+      "icon": "inv_gauntlets_15",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 260,
+        "green": 260,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "18405",
+      "name": "Runecloth Bag",
+      "icon": "inv_misc_bag_19",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "18408",
+      "name": "Cindercloth Vest",
+      "icon": "inv_chest_cloth_07",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "18406",
+      "name": "Runecloth Robe",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "18407",
+      "name": "Runecloth Tunic",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "26085",
+      "name": "Soul Pouch",
+      "icon": "inv_misc_bag_soulbag",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "46646",
+      "name": "Pillager's Amice",
+      "icon": "inv_shoulder_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 265,
+        "green": 265,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "46650",
+      "name": "Pillager's Pantaloons",
+      "icon": "inv_pants_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 265,
+        "green": 265,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "46645",
+      "name": "Pillager's Hood",
+      "icon": "inv_helmet_28",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 265,
+        "green": 265,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "18411",
+      "name": "Frostweave Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 280,
+        "green": 295,
+        "gray": 310
+      }
+    },
+    {
+      "spell_id": "18410",
+      "name": "Ghostweave Belt",
+      "icon": "inv_belt_16",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 280,
+        "green": 295,
+        "gray": 310
+      }
+    },
+    {
+      "spell_id": "18409",
+      "name": "Runecloth Cloak",
+      "icon": "inv_misc_cape_10",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 280,
+        "green": 295,
+        "gray": 310
+      }
+    },
+    {
+      "spell_id": "46647",
+      "name": "Pillager's Robe",
+      "icon": "inv_chest_cloth_22",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 270,
+        "green": 270,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "18415",
+      "name": "Brightcloth Gloves",
+      "icon": "inv_gauntlets_21",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "18414",
+      "name": "Brightcloth Robe",
+      "icon": "inv_chest_cloth_26",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "18412",
+      "name": "Cindercloth Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "18413",
+      "name": "Ghostweave Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "22813",
+      "name": "Gordok Ogre Suit",
+      "icon": "inv_chest_chain_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 285,
+        "green": 290,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "18420",
+      "name": "Brightcloth Cloak",
+      "icon": "inv_misc_cape_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "27724",
+      "name": "Cenarion Herb Bag",
+      "icon": "inv_misc_bag_cenarionherbbag",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18418",
+      "name": "Cindercloth Cloak",
+      "icon": "inv_misc_cape_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "27659",
+      "name": "Enchanted Runecloth Bag",
+      "icon": "inv_misc_bag_enchantedrunecloth",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18419",
+      "name": "Felcloth Pants",
+      "icon": "inv_pants_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18416",
+      "name": "Ghostweave Vest",
+      "icon": "inv_shirt_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18417",
+      "name": "Runecloth Gloves",
+      "icon": "inv_gauntlets_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18421",
+      "name": "Wizardweave Leggings",
+      "icon": "inv_pants_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    }
+  ],
+  "TailoringArtisan3": [
+    {
+      "spell_id": "18422",
+      "name": "Cloak of Fire",
+      "icon": "inv_misc_cape_18",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18434",
+      "name": "Cindercloth Pants",
+      "icon": "inv_pants_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 280,
+        "yellow": 295,
+        "green": 310,
+        "gray": 325
+      }
+    },
+    {
+      "spell_id": "18424",
+      "name": "Frostweave Pants",
+      "icon": "inv_pants_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 280,
+        "yellow": 295,
+        "green": 310,
+        "gray": 325
+      }
+    },
+    {
+      "spell_id": "18423",
+      "name": "Runecloth Boots",
+      "icon": "inv_boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 280,
+        "yellow": 295,
+        "green": 310,
+        "gray": 325
+      }
+    },
+    {
+      "spell_id": "26086",
+      "name": "Felcloth Bag",
+      "icon": "inv_misc_bag_felclothbag",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 280,
+        "yellow": 300,
+        "green": 315,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "18437",
+      "name": "Felcloth Boots",
+      "icon": "inv_boots_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 285,
+        "yellow": 300,
+        "green": 315,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "18438",
+      "name": "Runecloth Pants",
+      "icon": "inv_pants_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 285,
+        "yellow": 300,
+        "green": 315,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "18436",
+      "name": "Robe of Winter Night",
+      "icon": "inv_chest_cloth_49",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 285,
+        "yellow": 300,
+        "green": 315,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "19435",
+      "name": "Mooncloth Boots",
+      "icon": "inv_boots_05",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 295,
+        "green": 310,
+        "gray": 325
+      }
+    },
+    {
+      "spell_id": "18439",
+      "name": "Brightcloth Pants",
+      "icon": "inv_pants_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "18442",
+      "name": "Felcloth Hood",
+      "icon": "inv_helmet_34",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "18441",
+      "name": "Ghostweave Pants",
+      "icon": "inv_pants_01",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "23664",
+      "name": "Argent Boots",
+      "icon": "inv_boots_cloth_03",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "18440",
+      "name": "Mooncloth Leggings",
+      "icon": "inv_pants_13",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "23662",
+      "name": "Wisdom of the Timbermaw",
+      "icon": "inv_belt_09",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "18444",
+      "name": "Runecloth Headband",
+      "icon": "inv_misc_bandana_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 295,
+        "yellow": 310,
+        "green": 325,
+        "gray": 340
+      }
+    },
+    {
+      "spell_id": "27660",
+      "name": "Big Bag of Enchantment",
+      "icon": "inv_misc_bag_bigbagofenchantments",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18451",
+      "name": "Felcloth Robe",
+      "icon": "inv_chest_cloth_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18453",
+      "name": "Felcloth Shoulders",
+      "icon": "inv_shoulder_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18445",
+      "name": "Mooncloth Bag",
+      "icon": "inv_misc_bag_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18449",
+      "name": "Runecloth Shoulders",
+      "icon": "inv_shoulder_21",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "27725",
+      "name": "Satchel of Cenarius",
+      "icon": "inv_misc_bag_satchelofcenarius",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18446",
+      "name": "Wizardweave Robe",
+      "icon": "inv_chest_cloth_46",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18450",
+      "name": "Wizardweave Turban",
+      "icon": "inv_helmet_63",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "23665",
+      "name": "Argent Shoulders",
+      "icon": "inv_shoulder_13",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "24093",
+      "name": "Bloodvine Boots",
+      "icon": "inv_boots_cloth_02",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "24092",
+      "name": "Bloodvine Leggings",
+      "icon": "inv_pants_cloth_14",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "24091",
+      "name": "Bloodvine Vest",
+      "icon": "inv_chest_cloth_07",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18455",
+      "name": "Bottomless Bag",
+      "icon": "inv_misc_bag_13",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22870",
+      "name": "Cloak of Warding",
+      "icon": "inv_misc_cape_06",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    }
+  ],
+  "TailoringArtisan4": [
+    {
+      "spell_id": "22867",
+      "name": "Felcloth Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28210",
+      "name": "Gaea's Embrace",
+      "icon": "inv_misc_cape_17",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22868",
+      "name": "Inferno Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57024",
+      "name": "Windbinder Gloves",
+      "icon": "inv_gauntlets_12",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57020",
+      "name": "Dustguider Sash",
+      "icon": "inv_belt_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "23663",
+      "name": "Mantle of the Timbermaw",
+      "icon": "inv_shoulder_19",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18452",
+      "name": "Mooncloth Circlet",
+      "icon": "inv_misc_bandana_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22869",
+      "name": "Mooncloth Gloves",
+      "icon": "inv_gauntlets_17",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22902",
+      "name": "Mooncloth Robe",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18448",
+      "name": "Mooncloth Shoulders",
+      "icon": "inv_shoulder_02",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18447",
+      "name": "Mooncloth Vest",
+      "icon": "inv_chest_cloth_08",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "24902",
+      "name": "Runed Stygian Belt",
+      "icon": "inv_belt_14",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "24903",
+      "name": "Runed Stygian Boots",
+      "icon": "inv_boots_05",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "24901",
+      "name": "Runed Stygian Leggings",
+      "icon": "inv_pants_cloth_05",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28481",
+      "name": "Sylvan Crown",
+      "icon": "inv_crown_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28482",
+      "name": "Sylvan Shoulders",
+      "icon": "inv_shoulder_18",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28480",
+      "name": "Sylvan Vest",
+      "icon": "inv_chest_plate07",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57601",
+      "name": "Cosmic Headdress",
+      "icon": "inv_helmet_53",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "57603",
+      "name": "Cosmic Mantle",
+      "icon": "INV_Shoulder_14",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "57605",
+      "name": "Cosmic Vest",
+      "icon": "INV_Chest_Cloth_08",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "57607",
+      "name": "Cosmic Leggings",
+      "icon": "INV_Pants_06",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "57633",
+      "name": "Ley-Kissed Drape",
+      "icon": "INV_Misc_Cape_06",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "36913",
+      "name": "Astronomer Raiments",
+      "icon": "INV_Chest_Cloth_04",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 322,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "22866",
+      "name": "Belt of the Archmage",
+      "icon": "inv_belt_31",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "26087",
+      "name": "Core Felcloth Bag",
+      "icon": "inv_misc_bag_corefelclothbag",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "20849",
+      "name": "Flarecore Gloves",
+      "icon": "inv_gauntlets_26",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "23667",
+      "name": "Flarecore Leggings",
+      "icon": "inv_pants_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "20848",
+      "name": "Flarecore Mantle",
+      "icon": "inv_shoulder_23",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "23666",
+      "name": "Flarecore Robe",
+      "icon": "inv_chest_cloth_18",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22759",
+      "name": "Flarecore Wraps",
+      "icon": "inv_bracer_09",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    }
+  ],
+  "TailoringArtisan5": [
+    {
+      "spell_id": "28208",
+      "name": "Glacial Cloak",
+      "icon": "inv_misc_cape_16",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28205",
+      "name": "Glacial Gloves",
+      "icon": "inv_gauntlets_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28207",
+      "name": "Glacial Vest",
+      "icon": "inv_chest_cloth_08",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28209",
+      "name": "Glacial Wrists",
+      "icon": "inv_bracer_07",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18454",
+      "name": "Gloves of Spell Mastery",
+      "icon": "inv_gauntlets_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18457",
+      "name": "Robe of the Archmage",
+      "icon": "inv_chest_cloth_38",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18458",
+      "name": "Robe of the Void",
+      "icon": "inv_chest_cloth_51",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18456",
+      "name": "Truefaith Vestments",
+      "icon": "inv_chest_cloth_31",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "46656",
+      "name": "Robe of Sacrifice",
+      "icon": "inv_chest_cloth_09",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "54011",
+      "name": "Flarecore Boots",
+      "icon": "inv_boots_05",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45485",
+      "name": "Gloves of Unwinding Mystery",
+      "icon": "inv_gauntlets_25",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45459",
+      "name": "Dreamthread Kilt",
+      "icon": "inv_pants_14",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45461",
+      "name": "Dreamthread Bracers",
+      "icon": "inv_bracer_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45463",
+      "name": "Dreamthread Gloves",
+      "icon": "inv_gauntlets_23",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45457",
+      "name": "Dreamthread Mantle",
+      "icon": "INV_Shoulder_05",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45453",
+      "name": "Dreamthread",
+      "icon": "INV_Misc_Herb_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    }
+  ],
+  "TailoringHelm1": [
+    {
+      "spell_id": "8760",
+      "name": "Azure Silk Hood",
+      "icon": "inv_helmet_29",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 145,
+        "yellow": 155,
+        "green": 160,
+        "gray": 165
+      }
+    },
+    {
+      "spell_id": "3857",
+      "name": "Enchanter's Cowl",
+      "icon": "inv_helmet_31",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 165,
+        "yellow": 185,
+        "green": 200,
+        "gray": 215
+      }
+    },
+    {
+      "spell_id": "3858",
+      "name": "Shadow Hood",
+      "icon": "inv_helmet_27",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 170,
+        "yellow": 190,
+        "green": 205,
+        "gray": 220
+      }
+    },
+    {
+      "spell_id": "46639",
+      "name": "Augerer's Hat",
+      "icon": "INV_Helmet_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 205,
+        "green": 205,
+        "gray": 205
+      }
+    },
+    {
+      "spell_id": "12059",
+      "name": "White Bandit Mask",
+      "icon": "inv_misc_cape_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 220,
+        "green": 225,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "46635",
+      "name": "Diviner's Cowl",
+      "icon": "inv_helmet_33",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 230,
+        "green": 230,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "12072",
+      "name": "Black Mageweave Headband",
+      "icon": "inv_misc_bandana_01",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 245,
+        "green": 260,
+        "gray": 275
+      }
+    },
+    {
+      "spell_id": "12081",
+      "name": "Admiral's Hat",
+      "icon": "inv_helmet_29",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 255,
+        "green": 270,
+        "gray": 285
+      }
+    },
+    {
+      "spell_id": "12083",
+      "name": "Stormcloth Headband",
+      "icon": "INV_Helmet_30",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 240,
+        "yellow": 255,
+        "green": 270,
+        "gray": 285
+      }
+    },
+    {
+      "spell_id": "12086",
+      "name": "Shadoweave Mask",
+      "icon": "inv_helmet_27",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 245,
+        "yellow": 260,
+        "green": 275,
+        "gray": 290
+      }
+    },
+    {
+      "spell_id": "12092",
+      "name": "Dreamweave Circlet",
+      "icon": "inv_crown_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "46645",
+      "name": "Pillager's Hood",
+      "icon": "inv_helmet_28",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 265,
+        "green": 265,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "18442",
+      "name": "Felcloth Hood",
+      "icon": "inv_helmet_34",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 290,
+        "yellow": 305,
+        "green": 320,
+        "gray": 335
+      }
+    },
+    {
+      "spell_id": "18452",
+      "name": "Mooncloth Circlet",
+      "icon": "inv_misc_bandana_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28481",
+      "name": "Sylvan Crown",
+      "icon": "inv_crown_01",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57601",
+      "name": "Cosmic Headdress",
+      "icon": "inv_helmet_53",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "3848",
+      "name": "Double-stitched Woolen Shoulders",
+      "icon": "inv_shoulder_06",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 110,
+        "yellow": 135,
+        "green": 152,
+        "gray": 170
+      }
+    },
+    {
+      "spell_id": "3849",
+      "name": "Reinforced Woolen Shoulders",
+      "icon": "inv_shoulder_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 120,
+        "yellow": 145,
+        "green": 162,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "8774",
+      "name": "Green Silken Shoulders",
+      "icon": "inv_shoulder_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 180,
+        "yellow": 200,
+        "green": 215,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "8795",
+      "name": "Azure Shoulders",
+      "icon": "inv_shoulder_27",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 210,
+        "green": 225,
+        "gray": 240
+      }
+    },
+    {
+      "spell_id": "8793",
+      "name": "Crimson Silk Shoulders",
+      "icon": "inv_shoulder_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 210,
+        "green": 225,
+        "gray": 240
+      }
+    },
+    {
+      "spell_id": "46642",
+      "name": "Augerer's Mantle",
+      "icon": "INV_Shoulder_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 205,
+        "green": 205,
+        "gray": 205
+      }
+    },
+    {
+      "spell_id": "46638",
+      "name": "Diviner's Epaulets",
+      "icon": "inv_shoulder_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 230,
+        "yellow": 230,
+        "green": 230,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "12078",
+      "name": "Red Mageweave Shoulders",
+      "icon": "inv_shoulder_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 250,
+        "green": 265,
+        "gray": 280
+      }
+    },
+    {
+      "spell_id": "12076",
+      "name": "Shadoweave Shoulders",
+      "icon": "inv_shoulder_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 250,
+        "green": 265,
+        "gray": 280
+      }
+    },
+    {
+      "spell_id": "12087",
+      "name": "Stormcloth Shoulders",
+      "icon": "INV_Shoulder_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 245,
+        "yellow": 260,
+        "green": 275,
+        "gray": 290
+      }
+    },
+    {
+      "spell_id": "46646",
+      "name": "Pillager's Amice",
+      "icon": "inv_shoulder_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 265,
+        "green": 265,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "18453",
+      "name": "Felcloth Shoulders",
+      "icon": "inv_shoulder_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18449",
+      "name": "Runecloth Shoulders",
+      "icon": "inv_shoulder_21",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "23665",
+      "name": "Argent Shoulders",
+      "icon": "inv_shoulder_13",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "23663",
+      "name": "Mantle of the Timbermaw",
+      "icon": "inv_shoulder_19",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18448",
+      "name": "Mooncloth Shoulders",
+      "icon": "inv_shoulder_02",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28482",
+      "name": "Sylvan Shoulders",
+      "icon": "inv_shoulder_18",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57603",
+      "name": "Cosmic Mantle",
+      "icon": "INV_Shoulder_14",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "20848",
+      "name": "Flarecore Mantle",
+      "icon": "inv_shoulder_23",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "45457",
+      "name": "Dreamthread Mantle",
+      "icon": "INV_Shoulder_05",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "2387",
+      "name": "Linen Cloak",
+      "icon": "inv_misc_cape_14",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 1,
+        "yellow": 35,
+        "green": 47,
+        "gray": 60
+      }
+    },
+    {
+      "spell_id": "2397",
+      "name": "Reinforced Linen Cape",
+      "icon": "inv_misc_cape_07",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 60,
+        "yellow": 85,
+        "green": 102,
+        "gray": 120
+      }
+    },
+    {
+      "spell_id": "2402",
+      "name": "Woolen Cape",
+      "icon": "inv_misc_cape_10",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 75,
+        "yellow": 100,
+        "green": 117,
+        "gray": 135
+      }
+    },
+    {
+      "spell_id": "6521",
+      "name": "Pearl-clasped Cloak",
+      "icon": "inv_misc_cape_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 90,
+        "yellow": 115,
+        "green": 132,
+        "gray": 150
+      }
+    },
+    {
+      "spell_id": "3844",
+      "name": "Heavy Woolen Cloak",
+      "icon": "inv_misc_cape_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 100,
+        "yellow": 125,
+        "green": 142,
+        "gray": 160
+      }
+    },
+    {
+      "spell_id": "8786",
+      "name": "Azure Silk Cloak",
+      "icon": "inv_chest_cloth_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 175,
+        "yellow": 195,
+        "green": 210,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "8789",
+      "name": "Crimson Silk Cloak",
+      "icon": "inv_chest_cloth_16",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 180,
+        "yellow": 200,
+        "green": 215,
+        "gray": 230
+      }
+    },
+    {
+      "spell_id": "3861",
+      "name": "Long Silken Cloak",
+      "icon": "inv_misc_cape_02",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 185,
+        "yellow": 205,
+        "green": 220,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "3862",
+      "name": "Icy Cloak",
+      "icon": "inv_misc_cape_04",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "18409",
+      "name": "Runecloth Cloak",
+      "icon": "inv_misc_cape_10",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 280,
+        "green": 295,
+        "gray": 310
+      }
+    },
+    {
+      "spell_id": "18420",
+      "name": "Brightcloth Cloak",
+      "icon": "inv_misc_cape_11",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18418",
+      "name": "Cindercloth Cloak",
+      "icon": "inv_misc_cape_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "18422",
+      "name": "Cloak of Fire",
+      "icon": "inv_misc_cape_18",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "22870",
+      "name": "Cloak of Warding",
+      "icon": "inv_misc_cape_06",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57633",
+      "name": "Ley-Kissed Drape",
+      "icon": "INV_Misc_Cape_06",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "28208",
+      "name": "Glacial Cloak",
+      "icon": "inv_misc_cape_16",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "7623",
+      "name": "Brown Linen Robe",
+      "icon": "inv_chest_cloth_21",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 30,
+        "yellow": 55,
+        "green": 72,
+        "gray": 90
+      }
+    },
+    {
+      "spell_id": "7624",
+      "name": "White Linen Robe",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 30,
+        "yellow": 55,
+        "green": 72,
+        "gray": 90
+      }
+    },
+    {
+      "spell_id": "2389",
+      "name": "Red Linen Robe",
+      "icon": "inv_chest_cloth_18",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 40,
+        "yellow": 65,
+        "green": 82,
+        "gray": 100
+      }
+    },
+    {
+      "spell_id": "7630",
+      "name": "Blue Linen Vest",
+      "icon": "inv_chest_cloth_37",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 55,
+        "yellow": 80,
+        "green": 97,
+        "gray": 115
+      }
+    },
+    {
+      "spell_id": "7629",
+      "name": "Red Linen Vest",
+      "icon": "inv_chest_cloth_40",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 55,
+        "yellow": 80,
+        "green": 97,
+        "gray": 115
+      }
+    },
+    {
+      "spell_id": "2395",
+      "name": "Barbaric Linen Vest",
+      "icon": "inv_chest_fur",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "7633",
+      "name": "Blue Linen Robe",
+      "icon": "inv_chest_cloth_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 70,
+        "yellow": 95,
+        "green": 112,
+        "gray": 130
+      }
+    },
+    {
+      "spell_id": "2399",
+      "name": "Green Woolen Vest",
+      "icon": "inv_chest_cloth_39",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 85,
+        "yellow": 110,
+        "green": 127,
+        "gray": 145
+      }
+    },
+    {
+      "spell_id": "2403",
+      "name": "Gray Woolen Robe",
+      "icon": "inv_chest_cloth_13",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 105,
+        "yellow": 130,
+        "green": 147,
+        "gray": 165
+      }
+    },
+    {
+      "spell_id": "7643",
+      "name": "Greater Adept's Robe",
+      "icon": "inv_chest_cloth_24",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 115,
+        "yellow": 140,
+        "green": 157,
+        "gray": 175
+      }
+    },
+    {
+      "spell_id": "6690",
+      "name": "Lesser Wizard's Robe",
+      "icon": "inv_chest_cloth_17",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 135,
+        "yellow": 155,
+        "green": 170,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "3859",
+      "name": "Azure Silk Vest",
+      "icon": "inv_chest_cloth_37",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "6692",
+      "name": "Robes of Arcana",
+      "icon": "inv_chest_cloth_29",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "8784",
+      "name": "Green Silk Armor",
+      "icon": "inv_chest_cloth_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 165,
+        "yellow": 185,
+        "green": 200,
+        "gray": 215
+      }
+    },
+    {
+      "spell_id": "8770",
+      "name": "Robe of Power",
+      "icon": "inv_chest_cloth_02",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 190,
+        "yellow": 210,
+        "green": 225,
+        "gray": 240
+      }
+    },
+    {
+      "spell_id": "12048",
+      "name": "Black Mageweave Vest",
+      "icon": "inv_chest_leather_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "8802",
+      "name": "Crimson Silk Robe",
+      "icon": "inv_chest_cloth_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 205,
+        "yellow": 220,
+        "green": 235,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "46640",
+      "name": "Augerer's Robe",
+      "icon": "inv_chest_cloth_22",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 210,
+        "green": 210,
+        "gray": 210
+      }
+    },
+    {
+      "spell_id": "12050",
+      "name": "Black Mageweave Robe",
+      "icon": "inv_chest_cloth_13",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 225,
+        "green": 240,
+        "gray": 255
+      }
+    },
+    {
+      "spell_id": "12055",
+      "name": "Shadoweave Robe",
+      "icon": "inv_chest_cloth_38",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 230,
+        "green": 245,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12069",
+      "name": "Cindercloth Robe",
+      "icon": "inv_chest_cloth_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12068",
+      "name": "Stormcloth Vest",
+      "icon": "INV_Chest_Cloth_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12070",
+      "name": "Dreamweave Vest",
+      "icon": "inv_chest_cloth_42",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "46634",
+      "name": "Diviner's Robes",
+      "icon": "inv_chest_cloth_22",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 235,
+        "green": 235,
+        "gray": 235
+      }
+    },
+    {
+      "spell_id": "12077",
+      "name": "Simple Black Dress",
+      "icon": "inv_chest_cloth_21",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 235,
+        "yellow": 240,
+        "green": 245,
+        "gray": 250
+      }
+    },
+    {
+      "spell_id": "12091",
+      "name": "White Wedding Dress",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 255,
+        "green": 260,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "26403",
+      "name": "Festival Dress",
+      "icon": "inv_chest_cloth_56",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "26407",
+      "name": "Festive Red Pant Suit",
+      "icon": "inv_chest_cloth_55",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 250,
+        "yellow": 265,
+        "green": 280,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "18404",
+      "name": "Frostweave Robe",
+      "icon": "inv_chest_cloth_03",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 255,
+        "yellow": 270,
+        "green": 285,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "18403",
+      "name": "Frostweave Tunic",
+      "icon": "inv_chest_cloth_08",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 255,
+        "yellow": 270,
+        "green": 285,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "18408",
+      "name": "Cindercloth Vest",
+      "icon": "inv_chest_cloth_07",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "18406",
+      "name": "Runecloth Robe",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "18407",
+      "name": "Runecloth Tunic",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 275,
+        "green": 290,
+        "gray": 305
+      }
+    },
+    {
+      "spell_id": "46647",
+      "name": "Pillager's Robe",
+      "icon": "inv_chest_cloth_22",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 270,
+        "green": 270,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "18414",
+      "name": "Brightcloth Robe",
+      "icon": "inv_chest_cloth_26",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "22813",
+      "name": "Gordok Ogre Suit",
+      "icon": "inv_chest_chain_14",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 285,
+        "green": 290,
+        "gray": 295
+      }
+    },
+    {
+      "spell_id": "18436",
+      "name": "Robe of Winter Night",
+      "icon": "inv_chest_cloth_49",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 285,
+        "yellow": 300,
+        "green": 315,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "18451",
+      "name": "Felcloth Robe",
+      "icon": "inv_chest_cloth_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18446",
+      "name": "Wizardweave Robe",
+      "icon": "inv_chest_cloth_46",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "36913",
+      "name": "Astronomer Raiments",
+      "icon": "INV_Chest_Cloth_04",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 322,
+        "gray": 330
+      }
+    },
+    {
+      "spell_id": "24091",
+      "name": "Bloodvine Vest",
+      "icon": "inv_chest_cloth_07",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22902",
+      "name": "Mooncloth Robe",
+      "icon": "inv_chest_cloth_04",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18447",
+      "name": "Mooncloth Vest",
+      "icon": "inv_chest_cloth_08",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28480",
+      "name": "Sylvan Vest",
+      "icon": "inv_chest_plate07",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57605",
+      "name": "Cosmic Vest",
+      "icon": "INV_Chest_Cloth_08",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "23666",
+      "name": "Flarecore Robe",
+      "icon": "inv_chest_cloth_18",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28207",
+      "name": "Glacial Vest",
+      "icon": "inv_chest_cloth_08",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18457",
+      "name": "Robe of the Archmage",
+      "icon": "inv_chest_cloth_38",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18458",
+      "name": "Robe of the Void",
+      "icon": "inv_chest_cloth_51",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18456",
+      "name": "Truefaith Vestments",
+      "icon": "inv_chest_cloth_31",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "46656",
+      "name": "Robe of Sacrifice",
+      "icon": "inv_chest_cloth_09",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "3841",
+      "name": "Green Linen Bracers",
+      "icon": "inv_bracer_12",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 60,
+        "yellow": 85,
+        "green": 102,
+        "gray": 120
+      }
+    },
+    {
+      "spell_id": "22759",
+      "name": "Flarecore Wraps",
+      "icon": "inv_bracer_09",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28209",
+      "name": "Glacial Wrists",
+      "icon": "inv_bracer_07",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "45461",
+      "name": "Dreamthread Bracers",
+      "icon": "inv_bracer_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "3840",
+      "name": "Heavy Linen Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Common",
+      "skill_levels": {
+        "orange": 35,
+        "yellow": 60,
+        "green": 77,
+        "gray": 95
+      }
+    },
+    {
+      "spell_id": "45066",
+      "name": "Gloves of Manathirst",
+      "icon": "inv_gauntlets_19",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 75,
+        "yellow": 150,
+        "green": 167,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "3843",
+      "name": "Heavy Woolen Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 85,
+        "yellow": 110,
+        "green": 127,
+        "gray": 145
+      }
+    },
+    {
+      "spell_id": "3868",
+      "name": "Phoenix Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 125,
+        "yellow": 150,
+        "green": 167,
+        "gray": 185
+      }
+    },
+    {
+      "spell_id": "3852",
+      "name": "Gloves of Meditation",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 130,
+        "yellow": 150,
+        "green": 165,
+        "gray": 180
+      }
+    },
+    {
+      "spell_id": "3854",
+      "name": "Azure Silk Gloves",
+      "icon": "inv_gauntlets_17",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 145,
+        "yellow": 165,
+        "green": 180,
+        "gray": 195
+      }
+    },
+    {
+      "spell_id": "8780",
+      "name": "Hands of Darkness",
+      "icon": "inv_gauntlets_22",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 145,
+        "yellow": 165,
+        "green": 180,
+        "gray": 195
+      }
+    },
+    {
+      "spell_id": "8782",
+      "name": "Truefaith Gloves",
+      "icon": "inv_gauntlets_16",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 150,
+        "yellow": 170,
+        "green": 185,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "46643",
+      "name": "Augerer's Gloves",
+      "icon": "INV_Gauntlets_06",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 200,
+        "yellow": 200,
+        "green": 200,
+        "gray": 200
+      }
+    },
+    {
+      "spell_id": "8804",
+      "name": "Crimson Silk Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 210,
+        "yellow": 225,
+        "green": 240,
+        "gray": 255
+      }
+    },
+    {
+      "spell_id": "12053",
+      "name": "Black Mageweave Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 215,
+        "yellow": 230,
+        "green": 245,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "12063",
+      "name": "Stormcloth Gloves",
+      "icon": "INV_Gauntlets_17",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 220,
+        "yellow": 235,
+        "green": 250,
+        "gray": 265
+      }
+    },
+    {
+      "spell_id": "12066",
+      "name": "Red Mageweave Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12071",
+      "name": "Shadoweave Gloves",
+      "icon": "inv_gauntlets_09",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "12067",
+      "name": "Dreamweave Gloves",
+      "icon": "inv_gauntlets_18",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 240,
+        "green": 255,
+        "gray": 270
+      }
+    },
+    {
+      "spell_id": "46637",
+      "name": "Diviner's Mitts",
+      "icon": "inv_gauntlets_23",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 225,
+        "yellow": 225,
+        "green": 225,
+        "gray": 225
+      }
+    },
+    {
+      "spell_id": "46648",
+      "name": "Pillager's Grips",
+      "icon": "inv_gauntlets_15",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 260,
+        "yellow": 260,
+        "green": 260,
+        "gray": 260
+      }
+    },
+    {
+      "spell_id": "18411",
+      "name": "Frostweave Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 265,
+        "yellow": 280,
+        "green": 295,
+        "gray": 310
+      }
+    },
+    {
+      "spell_id": "18415",
+      "name": "Brightcloth Gloves",
+      "icon": "inv_gauntlets_21",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "18412",
+      "name": "Cindercloth Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "18413",
+      "name": "Ghostweave Gloves",
+      "icon": "inv_gauntlets_05",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 270,
+        "yellow": 285,
+        "green": 300,
+        "gray": 315
+      }
+    },
+    {
+      "spell_id": "18417",
+      "name": "Runecloth Gloves",
+      "icon": "inv_gauntlets_25",
+      "quality": "Uncommon",
+      "skill_levels": {
+        "orange": 275,
+        "yellow": 290,
+        "green": 305,
+        "gray": 320
+      }
+    },
+    {
+      "spell_id": "22867",
+      "name": "Felcloth Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22868",
+      "name": "Inferno Gloves",
+      "icon": "inv_gauntlets_19",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "57024",
+      "name": "Windbinder Gloves",
+      "icon": "inv_gauntlets_12",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "22869",
+      "name": "Mooncloth Gloves",
+      "icon": "inv_gauntlets_17",
+      "quality": "Rare",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "20849",
+      "name": "Flarecore Gloves",
+      "icon": "inv_gauntlets_26",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "28205",
+      "name": "Glacial Gloves",
+      "icon": "inv_gauntlets_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "18454",
+      "name": "Gloves of Spell Mastery",
+      "icon": "inv_gauntlets_06",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 315,
+        "green": 330,
+        "gray": 345
+      }
+    },
+    {
+      "spell_id": "45485",
+      "name": "Gloves of Unwinding Mystery",
+      "icon": "inv_gauntlets_25",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    },
+    {
+      "spell_id": "45463",
+      "name": "Dreamthread Gloves",
+      "icon": "inv_gauntlets_23",
+      "quality": "Epic",
+      "skill_levels": {
+        "orange": 300,
+        "yellow": 300,
+        "green": 300,
+        "gray": 300
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "windows-admin": {
+      "command": "C:\\Program Files\\Python312\\python.exe",
+      "args": [
+        "C:\\MCPServer\\windows_admin_fastmcp.py"
+      ]
+    }
+  }
+}

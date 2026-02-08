@@ -1,0 +1,495 @@
+{
+  "lastUpdated": "2026-02-06T01:45:00-08:00",
+  "title": "AH & Vault Sync v5.0 — Complete Guild Data Pipeline",
+  "description": "Complete design specification for AH & Vault Sync v5.0: the guild's automated data pipeline connecting TurtleWoW game client data to the tbcguild.duckdns.org website. Includes unified tray application with account/character selection GUI, three WoW addons, server APIs, website UI, testing plans, and phased implementation roadmap.",
+
+  "urlStructure": {
+    "title": "System Architecture — Complete Data Flow",
+    "description": "How data flows from TurtleWoW game client through Windows tray app to Linux server and website",
+    "diagram": [
+      "╔══════════════════════════════════════════════════════════════════════════════════════════════════════════╗",
+      "║                           AH & VAULT SYNC v5.0 — SYSTEM ARCHITECTURE                                     ║",
+      "╠══════════════════════════════════════════════════════════════════════════════════════════════════════════╣",
+      "║                                                                                                          ║",
+      "║   GAME CLIENT (TurtleWoW 1.12.1)                      WINDOWS HOST                        LINUX SERVER   ║",
+      "║   ══════════════════════════════                      ════════════                        ════════════   ║",
+      "║                                                                                                          ║",
+      "║   ┌────────────────────────────┐                                                                         ║",
+      "║   │   GuildShopSync.lua        │                                                                         ║",
+      "║   │   (Auction Price Scanner)  │──── /reload ────> WTF/.../GuildShopSync.lua                             ║",
+      "║   │   68 items, lowest buyout  │                           │                                             ║",
+      "║   │   /gss scan | /gss debug   │                           │ 3s poll                                     ║",
+      "║   └────────────────────────────┘                           ▼                                             ║",
+      "║                                                 ┌─────────────────────────┐      HTTPS PUT               ║",
+      "║   ┌────────────────────────────┐                │                         │    ┌──────────────────┐      ║",
+      "║   │   GBankExport.lua          │                │   AH_and_VaultSync      │───>│  Deno Fresh API  │      ║",
+      "║   │   (Guild Vault Scanner)    │──── /reload ───│   Tray.exe              │    │                  │      ║",
+      "║   │   5 tabs, 490 slots total  │                │                         │    │  /api/consumes/  │      ║",
+      "║   │   /gbe scan | /gbe status  │                │   (.NET WinForms)       │    │    prices        │      ║",
+      "║   └────────────────────────────┘                │                         │    │                  │      ║",
+      "║                                      WTF/.../   │   Settings GUI:         │    │  /api/guild-bank/│      ║",
+      "║   ┌────────────────────────────┐    GBankExp ───│   - Account selector    │───>│    inventory     │      ║",
+      "║   │   BankAltExport.lua        │    ort.lua     │   - Character checkboxes│    │                  │      ║",
+      "║   │   (Bank Alt Scanner)       │                │   - Enable/disable sync │    │  /api/bank-alts/ │      ║",
+      "║   │   Bags + Personal Bank     │──── /reload ───│                         │───>│    inventory     │      ║",
+      "║   │   Per-character inventory  │                │   Registry Run key      │    │                  │      ║",
+      "║   │   /bae scan | /bae status  │    WTF/.../    │   Desktop + Start Menu  │    │  Deno KV storage │      ║",
+      "║   └────────────────────────────┘    BankAlt     │   Named mutex singleton │    └────────┬─────────┘      ║",
+      "║                                      Export.lua │   Tray icon (3-color)   │             │                ║",
+      "║                                                 └─────────────────────────┘             │                ║",
+      "║                                                         │                               ▼                ║",
+      "║                                                    Local JSON/TXT            ┌──────────────────┐        ║",
+      "║                                                    exports to:               │  TBC Guild       │        ║",
+      "║                                                    WoW/Interface/AddOns/     │  Website         │        ║",
+      "║                                                      GBankExport/            │  /guild-bank     │        ║",
+      "║                                                      BankAltExport/          │  /bank-alts      │        ║",
+      "║                                                                              │  /consumes       │        ║",
+      "║                                                                              └──────────────────┘        ║",
+      "╚══════════════════════════════════════════════════════════════════════════════════════════════════════════╝"
+    ]
+  },
+
+  "navigationFlow": {
+    "title": "Current State vs Target State",
+    "diagram": [
+      "┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐",
+      "│                                    CURRENT STATE vs TARGET STATE                                        │",
+      "├────────────────────────────────────────────┬────────────────────────────────────────────────────────────┤",
+      "│         CURRENT (Broken)                   │                    TARGET (v5.0)                          │",
+      "├────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤",
+      "│                                            │                                                            │",
+      "│  ✗ v4.0 tray app compiled but installer    │  ✓ v5.0 installer creates:                                │",
+      "│    never built — disappears on reboot      │    - Registry Run key (auto-start)                        │",
+      "│                                            │    - Desktop shortcut                                      │",
+      "│  ✗ GuildShopSync using old Scheduled Task  │    - Start Menu entry                                     │",
+      "│                                            │                                                            │",
+      "│  ✗ GBankExport using PowerShell + VBS      │  ✓ Settings GUI to select:                                │",
+      "│                                            │    - Which accounts to sync                                │",
+      "│  ✗ No bank alt inventory scanning          │    - Which characters per account                         │",
+      "│                                            │    - Enable/disable individual syncs                       │",
+      "│  ✗ No way to select accounts/characters    │                                                            │",
+      "│                                            │  ✓ Single unified tray app handles:                       │",
+      "│  ✗ Guild bank data local only              │    - AH price sync                                        │",
+      "│    (not uploading to website)              │    - Guild vault sync                                     │",
+      "│                                            │    - Bank alt inventory sync (selected only)              │",
+      "│  ✗ No combined storage view                │                                                            │",
+      "│                                            │  ✓ Website shows combined Guild Storage view              │",
+      "│                                            │    with 3 tabs: Vault, Bank Alts, Combined                │",
+      "│                                            │                                                            │",
+      "└────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘"
+    ]
+  },
+
+  "dataFlowDiagrams": {
+    "bankAltDataHierarchy": {
+      "title": "Bank Alt Data Hierarchy",
+      "description": "How bank alt character inventory data is organized across accounts and characters",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                        BANK ALT DATA HIERARCHY                                      │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│   Account (e.g., STORMBANK)                                                         │",
+        "│   │                                                                                 │",
+        "│   ├── Character: Bankalt (Level 35 Mage)                                           │",
+        "│   │   │                                                                             │",
+        "│   │   ├── Bags [Always Accessible]                                                 │",
+        "│   │   │   ├── Bag 0 (Backpack): 16 slots                                           │",
+        "│   │   │   ├── Bag 1-4: 14-18 slots each (equipped bags)                            │",
+        "│   │   │   └── Total: ~80-88 slots per character                                    │",
+        "│   │   │                                                                             │",
+        "│   │   └── Personal Bank [Only at Banker NPC]                                       │",
+        "│   │       ├── Main Bank: 24 slots (bag -1)                                         │",
+        "│   │       ├── Bank Bags 1-7: 14-18 slots each (bags 5-11)                          │",
+        "│   │       └── Total: ~122-150 slots per character                                  │",
+        "│   │                                                                                 │",
+        "│   ├── Character: Bankalt2 (Level 10 Warrior) ... same structure                   │",
+        "│   └── Character: Stashmaster (Level 5 Rogue) ... same structure                   │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "flatDataFormat": {
+      "title": "BANKALTEXPORT_V1 Flat Data Format",
+      "description": "Pipe-delimited flat format for efficient parsing by the tray application",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                     BANKALTEXPORT_V1 — FLAT DATA FORMAT                             │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  Header:  BANKALTEXPORT_V1|{timestamp}|{account}|{charCount}|{totalItems}          │",
+        "│  Char:    CHAR|{name}|{class}|{level}                                              │",
+        "│  Bag:     BAG|{bagId}|{slot}|{itemName}|{count}|{quality}|{itemId}                 │",
+        "│  Bank:    BANK|{bagId}|{slot}|{itemName}|{count}|{quality}|{itemId}                │",
+        "│  End:     ENDCHAR                                                                   │",
+        "│                                                                                     │",
+        "│  Example Output:                                                                    │",
+        "│  ─────────────────────────────────────────────────────────────────────────────────  │",
+        "│  BANKALTEXPORT_V1|1738857045|STORMBANK|2|4500                                       │",
+        "│  CHAR|Bankalt|Mage|35                                                               │",
+        "│  BAG|0|1|Greater Fire Protection Potion|20|1|13457                                  │",
+        "│  BAG|1|3|Flask of the Titans|5|3|13510                                              │",
+        "│  BANK|-1|1|Arcanite Bar|40|3|12360                                                  │",
+        "│  ENDCHAR                                                                            │",
+        "│  CHAR|Stashmaster|Rogue|5                                                           │",
+        "│  BAG|0|1|Linen Cloth|200|1|2589                                                     │",
+        "│  ENDCHAR                                                                            │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "apiEndpoints": {
+      "title": "Server API Endpoints",
+      "description": "Deno Fresh API endpoints for storing and retrieving inventory data",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                           SERVER API ENDPOINTS                                      │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  EXISTING:                                                                          │",
+        "│  PUT  /api/consumes/prices         → Store AH prices                               │",
+        "│  PUT  /api/guild-bank/inventory    → Store guild vault contents                    │",
+        "│  GET  /api/guild-bank/inventory    → Retrieve guild vault contents                 │",
+        "│                                                                                     │",
+        "│  NEW (To Build):                                                                    │",
+        "│  PUT  /api/bank-alts/inventory     → Store bank alt inventory (per account)        │",
+        "│  GET  /api/bank-alts/inventory     → Retrieve all bank alt inventories             │",
+        "│  GET  /api/bank-alts/inventory?account=X  → Filter by account                      │",
+        "│  GET  /api/guild-storage/combined  → Merged vault + bank alts view                 │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    }
+  },
+
+  "pageMockups": {
+    "trayAppSettingsGui": {
+      "title": "Tray App: Settings GUI — Account & Character Selection",
+      "description": "Windows Forms settings dialog allowing users to select which accounts and characters to include in sync",
+      "mockup": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                    TRAY APP SETTINGS GUI — ACCOUNT/CHARACTER SELECTION              │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  ┌─────────────────────────────────────────────────────────────────────────────┐   │",
+        "│  │  AH & Vault Sync v5.0 — Settings                                    [X]    │   │",
+        "│  ├─────────────────────────────────────────────────────────────────────────────┤   │",
+        "│  │                                                                              │   │",
+        "│  │  WoW Install Path: [ C:\\turtlewow                            ] [Browse...]  │   │",
+        "│  │                                                                              │   │",
+        "│  │  ┌─────────────────────────────────────────────────────────────────────────┐│   │",
+        "│  │  │  SYNC SOURCES                                                          ││   │",
+        "│  │  ├─────────────────────────────────────────────────────────────────────────┤│   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  [✓] AH Prices (GuildShopSync)                                          ││   │",
+        "│  │  │      Account: [ STORMSHADOW ▼ ]                                          ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  [✓] Guild Vault (GBankExport)                                          ││   │",
+        "│  │  │      Account: [ STORMSHADOW ▼ ]                                          ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  [✓] Bank Alt Inventories (BankAltExport)                               ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  └─────────────────────────────────────────────────────────────────────────┘│   │",
+        "│  │                                                                              │   │",
+        "│  │  ┌─────────────────────────────────────────────────────────────────────────┐│   │",
+        "│  │  │  BANK ALT ACCOUNTS & CHARACTERS                                        ││   │",
+        "│  │  ├─────────────────────────────────────────────────────────────────────────┤│   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  ▼ [✓] STORMBANK                                                        ││   │",
+        "│  │  │      [✓] Bankalt (Mage 35)        — Bags + Bank                         ││   │",
+        "│  │  │      [✓] Stashmaster (Rogue 5)   — Bags only                            ││   │",
+        "│  │  │      [ ] Pvpalt (Warrior 19)     — Excluded                             ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  ▼ [✓] ALTACCOUNT2                                                      ││   │",
+        "│  │  │      [✓] Herbfarmer (Druid 40)   — Bags + Bank                          ││   │",
+        "│  │  │      [✓] Orefarmer (Paladin 35)  — Bags + Bank                          ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  ▶ [ ] STORMSHADOW (main account - not a bank alt)                      ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  │  [+ Add Account...]  [Refresh from WTF folder]                          ││   │",
+        "│  │  │                                                                          ││   │",
+        "│  │  └─────────────────────────────────────────────────────────────────────────┘│   │",
+        "│  │                                                                              │   │",
+        "│  │  ┌─────────────────────────────────────────────────────────────────────────┐│   │",
+        "│  │  │  OPTIONS                                                                ││   │",
+        "│  │  ├─────────────────────────────────────────────────────────────────────────┤│   │",
+        "│  │  │  [✓] Start with Windows                                                 ││   │",
+        "│  │  │  [✓] Show balloon notifications on sync                                 ││   │",
+        "│  │  │  [✓] Auto-upload to website                                             ││   │",
+        "│  │  │  [ ] Save local JSON backups                                            ││   │",
+        "│  │  │  Poll interval: [ 5 ] seconds                                           ││   │",
+        "│  │  └─────────────────────────────────────────────────────────────────────────┘│   │",
+        "│  │                                                                              │   │",
+        "│  │                                        [ Cancel ]  [ Save & Apply ]         │   │",
+        "│  │                                                                              │   │",
+        "│  └─────────────────────────────────────────────────────────────────────────────┘   │",
+        "│                                                                                     │",
+        "│  BEHAVIOR:                                                                          │",
+        "│  • Accounts auto-discovered from WTF/Account/ folder                               │",
+        "│  • Characters auto-discovered from SavedVariables when addon runs                  │",
+        "│  • Unchecked accounts/characters are NOT synced to website                         │",
+        "│  • Settings saved to %LocalAppData%/AH_and_VaultSync/settings.json                 │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "trayAppContextMenu": {
+      "title": "Tray App: Context Menu (Right-Click)",
+      "description": "Quick status view and access to settings from system tray",
+      "mockup": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                           TRAY APP CONTEXT MENU                                     │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│                          ┌────────────────────────────────┐                        │",
+        "│                          │  AH & Vault Sync v5.0          │                        │",
+        "│                          ├────────────────────────────────┤                        │",
+        "│                          │  ✓ AH Prices     Synced 2m ago │                        │",
+        "│                          │  ✓ Guild Vault   Synced 5m ago │                        │",
+        "│                          │  ✓ STORMBANK     Synced 8m ago │                        │",
+        "│                          │    └─ Bankalt, Stashmaster     │                        │",
+        "│                          │  ✓ ALTACCOUNT2   Synced 12m ago│                        │",
+        "│                          │    └─ Herbfarmer, Orefarmer    │                        │",
+        "│                          ├────────────────────────────────┤                        │",
+        "│                          │  ⚙️ Settings...                │  <- Opens GUI above   │",
+        "│                          │  📊 View Status...             │                        │",
+        "│                          │  📂 Open Log File              │                        │",
+        "│                          │  🌐 Open Website               │                        │",
+        "│                          ├────────────────────────────────┤                        │",
+        "│                          │  🔄 Sync Now                   │                        │",
+        "│                          │  ❌ Exit                        │                        │",
+        "│                          └────────────────────────────────┘                        │",
+        "│                                                                                     │",
+        "│   TRAY ICON STATES:                                                                │",
+        "│   🟢 Green  = All enabled syncs successful                                         │",
+        "│   🟡 Yellow = Sync in progress                                                     │",
+        "│   🔴 Red    = Error (check log)                                                    │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "websiteGuildStorage": {
+      "title": "Website: Guild Storage Page — Vault Tab",
+      "description": "Guild vault contents with item grid display",
+      "mockup": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│  🏦 Guild Storage                                             Last synced: 2m ago  │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  [*Guild Vault*]  [ Bank Alts ]  [ Combined View ]                                 │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  Search: [_______________]  Filter: [All Types ▼]  Sort: [Name ▼]                 │",
+        "│                                                                                     │",
+        "│  ┌─────────────────────────────────────────────────────────────────────────────┐   │",
+        "│  │  VAULT TAB 1: Consumables                            [Tab 2] [Tab 3]...     │   │",
+        "│  ├─────────────────────────────────────────────────────────────────────────────┤   │",
+        "│  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐           │   │",
+        "│  │  │ 🧪   │ │ 🧪   │ │ ⚗️   │ │ 🍖   │ │ 📜   │ │ 🧪   │ │ 💎   │           │   │",
+        "│  │  │ x20  │ │ x15  │ │ x40  │ │ x60  │ │ x10  │ │ x25  │ │ x5   │           │   │",
+        "│  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘           │   │",
+        "│  │  Fire     Flask    Mongoose  Squid   Scroll   Mana     Arcane              │   │",
+        "│  │  Prot                                                   Pot     Crystal    │   │",
+        "│  └─────────────────────────────────────────────────────────────────────────────┘   │",
+        "│                                                                                     │",
+        "│  Summary: 160 unique items | 5,908 total | 5 tabs                                  │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "websiteBankAltsTab": {
+      "title": "Website: Guild Storage Page — Bank Alts Tab",
+      "description": "Bank alt inventories grouped by account and character",
+      "mockup": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│  🏦 Guild Storage                                             Last synced: 2m ago  │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  [ Guild Vault ]  [*Bank Alts*]  [ Combined View ]                                 │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  Account: [All ▼]  Character: [All ▼]  Location: [All ▼]                          │",
+        "│                                                                                     │",
+        "│  ┌─────────────────────────────────────────────────────────────────────────────┐   │",
+        "│  │  📦 STORMBANK                                            Synced: 5 min ago │   │",
+        "│  ├─────────────────────────────────────────────────────────────────────────────┤   │",
+        "│  │  👤 Bankalt (Mage 35)                                                       │   │",
+        "│  │  ├─ Bags: 78/82 slots — Fire Prot x200, Flask x15, Scrolls x40...          │   │",
+        "│  │  └─ Bank: 120/136 slots — Arcanite x40, Black Lotus x15...                 │   │",
+        "│  │                                                                              │   │",
+        "│  │  👤 Stashmaster (Rogue 5)                                                   │   │",
+        "│  │  ├─ Bags: 45/64 slots — Linen x200, Wool x150...                            │   │",
+        "│  │  └─ Bank: Not scanned                                                       │   │",
+        "│  └─────────────────────────────────────────────────────────────────────────────┘   │",
+        "│                                                                                     │",
+        "│  Summary: 2 accounts | 4 characters | 3,200 total items                           │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "websiteCombinedView": {
+      "title": "Website: Guild Storage Page — Combined View",
+      "description": "Aggregated totals across vault + all bank alts",
+      "mockup": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│  🏦 Guild Storage                                             Last synced: 2m ago  │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  [ Guild Vault ]  [ Bank Alts ]  [*Combined View*]                                 │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  Search: [_______________]  Category: [Consumables ▼]  Sort: [Count ▼]            │",
+        "│                                                                                     │",
+        "│  ┌────────────────────────────────┬───────┬───────────┬───────┬─────────────────┐  │",
+        "│  │  Item Name                     │ Vault │ Bank Alts │ TOTAL │ Locations       │  │",
+        "│  ├────────────────────────────────┼───────┼───────────┼───────┼─────────────────┤  │",
+        "│  │  Greater Fire Protection Pot   │   60  │    340    │  400  │ V1, BA, ST      │  │",
+        "│  │  Flask of the Titans           │   25  │     35    │   60  │ V1, BA          │  │",
+        "│  │  Elixir of the Mongoose        │   80  │    120    │  200  │ V2, BA, SM      │  │",
+        "│  │  Arcanite Bar                  │   20  │     80    │  100  │ V4, BA, ST      │  │",
+        "│  └────────────────────────────────┴───────┴───────────┴───────┴─────────────────┘  │",
+        "│                                                                                     │",
+        "│  Legend: V1-5=Vault tabs, BA=Bankalt, ST=Stashmaster                              │",
+        "│  Grand Total: 245 unique | 9,108 total (Vault: 5,908 + Alts: 3,200)               │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    }
+  },
+
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Stabilize v4.0 (Reboot Survival)",
+      "status": "Not Started",
+      "description": "Compile the v4.0 Inno Setup installer so the tray app survives reboots. Creates Registry Run key, desktop shortcut, and Start Menu entry. Removes old Scheduled Task and VBS mechanisms.",
+      "estimatedTime": "2-3 hours",
+      "files": {
+        "create": [
+          {"path": "AH_and_Vault_Sync-v4.0-Setup.exe", "purpose": "Compiled Inno Setup installer"}
+        ],
+        "refactor": [
+          {"path": "AH_and_Vault_Sync.iss", "changes": "Verify all paths and version numbers before compile"}
+        ]
+      }
+    },
+    {
+      "phase": 2,
+      "name": "Build BankAltExport Addon",
+      "status": "Not Started",
+      "description": "Create new WoW addon that scans character bags (0-4) and personal bank (-1, 5-11). Auto-scans bank on BANKFRAME_OPENED event. Outputs BANKALTEXPORT_V1 flat format for tray app parsing.",
+      "estimatedTime": "4-6 hours",
+      "files": {
+        "create": [
+          {"path": "Interface/AddOns/BankAltExport/BankAltExport.lua", "purpose": "Main addon logic - bag and bank scanning"},
+          {"path": "Interface/AddOns/BankAltExport/BankAltExport.toc", "purpose": "Addon manifest file"}
+        ]
+      }
+    },
+    {
+      "phase": 3,
+      "name": "Update Tray App to v5.0 with Settings GUI",
+      "status": "Not Started",
+      "description": "Add Settings GUI for account/character selection. User can choose which accounts and which characters within each account are included in sync. Add BankAltExport file watcher, parse BANKALTEXPORT_V1 format, upload to new API endpoint.",
+      "estimatedTime": "6-8 hours",
+      "files": {
+        "create": [
+          {"path": "source/SettingsForm.cs", "purpose": "WinForms settings dialog with account/character tree"},
+          {"path": "source/SettingsForm.Designer.cs", "purpose": "Designer file for settings form"},
+          {"path": "source/Settings.cs", "purpose": "Settings model and JSON persistence"}
+        ],
+        "refactor": [
+          {"path": "source/AH_and_VaultSyncTray.cs", "changes": "Add BankAltExport watcher, settings integration, context menu updates"}
+        ]
+      }
+    },
+    {
+      "phase": 4,
+      "name": "Build Server API",
+      "status": "Not Started",
+      "description": "Create Deno Fresh API endpoints for bank alt inventory storage and retrieval. Add combined guild storage endpoint that merges vault + bank alts.",
+      "estimatedTime": "3-4 hours",
+      "files": {
+        "create": [
+          {"path": "routes/api/bank-alts/inventory.ts", "purpose": "PUT/GET endpoints for bank alt data"},
+          {"path": "routes/api/guild-storage/combined.ts", "purpose": "GET endpoint returning merged vault + alts"}
+        ]
+      }
+    },
+    {
+      "phase": 5,
+      "name": "Build Website UI",
+      "status": "Not Started",
+      "description": "Create Guild Storage page with 3-tab UI: Guild Vault, Bank Alts, Combined View. Includes search, filter, sort functionality. Mobile responsive.",
+      "estimatedTime": "6-8 hours",
+      "files": {
+        "create": [
+          {"path": "routes/guild-storage.tsx", "purpose": "Main page route"},
+          {"path": "islands/GuildStorageTabs.tsx", "purpose": "Interactive tab component with all 3 views"}
+        ],
+        "refactor": [
+          {"path": "components/Nav.tsx", "changes": "Add Guild Storage link to navigation"}
+        ]
+      }
+    },
+    {
+      "phase": 6,
+      "name": "Update Installer to v5.0",
+      "status": "Not Started",
+      "description": "Add BankAltExport addon to installer. Update version to 5.0. Handle upgrade path from v4.0.",
+      "estimatedTime": "2-3 hours",
+      "files": {
+        "refactor": [
+          {"path": "AH_and_Vault_Sync.iss", "changes": "Add BankAltExport addon files, bump version to 5.0, add upgrade logic"}
+        ],
+        "create": [
+          {"path": "AH_and_Vault_Sync-v5.0-Setup.exe", "purpose": "Final compiled installer"}
+        ]
+      }
+    },
+    {
+      "phase": 7,
+      "name": "Testing & Documentation",
+      "status": "Not Started",
+      "description": "Execute technical testing plan (addon, tray app, API, website). Run UAT scenarios. Fix bugs. Write user documentation.",
+      "estimatedTime": "4-5 hours",
+      "files": {
+        "create": [
+          {"path": "tests/playwright/guild-storage.spec.ts", "purpose": "Playwright E2E tests for website UI"},
+          {"path": "README.md", "purpose": "User installation and usage guide"},
+          {"path": "TROUBLESHOOTING.md", "purpose": "Common issues and solutions"}
+        ]
+      }
+    }
+  ],
+
+  "testingPlan": {
+    "title": "Technical Testing Plan",
+    "sections": [
+      {
+        "name": "T1: BankAltExport Addon",
+        "tests": ["Addon loads without errors", "/bae scan scans all bags", "Bank auto-scans on open", "SavedVariables persists", "FlatData format correct"]
+      },
+      {
+        "name": "T2: Tray App",
+        "tests": ["Auto-starts on login", "Settings GUI opens", "Account/character selection saves", "Only selected items sync", "File watcher detects changes", "API upload works"]
+      },
+      {
+        "name": "T3: Server API",
+        "tests": ["PUT stores data", "GET retrieves data", "Account filter works", "Combined endpoint merges correctly"]
+      },
+      {
+        "name": "T4: Website UI",
+        "tests": ["All 3 tabs render", "Search filters items", "Sort works", "Mobile responsive"]
+      }
+    ]
+  },
+
+  "uatChecklist": {
+    "title": "User Acceptance Testing",
+    "scenarios": [
+      {"id": "UAT-1", "name": "Fresh Install", "steps": "Run installer, verify addons load, tray starts, shortcuts exist"},
+      {"id": "UAT-2", "name": "Reboot Survival", "steps": "Reboot Windows, verify tray auto-starts"},
+      {"id": "UAT-3", "name": "Settings GUI", "steps": "Open settings, select accounts/characters, save, verify only selected sync"},
+      {"id": "UAT-4", "name": "AH Sync", "steps": "Scan AH, reload, verify website updated"},
+      {"id": "UAT-5", "name": "Vault Sync", "steps": "Open guild bank, reload, verify website updated"},
+      {"id": "UAT-6", "name": "Bank Alt Sync", "steps": "Log bank alt, scan bags/bank, reload, verify website shows data"},
+      {"id": "UAT-7", "name": "Combined View", "steps": "Add items to vault and bank alt, sync both, verify combined totals correct"},
+      {"id": "UAT-8", "name": "Excluded Characters", "steps": "Uncheck a character in settings, sync, verify their items NOT on website"}
+    ]
+  }
+}

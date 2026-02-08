@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AH & Vault Sync</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>AH & Vault Sync</h1>
+      <p class="subtitle">Turtle WoW Guild Data Pipeline</p>
+    </header>
+
+    <main class="main-content">
+      <!-- Setup Section -->
+      <section class="config-section">
+        <h2>WoW Installation</h2>
+        <div class="form-group">
+          <label for="wowPath">Turtle WoW Folder:</label>
+          <div class="path-input-group">
+            <input type="text" id="wowPath" placeholder="C:\Games\Turtle WoW" readonly>
+            <button id="browseBtn" class="btn btn-secondary">Browse...</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Addon Status Section -->
+      <section class="addon-section">
+        <h2>WoW Addons</h2>
+        <div id="addonStatus" class="addon-status">
+          <p class="placeholder-text">Select your WoW folder to install addons automatically...</p>
+        </div>
+        <button id="installAddonsBtn" class="btn btn-secondary" style="margin-top: 10px; display: none;">Reinstall Addons</button>
+      </section>
+
+      <!-- Accounts Section -->
+      <section class="accounts-section">
+        <h2>Accounts & Characters</h2>
+        <div id="accountsList" class="accounts-list">
+          <p class="placeholder-text">Select your WoW folder to discover accounts...</p>
+        </div>
+      </section>
+
+      <!-- Sync Options -->
+      <section class="sync-section">
+        <h2>Sync Settings</h2>
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" id="autoSync" checked>
+            <span>Auto-sync when addon data changes</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Status Section -->
+      <section class="status-section">
+        <h2>Sync Status</h2>
+        <div class="status-grid">
+          <div class="status-item">
+            <span class="status-label">Last Sync:</span>
+            <span id="lastSyncTime" class="status-value">Never</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Connection:</span>
+            <span id="connectionStatus" class="status-value status-unknown">Unknown</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Watcher:</span>
+            <span id="watcherStatus" class="status-value status-unknown">Stopped</span>
+          </div>
+        </div>
+        <div id="syncLog" class="sync-log">
+          <p class="log-entry">Ready to sync...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="button-group">
+        <button id="testConnectionBtn" class="btn btn-secondary">Test Connection</button>
+        <button id="syncNowBtn" class="btn btn-primary">Sync Now</button>
+        <button id="openDashboardBtn" class="btn btn-secondary">Open Website</button>
+      </div>
+      <div class="button-group">
+        <button id="saveConfigBtn" class="btn btn-success">Save Settings</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

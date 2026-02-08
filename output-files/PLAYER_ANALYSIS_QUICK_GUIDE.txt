@@ -1,0 +1,164 @@
+╔══════════════════════════════════════════════════════════╗
+║   🐢 PLAYER ANALYSIS FEATURE - QUICK GUIDE              ║
+║      New in v2.1 - October 21, 2025                      ║
+╚══════════════════════════════════════════════════════════╝
+
+📊 WHAT'S NEW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+A new "Player Analysis" tab that shows:
+✓ Who used which consumables (food, elixirs, flasks)
+✓ Who died and how many times
+✓ Who cast dispels (Remove Curse, Cure Disease, etc.)
+✓ Who cast protective buffs (Fear Ward, etc.)
+
+
+⚡ HOW TO USE (3 CLICKS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Launch: start_web_app.bat
+2. Click: "📊 Player Analysis" tab
+3. Select: Your processed raid log (e.g., TurtLog-MC-2025-10-20-Ragnaros.txt)
+4. Click: "Analyze Player Behavior"
+5. Done! View the results.
+
+
+📋 WHAT YOU'LL SEE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SUMMARY STATS:
+  Total Players:          62
+  Total Deaths:           249
+  Total Consumables:      1354
+  Total Dispels:          311
+  Avg Deaths/Player:      4.02
+  Avg Consumables/Player: 21.84
+
+PLAYER TABLE (Sortable):
+┌────────────┬──────┬─────────┬────────┬─────────┬────────┐
+│ Player     │ Food │ Elixirs │ Flasks │ Deaths  │ Dispels│
+├────────────┼──────┼─────────┼────────┼─────────┼────────┤
+│ Keenhoof   │  12  │   45    │   3    │    2    │   15   │
+│ Hound      │   0  │    5    │   0    │   39    │    0   │
+│ Zuella     │   8  │   22    │   1    │    3    │   76   │
+└────────────┴──────┴─────────┴────────┴─────────┴────────┘
+
+
+🎯 COOL FEATURES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SORTABLE COLUMNS:
+  Click any column header to sort
+  Click again to reverse (high → low, low → high)
+
+TOOLTIPS:
+  Hover over numbers to see details
+  Example: "Elixir of the Mongoose: 3, Winterfall Firewater: 2"
+
+FILTER BY NAME:
+  Type player name to filter table
+  Real-time search as you type
+
+RESET BUTTON:
+  One-click to clear all filters
+
+
+💡 USE CASES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOR RAID LEADERS:
+  • Sort by deaths to see who's struggling
+  • Sort by consumables to see who's prepared
+  • Sort by dispels to see who's helping
+
+FOR PLAYERS:
+  • Find your name and see your stats
+  • Compare to raid average
+  • Track improvement over time
+
+FOR OFFICERS:
+  • Review preparation for loot decisions
+  • Recognize MVP contributors
+  • Coach struggling raiders
+
+
+📊 TRACKED ITEMS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FOOD:
+  Danonzo's Tel'Abim Medley, Blessed Sunfruit,
+  Dirge's Chops, Grilled Squid, and more
+
+ELIXIRS:
+  Mongoose, Giants, Greater Agility, Winterfall Firewater,
+  Shadow Power, Greater Firepower, Dreamshard, and more
+
+FLASKS:
+  Supreme Power, Titans, Distilled Wisdom,
+  Chromatic Resistance
+
+WEAPON BUFFS:
+  Brilliant Wizard Oil, Dense Sharpening Stone,
+  Elemental Sharpening Stone, Windfury Totem
+
+WORLD BUFFS:
+  Rallying Cry, Warchief's Blessing, Spirit of Zandalar,
+  Songflower, DMF buffs, DM buffs
+
+DISPELS:
+  Remove Curse, Cure Disease, Cleanse, Abolish Poison,
+  Dispel Magic
+
+PROTECTIVE:
+  Fear Ward, Power Word: Shield
+
+
+🎯 REAL EXAMPLE (MC 10/20/2025):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Most Deaths:      Hound (39)        ← Needs help!
+Most Consumables: Keenhoof (196)    ← MVP prep!
+Most Dispels:     Zuella (76)       ← MVP support!
+
+Avg Consumables:  21.84 per player
+Avg Deaths:       4.02 per player
+
+
+⚙️ NEW FILES ADDED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+C:\turtlewow\Logs\consumables_database.json
+  └─ Database of all tracked items/spells
+
+C:\turtlewow\Logs\analyze_player_behavior.py
+  └─ Analysis engine (can run standalone)
+
+
+🔧 STANDALONE USE (Optional):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Command line usage:
+  python analyze_player_behavior.py TurtLog-MC-2025-10-20-Ragnaros.txt
+
+Output:
+  TurtLog-MC-2025-10-20-Ragnaros_analysis.json
+
+
+📖 FULL DOCUMENTATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+See: PLAYER_ANALYSIS_FEATURE.md
+  For complete details, customization, troubleshooting
+
+
+══════════════════════════════════════════════════════════════
+
+That's it! The analysis happens automatically from your
+already-processed raid logs. No extra steps needed!
+
+Just process your raid as normal, then click the Analysis tab
+to see who brought their A-game! 🎮📊
+
+Happy analyzing! 🐢⚔️
+
+══════════════════════════════════════════════════════════════

@@ -1,0 +1,283 @@
+# Hive-Mind-Advanced Command for Windows
+# Advanced AI swarm orchestration with intelligent agent selection
+
+function hive-mind-advanced {
+    param(
+        [string]$AdditionalContext = "",
+        [string]$Strategy = "adaptive",
+        [int]$MaxAgents = 12
+    )
+    
+    $PromptFile = "C:\Claude-Flow\hive_prompt.txt"
+    $ClaudeFlowDir = "C:\Claude-Flow"
+    $Workspace = "C:\Claude-Flow\output-files"
+    
+    # Fix PATH order - prioritize npm's claude-code and remove invalid .local/bin
+    # First, remove both paths if they exist in PATH
+    $env:PATH = ($env:PATH -split ';' | Where-Object { 
+        $_ -ne "C:\Users\ryanr\.local\bin" -and 
+        $_ -ne "C:\Users\ryanr\AppData\Roaming\npm" 
+    }) -join ';'
+    
+    # Now add only npm path (for claude-code) - exclude .local/bin as it contains invalid binary
+    $env:PATH = "C:\Users\ryanr\AppData\Roaming\npm;$env:PATH"
+    
+    # Generate unique namespace
+    $Timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $RandomHex = -join ((1..4) | ForEach {'{0:x}' -f (Get-Random -Max 16)})
+    $Namespace = "hive-$Timestamp-$RandomHex"
+    
+    # Create workspace directory if it doesn't exist
+    if (!(Test-Path $Workspace)) {
+        New-Item -ItemType Directory -Path $Workspace -Force | Out-Null
+    }
+    
+    # Check if prompt file exists
+    if (!(Test-Path $PromptFile)) {
+        Write-Host "Error: Prompt file not found at $PromptFile" -ForegroundColor Red
+        Write-Host "Please create your objective file first with:" -ForegroundColor Yellow
+        Write-Host "   'Your objective here' | Out-File -FilePath $PromptFile" -ForegroundColor Cyan
+        return
+    }
+    
+    # Read objective
+    $MainObjective = Get-Content $PromptFile -Raw
+    
+    if ([string]::IsNullOrWhiteSpace($MainObjective)) {
+        Write-Host "Error: Prompt file is empty" -ForegroundColor Red
+        return
+    }
+    
+    # Function to determine optimal agents based on objective content
+    function Get-OptimalAgents {
+        param([string]$Objective)
+        
+        $agents = @("coordinator", "architect")
+        
+        # Database agents
+        if ($Objective -match "database|sql|postgres|mysql|mongo|redis|schema") {
+            $agents += "database"
+        }
+        
+        # API/Backend agents
+        if ($Objective -match "api|rest|graphql|backend|endpoint|server|microservice") {
+            $agents += @("api", "backend")
+        }
+        
+        # Frontend agents
+        if ($Objective -match "frontend|ui|ux|react|vue|angular|component|interface") {
+            $agents += @("frontend", "ui-ux")
+        }
+        
+        # Testing agents
+        if ($Objective -match "test|testing|qa|quality|coverage|unit test|integration") {
+            $agents += @("tester", "qa")
+        }
+        
+        # DevOps agents
+        if ($Objective -match "deploy|deployment|docker|kubernetes|ci/cd|pipeline|aws|azure") {
+            $agents += @("devops", "infrastructure")
+        }
+        
+        # Security agents
+        if ($Objective -match "security|vulnerability|authentication|encryption|owasp") {
+            $agents += "security"
+        }
+        
+        # Performance agents
+        if ($Objective -match "performance|optimization|speed|efficiency|bottleneck") {
+            $agents += @("performance", "optimizer")
+        }
+        
+        # Documentation agents
+        if ($Objective -match "document|documentation|readme|guide|tutorial") {
+            $agents += "documenter"
+        }
+        
+        # Research agents
+        if ($Objective -match "research|analyze|analysis|investigate|explore|evaluate") {
+            $agents += @("researcher", "analyst")
+        }
+        
+        # Mobile agents
+        if ($Objective -match "mobile|ios|android|react native|flutter|swift|kotlin") {
+            $agents += "mobile"
+        }
+        
+        # ML/AI agents
+        if ($Objective -match "machine learning|ml|ai|neural|model|training|prediction") {
+            $agents += "ml-specialist"
+        }
+        
+        # Default agents if none matched
+        if ($agents.Count -eq 2) {
+            $agents += @("researcher", "coder", "tester", "analyst", "reviewer", "optimizer")
+        } else {
+            $agents += @("coder", "reviewer")
+        }
+        
+        return ($agents -join ",")
+    }
+    
+    # Determine optimal agents
+    $OptimalAgents = Get-OptimalAgents -Objective $MainObjective
+    
+    # Display configuration
+    Write-Host "Executing ADVANCED Hive-Mind with Intelligent Agent Selection" -ForegroundColor Green
+    Write-Host ("=" * 65) -ForegroundColor DarkGray
+    Write-Host "Version: Claude-Flow @latest" -ForegroundColor Cyan
+    Write-Host "Workspace: $Workspace" -ForegroundColor Cyan
+    Write-Host "Namespace: $Namespace" -ForegroundColor Cyan
+    Write-Host "Strategy: $Strategy" -ForegroundColor Yellow
+    Write-Host "Max Agents: $MaxAgents" -ForegroundColor Yellow
+    Write-Host "Queen Type: adaptive" -ForegroundColor Yellow
+    Write-Host "Selected Agents: $OptimalAgents" -ForegroundColor Magenta
+    Write-Host "Objective: $($MainObjective.Substring(0, [Math]::Min(100, $MainObjective.Length)))..." -ForegroundColor Yellow
+    
+    if ($AdditionalContext) {
+        Write-Host "Additional Context: $AdditionalContext" -ForegroundColor Magenta
+        $MainObjective = "$MainObjective`n`nAdditional context: $AdditionalContext"
+    }
+    
+    Write-Host ("=" * 65) -ForegroundColor DarkGray
+    
+    # Display agent capabilities
+    Write-Host "`nAgent Capabilities Activated:" -ForegroundColor Green
+    Write-Host ("-" * 32) -ForegroundColor DarkGray
+    
+    $agentList = $OptimalAgents -split ","
+    foreach ($agent in $agentList) {
+        switch ($agent.Trim()) {
+            "coordinator" { Write-Host "  Coordinator: Orchestration and workflow management" }
+            "architect" { Write-Host "  Architect: System design and technical architecture" }
+            "database" { Write-Host "  Database: Schema design, migrations, optimization" }
+            "api" { Write-Host "  API: REST/GraphQL endpoint development" }
+            "backend" { Write-Host "  Backend: Server-side logic and business rules" }
+            "frontend" { Write-Host "  Frontend: UI components and user interactions" }
+            "ui-ux" { Write-Host "  UI/UX: Design systems and user experience" }
+            "tester" { Write-Host "  Tester: Automated testing and quality assurance" }
+            "qa" { Write-Host "  QA: Quality validation and test coverage" }
+            "devops" { Write-Host "  DevOps: CI/CD pipelines and deployment" }
+            "infrastructure" { Write-Host "  Infrastructure: Cloud services and scaling" }
+            "security" { Write-Host "  Security: Vulnerability assessment and compliance" }
+            "performance" { Write-Host "  Performance: Optimization and benchmarking" }
+            "optimizer" { Write-Host "  Optimizer: Code and resource optimization" }
+            "documenter" { Write-Host "  Documenter: Technical documentation and guides" }
+            "researcher" { Write-Host "  Researcher: Information gathering and analysis" }
+            "analyst" { Write-Host "  Analyst: Data analysis and insights" }
+            "reviewer" { Write-Host "  Reviewer: Code quality and best practices" }
+            "coder" { Write-Host "  Coder: Implementation and development" }
+            "mobile" { Write-Host "  Mobile: iOS/Android development" }
+            "ml-specialist" { Write-Host "  ML Specialist: Machine learning models" }
+        }
+    }
+    
+    Write-Host "`nAdvanced Features Enabled:" -ForegroundColor Green
+    Write-Host ("-" * 30) -ForegroundColor DarkGray
+    Write-Host "  - Adaptive Strategy"
+    Write-Host "  - Auto-spawn enabled"
+    Write-Host "  - Parallel execution"
+    Write-Host "  - Weighted consensus"
+    Write-Host "  - Auto-scaling"
+    Write-Host "  - Encryption enabled"
+    Write-Host "  - Real-time monitoring"
+    Write-Host "  - Claude Code CLI integration"
+    Write-Host "  - Execute mode enabled"
+    
+    Write-Host "`nSpawning Advanced Hive-Mind Swarm..." -ForegroundColor Green
+    Write-Host ("=" * 65) -ForegroundColor DarkGray
+    
+    # Find Claude Code - explicitly use the npm installation
+    $claudePath = "C:\Users\ryanr\AppData\Roaming\npm\claude-code.cmd"
+    if (-not (Test-Path $claudePath)) {
+        Write-Host "Error: Claude Code not found at expected location: $claudePath" -ForegroundColor Red
+        Write-Host "Please ensure Claude Code is installed via npm: npm install -g @anthropic/claude-cli" -ForegroundColor Yellow
+        return
+    }
+    Write-Host "Claude Code found at: $claudePath" -ForegroundColor Green
+    
+    # Change to workspace
+    Push-Location $Workspace
+    
+    try {
+        # Build arguments for npx with new flags
+        $arguments = @(
+            "claude-flow@latest",
+            "hive-mind",
+            "spawn",
+            "`"$MainObjective`"",
+            "--namespace", $Namespace,
+            "--agents", $OptimalAgents,
+            "--strategy", $Strategy,
+            "--claude",
+            "--auto-spawn",
+            "--max-workers", $MaxAgents,
+            "--queen-type", "adaptive",
+            "--consensus", "weighted",
+            "--parallel",
+            "--monitor",
+            "--verbose",
+            "--auto-scale",
+            "--encryption",
+            "--execute",
+            "--workspace", "`"$Workspace`""
+        )
+        
+        Write-Host "Executing Hive-Mind spawn..." -ForegroundColor Cyan
+        
+        # Run hive-mind spawn in background job
+        $spawnJob = Start-Job -ScriptBlock {
+            param($args, $workspace)
+            Set-Location $workspace
+            & npx $args
+        } -ArgumentList @(,$arguments), $Workspace
+        
+        # Wait for spawn to complete or timeout
+        $completed = Wait-Job $spawnJob -Timeout 60
+        
+        if ($completed) {
+            $spawnOutput = Receive-Job $spawnJob
+            Write-Host $spawnOutput
+            Remove-Job $spawnJob
+        } else {
+            Write-Host "Hive-mind spawn completed (or timed out), checking for prompt file..." -ForegroundColor Yellow
+            Stop-Job $spawnJob
+            Remove-Job $spawnJob
+        }
+        
+        # Find the generated Hive Mind prompt file
+        Start-Sleep -Seconds 3  # Give time for file creation
+        $hiveMindPromptFile = Get-ChildItem "$Workspace\.hive-mind\sessions\hive-mind-prompt-*.txt" -ErrorAction SilentlyContinue | 
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        
+        if ($hiveMindPromptFile) {
+            Write-Host ""
+            Write-Host "Found Hive Mind Advanced coordination prompt!" -ForegroundColor Green
+            Write-Host "Prompt file: $($hiveMindPromptFile.Name)" -ForegroundColor Cyan
+            Write-Host ""
+            Write-Host "EXECUTING ADVANCED HIVE MIND COORDINATION..." -ForegroundColor Magenta
+            Write-Host ("=" * 65) -ForegroundColor DarkGray
+            
+            # Execute the prompt directly with Claude Code via npx (bypass the broken detection)
+            & npx @anthropic-ai/claude-code --dangerously-skip-permissions "C:\Claude-Flow\hive_prompt.txt"
+            
+            Write-Host ""
+            Write-Host "ADVANCED HIVE MIND COORDINATION COMPLETED" -ForegroundColor Green
+            Write-Host "Results saved to: $Workspace" -ForegroundColor Cyan
+            Write-Host "Session namespace: $Namespace" -ForegroundColor Cyan
+            Write-Host "`nTo resume this session later, use:" -ForegroundColor Yellow
+            Write-Host "   npx claude-flow@latest hive-mind resume $Namespace" -ForegroundColor Cyan
+        } else {
+            Write-Host "Warning: Hive Mind prompt file not found" -ForegroundColor Yellow
+            Write-Host "The spawn may have failed or the prompt was not generated" -ForegroundColor White
+        }
+        
+    } catch {
+        Write-Host "Error executing ADVANCED MODE: $_" -ForegroundColor Red
+    } finally {
+        Pop-Location
+    }
+}
+
+# Execute the function with passed arguments
+hive-mind-advanced @args

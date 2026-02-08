@@ -1,0 +1,32 @@
+{
+  "name": "turtle-log-rotator",
+  "version": "1.0.0",
+  "description": "Rotate TurtleWoW combat logs while the game is running",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "build-installer": "electron-builder --win nsis"
+  },
+  "author": "TBC Guild",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.tbcguild.logrotator",
+    "productName": "TurtleWoW Log Rotator",
+    "win": {
+      "target": ["dir"],
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false
+    },
+    "portable": {
+      "artifactName": "TurtleLogRotator.exe"
+    }
+  }
+}

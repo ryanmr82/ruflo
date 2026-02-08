@@ -1,0 +1,65 @@
+{
+  "name": "ah-vault-sync",
+  "version": "5.0.0",
+  "description": "AH & Vault Sync - Auto-upload AH prices, guild vault, and bank alt inventories",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "build:portable": "electron-builder --win portable"
+  },
+  "keywords": [
+    "turtle-wow",
+    "guild-bank",
+    "auction-house",
+    "bank-alt"
+  ],
+  "author": "Thralls Book Club",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "chokidar": "^3.5.3",
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.tbcguild.ahvaultsync",
+    "productName": "AH & Vault Sync",
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AH & Vault Sync",
+      "include": "build/installer.nsh",
+      "uninstallDisplayName": "AH & Vault Sync"
+    },
+    "extraResources": [
+      {
+        "from": "addons",
+        "to": "addons"
+      },
+      {
+        "from": "build/icon.ico",
+        "to": "build/icon.ico"
+      }
+    ],
+    "removePackageScripts": true
+  }
+}

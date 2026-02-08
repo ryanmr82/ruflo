@@ -1,0 +1,6 @@
+@echo off
+REM HIVE-MIND Batch Wrapper for Windows PATH
+REM This enables hive-mind command from CMD/PowerShell
+REM Mode: MIND (Queen-led strategic planning)
+
+powershell.exe -ExecutionPolicy Bypass -File "C:\claude-flow\hive-mind-proper.ps1" %*

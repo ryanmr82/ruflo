@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: |cFF00FF00Guild Shop|r Sync
+## Notes: Syncs AH prices to TBC Guild Consume Shop
+## Author: TBC Guild
+## Version: 2.2
+## Dependencies: aux-addon
+## SavedVariables: GuildShopSyncDB
+
+GuildShopSync.lua

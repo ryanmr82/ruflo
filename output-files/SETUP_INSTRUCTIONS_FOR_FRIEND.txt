@@ -1,0 +1,161 @@
+═══════════════════════════════════════════════════════════════
+  🐢 TURTLE WOW COMBAT LOG PROCESSOR v2.0
+     SETUP INSTRUCTIONS
+═══════════════════════════════════════════════════════════════
+
+📦 WHAT YOU RECEIVED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ raids.json              - Raid configuration
+✓ format_log_v2.py        - Log processor
+✓ flask_app.py            - Web server
+✓ requirements.txt        - Dependencies
+✓ start_web_app.bat       - Launcher
+✓ QUICK_START_CARD.txt    - Quick reference
+✓ COMBAT_LOG_PROCESSOR... - Full guide (optional)
+
+
+⚙️ INSTALLATION (3 STEPS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Find Your Turtle WoW Logs Folder
+   Location: C:\turtlewow\Logs\
+   (Or wherever you installed Turtle WoW)
+
+STEP 2: Copy All Files
+   Copy these 5 files to your Logs folder:
+   • raids.json
+   • format_log_v2.py
+   • flask_app.py
+   • requirements.txt
+   • start_web_app.bat
+
+STEP 3: Done!
+   You're ready to use it!
+
+
+📋 REQUIREMENTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Python 3.x installed (get from python.org)
+✓ Turtle WoW installed
+✓ Combat logging enabled in WoW
+
+
+🚀 HOW TO USE (SUPER EASY):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Go to: C:\turtlewow\Logs\
+2. Double-click: start_web_app.bat
+3. Browser opens automatically!
+4. Fill out the form:
+   - Player Name: YourCharacterName
+   - Raid: MC (or BWL, AQ40, etc.)
+   - Start Time: 10/20/2025 4:00 PM
+   - End Detection: Auto-detect ✓
+5. Click "Process Combat Log"
+6. Download the ZIP file
+7. Upload to Legacy Logs!
+
+
+✨ WHAT IT DOES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Extracts ONLY your raid timeframe (not the entire log!)
+✓ Auto-detects when boss dies
+✓ Formats for Legacy Logs upload
+✓ Archives your original logs
+✓ Creates fresh logs for next raid
+✓ One-click download
+
+
+🎯 EXAMPLE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tonight's Molten Core:
+1. Double-click start_web_app.bat
+2. Enter: PlayerName = "Gandalf"
+3. Select: Raid = "MC - Molten Core"
+4. Enter: Start = "10/21/2025" "7:00 PM"
+5. Leave: End Detection = Auto-detect
+6. Click: Process
+7. See: "✅ Found: Ragnaros dies at 9:15 PM"
+8. Click: Download ZIP
+9. Upload to Legacy Logs
+10. View your parse! 📊
+
+
+⚠️ TROUBLESHOOTING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problem: "Flask not found"
+Fix:     Open command prompt in Logs folder and run:
+         pip install -r requirements.txt
+
+Problem: "Python not found"
+Fix:     Install Python from python.org
+         Make sure to check "Add to PATH" during install!
+
+Problem: "Web page won't load"
+Fix:     Manually go to: http://localhost:5000
+
+Problem: "No boss death detected"
+Fix:     Switch to "Manual" and enter end time yourself
+
+
+💡 TIPS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Process logs RIGHT after raid (while times are fresh)
+• Auto-detect works best for full clears
+• Use manual mode if you didn't kill final boss
+• Keep at least 2-3 archived logs as backup
+• Read QUICK_START_CARD.txt for more details
+
+
+📂 FILE LOCATIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Put all files here:
+   C:\turtlewow\Logs\
+
+Your WoW logs are here:
+   C:\turtlewow\Logs\WoWCombatLog.txt
+   C:\turtlewow\Logs\WoWRawCombatLog.txt
+
+Archived logs go here:
+   C:\turtlewow\Logs\WoWCombatLog.archived.TIMESTAMP.txt
+
+
+🎮 SUPPORTED RAIDS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MC      - Molten Core
+BWL     - Blackwing Lair
+ONY     - Onyxia
+ZG      - Zul'Gurub
+AQ20    - Ruins of Ahn'Qiraj
+AQ40    - Temple of Ahn'Qiraj
+NAXX    - Naxxramas
+EMERALD - Emerald Sanctum
+(Easy to add more by editing raids.json)
+
+
+📞 NEED HELP?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Read the full guide:
+   COMBAT_LOG_PROCESSOR_V2_GUIDE.md
+
+Quick reference:
+   QUICK_START_CARD.txt
+
+
+═══════════════════════════════════════════════════════════════
+
+That's it! Once you copy the 5 files to your Logs folder,
+just double-click start_web_app.bat and you're ready to go!
+
+Happy raiding! 🐢⚔️
+
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,360 @@
+/* Raid Calendar - Month/Week View */
+.raid-calendar {
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.calendar-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calendar-month {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.calendar-nav-btn {
+    background: var(--background-tertiary);
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.calendar-nav-btn:hover {
+    background: var(--apple-blue);
+    color: white;
+    border-color: var(--apple-blue);
+}
+
+.calendar-today-btn {
+    background: var(--apple-blue);
+    border: none;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* View Toggle */
+.calendar-view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 12px;
+    background: var(--background-tertiary);
+    padding: 4px;
+    border-radius: 8px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.view-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+    color: var(--text-primary);
+}
+
+.view-btn.active {
+    background: var(--apple-blue);
+    color: white;
+}
+
+/* Day Headers */
+.calendar-day-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.calendar-day-header-cell {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding: 8px 0;
+    letter-spacing: 0.5px;
+}
+
+/* Calendar Grid - 7 columns */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+}
+
+/* Month view - 6 rows */
+.calendar-grid.month-view {
+    grid-template-rows: repeat(6, minmax(80px, auto));
+}
+
+/* Week view - 1 row, taller */
+.calendar-grid.week-view {
+    grid-template-rows: minmax(120px, auto);
+}
+
+/* Base day cell */
+.calendar-day {
+    background: var(--background-tertiary);
+    border-radius: 6px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Days without raids */
+.calendar-day.no-raids {
+    opacity: 0.5;
+}
+
+/* Days with raids */
+.calendar-day.has-raids {
+    opacity: 1;
+    background: var(--background-secondary);
+    border: 1px solid var(--border-light);
+}
+
+/* Other month days (grayed out) */
+.calendar-day.other-month {
+    opacity: 0.3;
+}
+
+.calendar-day.other-month.has-raids {
+    opacity: 0.5;
+}
+
+.calendar-day:hover {
+    opacity: 1;
+}
+
+.calendar-today {
+    border: 2px solid var(--apple-blue) !important;
+    opacity: 1 !important;
+}
+
+.calendar-past {
+    opacity: 0.4;
+}
+
+.calendar-past.has-raids {
+    opacity: 0.7;
+}
+
+.calendar-day-number-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 4px;
+}
+
+.calendar-day-number {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.today-number {
+    background: var(--apple-blue);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+.calendar-day-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.calendar-no-raids {
+    display: none;
+}
+
+/* Raid entries - compact for month view */
+.calendar-raid {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 4px;
+    border-left: 3px solid;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.calendar-raid:hover {
+    transform: translateX(2px);
+}
+
+.calendar-raid-icon {
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.calendar-raid-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.calendar-raid-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-raid-time {
+    font-size: 9px;
+    color: var(--text-tertiary);
+}
+
+.calendar-raid-signups {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.calendar-raid-signups .signup-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--apple-green);
+}
+
+.calendar-raid-signups .signup-label {
+    display: none;
+}
+
+/* Legend - compact */
+.calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+/* Week view specific - larger elements */
+.week-view .calendar-raid-icon {
+    font-size: 16px;
+}
+
+.week-view .calendar-raid-title {
+    font-size: 12px;
+}
+
+.week-view .calendar-raid-time {
+    font-size: 10px;
+}
+
+.week-view .calendar-raid {
+    padding: 6px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .calendar-grid {
+        gap: 2px;
+    }
+
+    .calendar-grid.month-view {
+        grid-template-rows: repeat(6, minmax(60px, auto));
+    }
+
+    .calendar-day {
+        padding: 4px;
+    }
+
+    .calendar-day-header-cell {
+        font-size: 9px;
+        padding: 4px 0;
+    }
+
+    .calendar-day-number {
+        font-size: 10px;
+    }
+
+    .calendar-raid-icon {
+        display: none;
+    }
+
+    .calendar-raid-title {
+        font-size: 9px;
+    }
+
+    .calendar-raid-time {
+        display: none;
+    }
+
+    .calendar-raid-signups .signup-number {
+        font-size: 9px;
+    }
+
+    .calendar-legend {
+        gap: 6px;
+    }
+
+    .legend-item {
+        font-size: 9px;
+    }
+}
+

@@ -1,0 +1,139 @@
+#!/usr/bin/env pwsh
+<#
+.SYNOPSIS
+    HIVE-SWARM - SPARC-Integrated AI Orchestration (OPTIMAL - PRODUCTION READY)
+    Uses latest claude-flow version via npx, matching Linux implementation
+    
+.DESCRIPTION
+    Automatically reads objective from C:\claude-flow\hive_prompt.txt,
+    combines it with any additional context provided, and executes the 
+    SPARC-integrated swarm orchestration with optimal parameters.
+    Always uses the latest version of claude-flow from npm.
+    
+.PARAMETER AdditionalContext
+    Optional additional context to append to the main objective
+#>
+
+param(
+    [Parameter(Position=0, ValueFromRemainingArguments=$true)]
+    [string[]]$AdditionalContext
+)
+
+# Configuration
+$HIVE_PROMPT_FILE = "C:\hive_prompt.txt"
+$WORKSPACE_DIR = "C:\claude-flow\output-files"
+
+# Function to check prerequisites
+function Test-Prerequisites {
+    $errors = @()
+    
+    # Check if Node.js is available
+    $nodeVersion = $null
+    try {
+        $nodeVersion = node --version 2>$null
+    } catch {}
+    
+    if (-not $nodeVersion) {
+        $errors += "Error: Node.js is not installed or not in PATH"
+    }
+    
+    # Check if npx is available
+    $npxVersion = $null
+    try {
+        $npxVersion = npx --version 2>$null
+    } catch {}
+    
+    if (-not $npxVersion) {
+        $errors += "Error: npx is not available - ensure npm is installed"
+    }
+    
+    # Return any errors
+    return $errors
+}
+
+# Main execution
+Write-Host ""
+Write-Host "[SWARM] Executing OPTIMAL Hive-Swarm with SPARC integration..." -ForegroundColor Cyan
+Write-Host "[PKG] Using latest claude-flow version via npx" -ForegroundColor Green
+Write-Host "[DIR] Workspace: $WORKSPACE_DIR (all data centralized)" -ForegroundColor Green
+
+# Check prerequisites
+$errors = Test-Prerequisites
+if ($errors.Count -gt 0) {
+    foreach ($error in $errors) {
+        Write-Host $error -ForegroundColor Red
+    }
+    exit 1
+}
+
+# Check if hive_prompt.txt exists
+if (-not (Test-Path $HIVE_PROMPT_FILE)) {
+    Write-Host "Error: $HIVE_PROMPT_FILE not found" -ForegroundColor Red
+    Write-Host "Please create the file with your main objective:" -ForegroundColor Yellow
+    Write-Host "  notepad $HIVE_PROMPT_FILE" -ForegroundColor White
+    exit 1
+}
+
+# Read just enough to display info (NOT the full content for command line)
+$content = Get-Content $HIVE_PROMPT_FILE -Raw
+$lines = $content -split "`n"
+$displayObjective = if ($lines[0].Length -gt 100) {
+    $lines[0].Substring(0, 100) + "..."
+} else {
+    $lines[0]
+}
+
+Write-Host "[TASK] Main Objective: $displayObjective" -ForegroundColor Cyan
+
+# Combine with additional context if provided
+$additionalText = ""
+if ($AdditionalContext) {
+    $contextString = $AdditionalContext -join " "
+    if (-not [string]::IsNullOrWhiteSpace($contextString)) {
+        $additionalText = " $contextString"
+        Write-Host "[+] Additional Context: $contextString" -ForegroundColor Yellow
+    }
+}
+
+# Ensure workspace directory exists
+if (-not (Test-Path $WORKSPACE_DIR)) {
+    New-Item -ItemType Directory -Path $WORKSPACE_DIR -Force | Out-Null
+    Write-Host "[DIR] Created workspace directory: $WORKSPACE_DIR" -ForegroundColor Green
+}
+
+# Set environment variables for workspace
+$env:CLAUDE_WORKING_DIR = $WORKSPACE_DIR
+$env:PWD = $WORKSPACE_DIR
+
+# Change to workspace directory (where output should go)
+Push-Location $WORKSPACE_DIR
+
+try {
+    Write-Host ""
+    Write-Host "Executing swarm command with latest claude-flow..." -ForegroundColor Cyan
+    Write-Host ("=" * 76) -ForegroundColor DarkGray
+    
+    # CRITICAL: Use a SHORT objective to avoid command line limits
+    # The actual task details are in hive_prompt.txt
+    $shortObjective = "Execute task from hive_prompt.txt$additionalText"
+    
+    # Execute using npx to get latest version
+    $arguments = @(
+        "claude-flow@latest",
+        "swarm",
+        "`"$shortObjective`"",
+        "--claude",
+        "--max-agents", "10",
+        "--strategy", "development",
+        "--parallel",
+        "--monitor",
+        "--workspace", "`"$WORKSPACE_DIR`""
+    )
+    
+    # Execute with npx
+    & npx $arguments
+    
+} finally {
+    # Return to original directory
+    Pop-Location
+}

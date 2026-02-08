@@ -1,0 +1,25 @@
+function hasCompleteTooltip(item: StaticItem | ItemRecord | null): boolean {
+  if (!item) return false;
+  if (!item.tooltipHtml) return false;
+
+  // For epic/legendary items with armor (gear), check if tooltip was properly scraped
+  // Scraped tooltips have class="q2" for Equip effects or class="q" for set bonuses
+  if (item.quality >= 4 && item.armor && item.armor > 0) {
+    const html = item.tooltipHtml;
+
+    // Check for properly scraped content (has q2 class for green effects or q class for sets)
+    // This ensures we have the actual styled HTML, not just keyword matches
+    const hasScrapedEquip = html.includes('class="q2"') || html.includes('class=\\"q2\\"');
+    const hasScrapedSet = html.includes('class="q"') || html.includes('class=\\"q\\"');
+
+    if (hasScrapedEquip || hasScrapedSet) {
+      return true;
+    }
+
+    // No scraped styling = incomplete, will trigger rescrape
+    return false;
+  }
+
+  // Non-armor items or lower quality - assume complete
+  return true;
+}

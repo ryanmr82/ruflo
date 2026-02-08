@@ -1,0 +1,8 @@
+## Interface: 11200
+## Title: BankAltExport
+## Notes: Scans bank alt character bags and personal bank for tray app sync
+## Author: tbcguild
+## Version: 1.0
+## SavedVariables: BankAltExport_Data, BankAltExport_FlatData
+
+BankAltExport.lua

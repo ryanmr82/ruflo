@@ -1,0 +1,143 @@
+🐝 HIVE-SWARM MODE - DISTRIBUTED PARALLEL EXECUTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are operating in HIVE-SWARM MODE with these characteristics:
+
+SWARM MODE CONFIGURATION:
+- Architecture: Distributed multi-agent system
+- Execution: Parallel task processing
+- Coordination: Peer-to-peer with emergent behavior
+- Agents: Autonomous specialized workers
+- Decision Making: Distributed consensus
+- Focus: Rapid parallel execution and implementation
+
+SWARM COORDINATION PRINCIPLES:
+1. Spawn multiple specialized agents immediately
+2. Distribute tasks for parallel execution
+3. Enable peer-to-peer agent communication
+4. Use emergent swarm intelligence
+5. Maximize parallelization and efficiency
+6. Rapidly iterate and adapt
+
+AGENT TYPES TO SPAWN:
+- Researchers: Gather information in parallel
+- Coders: Implement solutions simultaneously
+- Testers: Validate outputs concurrently
+- Analysts: Process data in parallel
+- Coordinators: Manage sub-swarms
+
+WORKSPACE: C:\claude-flow\output-files
+
+OBJECTIVE TO EXECUTE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Take a look at why I'm getting these errors when I try to run the hive-mind shortcut. Determine why this is taking place, fix it, and resolve it.
+
+
+PowerShell 7.5.2
+?? PowerShell 7 - Hive shortcuts loaded successfully!
+Commands available: hive-swarm, hive-mind
+Hive shortcuts loaded successfully!
+PS C:\Users\ryanr> hive-mind
+
+?? HIVE-MIND MODE - Strategic Queen Coordinator
+??????????????????????????????????????????????????????????????????????????
+?? Using claude-flow via npx
+?? Workspace: C:\claude-flow\output-files
+?? Mode: MIND (Queen-led strategic planning)
+?? Task file: 670 bytes
+?? Objective: I want you to produce for me a few things:
+? Created mind-mode prompt: C:\claude-flow\output-files\.hive-mind\sessions\mind-prompt-20250812193420.txt
+
+?? Initiating HIVE-MIND Queen Coordinator...
+??????????????????????????????????????????????????????????????????????????
+Attempting: npx claude-flow mind...
+Run "claude-flow help" for available commands
+?¥î Error: Unknown command: mind
+
+Using direct Claude interface for MIND MODE...
+?????????????????????????????????????????????????????
+? ? Welcome to Claude Code!                         ?
+?                                                   ?
+?   /help for help, /status for your current setup  ?
+?                                                   ?
+?   cwd: C:\Claude-Flow\output-files                ?
+?????????????????????????????????????????????????????
+
+ ? Tip: Use /memory to view and manage Claude memory
+Error: Raw mode is not supported on the current process.stdin, which Ink uses as input stream by default.
+Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+    at handleSetRawMode (B:/~BUN/root/claude.exe:639:3844)
+    at <anonymous> (B:/~BUN/root/claude.exe:648:257)
+    at q6 (B:/~BUN/root/claude.exe:190:21530)
+    at B3 (B:/~BUN/root/claude.exe:190:41146)
+    at kK (B:/~BUN/root/claude.exe:190:35147)
+    at u8 (B:/~BUN/root/claude.exe:188:4842)
+    at ED (B:/~BUN/root/claude.exe:190:32454)
+    at <anonymous> (B:/~BUN/root/claude.exe:194:1839)
+    at render (B:/~BUN/root/claude.exe:646:511)
+    at Zt5 (B:/~BUN/root/claude.exe:647:954)
+
+  ERROR  Raw mode is not supported on the current process.stdin, which Ink uses as input stream by default.
+        Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+
+ - Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+ - handleSetRawMode (B:/~BUN/root/claude.exe:639:3844)
+ - <anonymous> (B:/~BUN/root/claude.exe:648:257)
+ - q6 (B:/~BUN/root/claude.exe:190:21530)
+ - B3 (B:/~BUN/root/claude.exe:190:41146)
+ - kK (B:/~BUN/root/claude.exe:190:35147)
+ - u8 (B:/~BUN/root/claude.exe:188:4842)
+ - ED (B:/~BUN/root/claude.exe:190:32454)
+ - <anonymous> (B:/~BUN/root/claude.exe:194:1839)
+ - render (B:/~BUN/root/claude.exe:646:511)
+ - Zt5 (B:/~BUN/root/claude.exe:647:954)
+
+634 | `:""}}return{output:"",outputHeight:0,staticOutput:""}},voZ=Cs5;import ioZ from"process";var loZ=c(uoZ(),1),poZ=c(coZ(),1);import Ls5 from"process";var Os5=loZ.default(()=>{poZ.default(()=>{Ls5.stderr.write("\x1B[?25h")},{alwaysLast:!0})}),noZ=Os5;var Bz0=!1,$l={};$l.show=(Z=ioZ.stderr)=>{if(!Z.isTTY)return;Bz0=!1,Z.write("\x1B[?25h")};$l.hide=(Z=ioZ.stderr)=>{if(!Z.isTTY)return;noZ(),Bz0=!0,Z.write("\x1B[?25l")};$l.toggle=(Z,G)=>{if(Z!==void 0)Bz0=Z;if(Bz0)$l.show(G);else $l.hide(G)};var HS=$l;var Ms5=(Z,{showCursor:G=!1}={})=>{let W=0,Y="",X=!1,B=(D)=>{if(!G&&!X)HS.hide(),X=!0;let J=D+`
+635 | `;if(J===Y)return;Y=J,Z.write(DS.eraseLines(W)+J),W=J.split(`
+636 | `).length};return B.clear=()=>{Z.write(DS.eraseLines(W)),Y="",W=0},B.updateLineCount=(D)=>{W=D.split(`
+637 | `).length},B.resetLineCount=()=>{W=0},B.done=()=>{if(Y="",W=0,!G)HS.show(),X=!1},B},Rs5={create:Ms5},roZ=Rs5;var Ts5=new Map,nx=Ts5;var dN=c(A0(),1);import{EventEmitter as rs5}from"events";var aoZ=c(A0(),1),ooZ=aoZ.createContext({exit(){}});ooZ.displayName="InternalAppContext";var At0=ooZ;var soZ=c(A0(),1);import{EventEmitter as Ps5}from"events";var toZ=soZ.createContext({stdin:process.stdin,internal_eventEmitter:new Ps5,setRawMode(){},isRawModeSupported:!1,internal_exitOnCtrlC:!0,internal_resetLineCount(){}});toZ.displayName="InternalStdinContext";var Jz0=toZ;var eoZ=c(A0(),1),ZsZ=eoZ.createContext({stdout:process.stdout,write(){}});ZsZ.displayName="InternalStdoutContext";var $t0=ZsZ;var GsZ=c(A0(),1),WsZ=GsZ.createContext({stderr:process.stderr,write(){}});WsZ.displayName="InternalStderrContext";var Ut0=WsZ;var YsZ=c(A0(),1),XsZ=YsZ.createContext({activeId:void 0,add(){},remove(){},activate(){},deactivate(){},enableFocus(){},disableFocus(){},focusNext(){},focusPrevious(){},focus(){}});XsZ.displayName="Inter | ... truncated
+638 | `).slice(1):void 0,W=G?qsZ.parseLine(G[0]):void 0,Y=zsZ(W?.file),X,B=0;if(Y&&W?.line&&Kz0.existsSync(Y)){let D=Kz0.readFileSync(Y,"utf8");if(X=HsZ(D,W.line),X)for(let{line:J}of X)B=Math.max(B,String(J).length)}return IJ.default.createElement(y,{flexDirection:"column",padding:1},IJ.default.createElement(y,null,IJ.default.createElement(O,{backgroundColor:"error",color:"text"}," ","ERROR"," "),IJ.default.createElement(O,null," ",Z.message)),W&&Y&&IJ.default.createElement(y,{marginTop:1},IJ.default.createElement(O,{dimColor:!0},Y,":",W.line,":",W.column)),W&&X&&IJ.default.createElement(y,{marginTop:1,flexDirection:"column"},X.map(({line:D,value:J})=>IJ.default.createElement(y,{key:D},IJ.default.createElement(y,{width:B+1},IJ.default.createElement(O,{dimColor:D!==W.line,backgroundColor:D===W.line?"error":void 0,color:D===W.line?"text":void 0},String(D).padStart(B," "),":")),IJ.default.createElement(O,{key:D,backgroundColor:D===W.line?"error":void 0,color:D===W.line?"text":void 0}," "+J)))),Z.stack&&IJ.default.crea | ... truncated
+639 | `)W.name="enter";else if(Z==="\t")W.name="tab";else if(Z==="\b"||Z==="\x1B\b")W.name="backspace",W.meta=Z.charAt(0)==="\x1B";else if(Z==="\x7F"||Z==="\x1B\x7F")W.name="backspace",W.meta=Z.charAt(0)==="\x1B";else if(Z==="\x1B"||Z==="\x1B\x1B")W.name="escape",W.meta=Z.length===2;else if(Z===" "||Z==="\x1B ")W.name="space",W.meta=Z.length===2;else if(Z==="\x1F")W.name="_",W.ctrl=!0;else if(Z<="\x1A"&&Z.length===1)W.name=String.fromCharCode(Z.charCodeAt(0)+97-1),W.ctrl=!0;else if(Z.length===1&&Z>="0"&&Z<="9")W.name="number";else if(Z.length===1&&Z>="a"&&Z<="z")W.name=Z;else if(Z.length===1&&Z>="A"&&Z<="Z")W.name=Z.toLowerCase(),W.shift=!0;else if(G=gs5.exec(Z))W.meta=!0,W.shift=/^[A-Z]$/.test(G[1]);else if(G=us5.exec(Z)){let Y=[...Z];if(Y[0]==="\x1B"&&Y[1]==="\x1B")W.option=!0;let X=[G[1],G[2],G[4],G[6]].filter(Boolean).join(""),B=(G[3]||G[5]||1)-1;W.ctrl=!!(B&4),W.meta=!!(B&10),W.shift=!!(B&1),W.code=X,W.name=NsZ[X],W.shift=ns5(X)||W.shift,W.ctrl=is5(X)||W.ctrl}if(W.raw==="\x1Bb")W.meta=!0,W.name="left";else if( | ... truncated
+
+error: Raw mode is not supported on the current process.stdin, which Ink uses as input stream by default.
+Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+      at handleSetRawMode (B:/~BUN/root/claude.exe:639:3835)
+      at <anonymous> (B:/~BUN/root/claude.exe:648:257)
+      at q6 (B:/~BUN/root/claude.exe:190:21530)
+      at B3 (B:/~BUN/root/claude.exe:190:41146)
+      at kK (B:/~BUN/root/claude.exe:190:35147)
+      at u8 (B:/~BUN/root/claude.exe:188:4842)
+      at ED (B:/~BUN/root/claude.exe:190:32454)
+      at <anonymous> (B:/~BUN/root/claude.exe:194:1839)
+      at render (B:/~BUN/root/claude.exe:646:511)
+      at Zt5 (B:/~BUN/root/claude.exe:647:954)
+
+634 | `;if(J===Y)return;Y=J,Z.write(DS.eraseLines(W)+J),W=J.split(`
+635 | `).length};return B.clear=()=>{Z.write(DS.eraseLines(W)),Y="",W=0},B.updateLineCount=(D)=>{W=D.split(`
+636 | `).length},B.resetLineCount=()=>{W=0},B.done=()=>{if(Y="",W=0,!G)HS.show(),X=!1},B},Rs5={create:Ms5},roZ=Rs5;var Ts5=new Map,nx=Ts5;var dN=c(A0(),1);import{EventEmitter as rs5}from"events";var aoZ=c(A0(),1),ooZ=aoZ.createContext({exit(){}});ooZ.displayName="InternalAppContext";var At0=ooZ;var soZ=c(A0(),1);import{EventEmitter as Ps5}from"events";var toZ=soZ.createContext({stdin:process.stdin,internal_eventEmitter:new Ps5,setRawMode(){},isRawModeSupported:!1,internal_exitOnCtrlC:!0,internal_resetLineCount(){}});toZ.displayName="InternalStdinContext";var Jz0=toZ;var eoZ=c(A0(),1),ZsZ=eoZ.createContext({stdout:process.stdout,write(){}});ZsZ.displayName="InternalStdoutContext";var $t0=ZsZ;var GsZ=c(A0(),1),WsZ=GsZ.createContext({stderr:process.stderr,write(){}});WsZ.displayName="InternalStderrContext";var Ut0=WsZ;var YsZ=c(A0(),1),XsZ=YsZ.createContext({activeId:void 0,add(){},remove(){},activate(){},deactivate(){},enableFocus(){},disableFocus(){},focusNext(){},focusPrevious(){},focus(){}});XsZ.displayName="Inter | ... truncated
+637 | `).slice(1):void 0,W=G?qsZ.parseLine(G[0]):void 0,Y=zsZ(W?.file),X,B=0;if(Y&&W?.line&&Kz0.existsSync(Y)){let D=Kz0.readFileSync(Y,"utf8");if(X=HsZ(D,W.line),X)for(let{line:J}of X)B=Math.max(B,String(J).length)}return IJ.default.createElement(y,{flexDirection:"column",padding:1},IJ.default.createElement(y,null,IJ.default.createElement(O,{backgroundColor:"error",color:"text"}," ","ERROR"," "),IJ.default.createElement(O,null," ",Z.message)),W&&Y&&IJ.default.createElement(y,{marginTop:1},IJ.default.createElement(O,{dimColor:!0},Y,":",W.line,":",W.column)),W&&X&&IJ.default.createElement(y,{marginTop:1,flexDirection:"column"},X.map(({line:D,value:J})=>IJ.default.createElement(y,{key:D},IJ.default.createElement(y,{width:B+1},IJ.default.createElement(O,{dimColor:D!==W.line,backgroundColor:D===W.line?"error":void 0,color:D===W.line?"text":void 0},String(D).padStart(B," "),":")),IJ.default.createElement(O,{key:D,backgroundColor:D===W.line?"error":void 0,color:D===W.line?"text":void 0}," "+J)))),Z.stack&&IJ.default.crea | ... truncated
+638 | `).slice(1).map((D)=>{let J=qsZ.parseLine(D);if(!J)return IJ.default.createElement(y,{key:D},IJ.default.createElement(O,{dimColor:!0},"- "),IJ.default.createElement(O,{dimColor:!0,bold:!0},D));return IJ.default.createElement(y,{key:D},IJ.default.createElement(O,{dimColor:!0},"- "),IJ.default.createElement(O,{dimColor:!0,bold:!0},J.function),IJ.default.createElement(O,{dimColor:!0,color:"secondaryText"}," ","(",zsZ(J.file)??"",":",J.line,":",J.column,")"))})))}import{Buffer as hs5}from"buffer";var gs5=/^(?:\x1b)([a-zA-Z0-9])$/,us5=/^(?:\x1b+)(O|N|\[|\[\[)(?:(\d+)(?:;(\d+))?([~^$])|(?:1;)?(\d+)?([a-zA-Z]))/,ds5="\x1B[200~",Hz0="\x1B[201~";function ms5(Z){return{name:"",fn:!1,ctrl:!1,meta:!1,shift:!1,option:!1,sequence:Z,raw:Z,isPasted:!0}}var cs5=new RegExp("^(.*?)("+["\\x1b\\][0-9]*(?:;[^\\x07\\x1b]*)*(?:\\x07|\\x1b\\\\)","\\x1bP[^\\x1b]*\\x1b\\\\","\\x1b\\[[0-9]*(?:;[0-9]*)*[A-Za-z~]","\\x1bO[A-Za-z]","\\x1b[\\x00-\\x7F]","\\x1b\\x1b","$"].map((Z)=>`(?:${Z})`).join("|")+")","s"),ls5=new RegExp("(.*?)("+["\\x1 | ... truncated
+639 | `)W.name="enter";else if(Z==="\t")W.name="tab";else if(Z==="\b"||Z==="\x1B\b")W.name="backspace",W.meta=Z.charAt(0)==="\x1B";else if(Z==="\x7F"||Z==="\x1B\x7F")W.name="backspace",W.meta=Z.charAt(0)==="\x1B";else if(Z==="\x1B"||Z==="\x1B\x1B")W.name="escape",W.meta=Z.length===2;else if(Z===" "||Z==="\x1B ")W.name="space",W.meta=Z.length===2;else if(Z==="\x1F")W.name="_",W.ctrl=!0;else if(Z<="\x1A"&&Z.length===1)W.name=String.fromCharCode(Z.charCodeAt(0)+97-1),W.ctrl=!0;else if(Z.length===1&&Z>="0"&&Z<="9")W.name="number";else if(Z.length===1&&Z>="a"&&Z<="z")W.name=Z;else if(Z.length===1&&Z>="A"&&Z<="Z")W.name=Z.toLowerCase(),W.shift=!0;else if(G=gs5.exec(Z))W.meta=!0,W.shift=/^[A-Z]$/.test(G[1]);else if(G=us5.exec(Z)){let Y=[...Z];if(Y[0]==="\x1B"&&Y[1]==="\x1B")W.option=!0;let X=[G[1],G[2],G[4],G[6]].filter(Boolean).join(""),B=(G[3]||G[5]||1)-1;W.ctrl=!!(B&4),W.meta=!!(B&10),W.shift=!!(B&1),W.code=X,W.name=NsZ[X],W.shift=ns5(X)||W.shift,W.ctrl=is5(X)||W.ctrl}if(W.raw==="\x1Bb")W.meta=!0,W.name="left";else if( | ... truncated
+
+error: Raw mode is not supported on the current process.stdin, which Ink uses as input stream by default.
+Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+      at handleSetRawMode (B:/~BUN/root/claude.exe:639:3844)
+
+
+  ERROR  Raw mode is not supported on the current process.stdin, which Ink uses as input stream by default.
+        Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+
+ - Read about how to prevent this error on https://github.com/vadimdemedes/ink/#israwmodesupported
+ - handleSetRawMode (B:/~BUN/root/claude.exe:639:3844)
+ - <anonymous> (B:/~BUN/root/claude.exe:648:257)
+ - q6 (B:/~BUN/root/claude.exe:190:21530)
+ - B3 (B:/~BUN/root/claude.exe:190:41146)
+ - kK (B:/~BUN/root/claude.exe:190:35147)
+ - u8 (B:/~BUN/root/claude.exe:188:4842)
+ - ED (B:/~BUN/root/claude.exe:190:32454)
+ - <anonymous> (B:/~BUN/root/claude.exe:194:1839)
+ - render (B:/~BUN/root/claude.exe:646:511)
+ - Zt5 (B:/~BUN/root/claude.exe:647:954)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Please execute this objective using SWARM MODE with distributed parallel coordination. Focus on rapid execution, parallel processing, and emergent problem-solving.

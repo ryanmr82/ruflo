@@ -1,0 +1,25 @@
+## Interface: 11200
+## Title: pfQuest
+## Author: Shagu
+## Notes: A vanilla questhelper and database
+## Version: 4.7.5
+## SavedVariablesPerCharacter: pfDB_chars
+## SavedVariables: pfDB
+
+init.lua
+config.lua
+db.lua
+questlog.lua
+tracker.lua
+browser.lua
+map.lua
+tooltip.lua
+arrow.lua
+compat.lua
+api.lua
+
+locales\enUS.lua
+locales\deDE.lua
+locales\frFR.lua
+locales\ruRU.lua
+locales\zhCN.lua
