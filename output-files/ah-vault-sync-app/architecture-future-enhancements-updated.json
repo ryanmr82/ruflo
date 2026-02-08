@@ -1,0 +1,842 @@
+{
+  "lastUpdated": "2026-02-08T02:00:00-08:00",
+  "title": "AH & Vault Sync v5.0 — Complete Guild Data Pipeline",
+  "description": "GOLD STANDARD reference document. Complete design specification for the unified guild data sync system: auction prices, guild vault, and bank alt inventories. Updated after each phase completion.",
+
+  "projectStatus": {
+    "title": "Project Status Dashboard",
+    "overallProgress": "92% — Phase 5 Complete (v5.0 installer built)",
+    "currentPhase": "Phase 6: Final polish + deploy",
+    "lastUpdated": "2026-02-08T02:00:00-08:00",
+    "summary": "Phase 1 COMPLETE (BankAltExport v2 addon). Phase 2 COMPLETE (Electron tray app replaced C# WinForms — all core sync functionality built). Phase 3 COMPLETE (APIs deployed including DELETE method). Phase 4 COMPLETE + EXTRAS (website UI with 3 tabs, item icons, tooltips, sticky headers, All Accounts dropdown, source column, KV quality self-healing). Phase 5 COMPLETE (electron-builder NSIS installer built: 'AH & Vault Sync Setup 5.0.0.exe'). Remaining: Start with Windows toggle, minor polish."
+  },
+
+  "remainingWork": {
+    "title": "Remaining Work",
+    "items": [
+      {
+        "item": "Start with Windows toggle",
+        "priority": "HIGH",
+        "description": "Add a toggle in the Electron app settings that lets the user enable/disable auto-start on Windows login. Use Electron's app.setLoginItemSettings() API or Registry Run key. The user should be able to turn this on or off from the app UI.",
+        "phase": 6
+      },
+      {
+        "item": "Per-source sync timestamps in tray menu",
+        "priority": "LOW",
+        "description": "Tray context menu should show individual sync times for AH Prices, Guild Vault, and each Bank Alt account. Currently shows single timestamp.",
+        "phase": 6
+      },
+      {
+        "item": "Desktop toast notifications",
+        "priority": "LOW",
+        "description": "Show a small Windows notification pop-up (toast) in the bottom-right corner when a sync completes successfully. Uses Electron's Notification API. Example: 'Guild Vault synced successfully' appears for a few seconds then auto-dismisses. Only visible when the app window is minimized to tray. Should include a toggle in settings to turn on/off.",
+        "phase": 6
+      },
+      {
+        "item": "End-to-end testing from clean install",
+        "priority": "HIGH",
+        "description": "Full UAT: run the installer on a clean Windows machine, verify addon installation, all data flows, settings, website display.",
+        "phase": 6
+      }
+    ]
+  },
+
+  "existingComponents": {
+    "title": "Existing Components — FULLY ANALYZED",
+    "description": "These components are PRODUCTION. Do NOT rebuild. The v5.0 installer will package these alongside new components.",
+    "addons": [
+      {
+        "name": "GuildShopSync.lua",
+        "version": "3.0",
+        "status": "PRODUCTION",
+        "location": "C:/turtlewow/Interface/AddOns/GuildShopSync/",
+        "lines": 285,
+        "purpose": "Scans 68 consumable items at Auction House, records lowest buyout-per-unit price",
+        "savedVariables": "GuildShopSyncDB",
+        "triggerMechanism": "Sets GuildShopSyncDB.triggerUpload = true after scan, shows reload popup",
+        "slashCommands": ["/gss scan", "/gss debug", "/gss stop"],
+        "dependencies": "Requires aux addon frame to be visible (AH must be open)"
+      },
+      {
+        "name": "GBankExport.lua",
+        "version": "3.0",
+        "status": "PRODUCTION",
+        "location": "C:/turtlewow/Interface/AddOns/GBankExport/",
+        "lines": 581,
+        "purpose": "Auto-scans TurtleWoW guild vault when opened. Reads 5 tabs, 98 slots each (490 total).",
+        "savedVariables": ["GBankExport_Data", "GBankExport_FlatData"],
+        "triggerMechanism": "Hooks GuildBankFrame OnShow, auto-scans after 2s delay, switches tabs with 1.5s delay",
+        "slashCommands": ["/gbe scan", "/gbe status", "/gbe list", "/gbe tabs", "/gbe debug"],
+        "flatFormat": "GBANKEXPORT_V1 with TAB|index|name, ITEM|name|count|quality|itemId|slot, TOTAL|name|count|quality|itemId",
+        "notes": "TurtleWoW guild bank is custom Lua UI. Reads GuildBankFrameItem{1-98} button properties (.occupied, .itemID, .count, .tab)"
+      }
+    ],
+    "trayApp": {
+      "name": "ah-vault-sync-app (Electron)",
+      "version": "5.0",
+      "status": "BUILT — Installer compiled: 'AH & Vault Sync Setup 5.0.0.exe'",
+      "location": "C:/Claude-Flow/output-files/ah-vault-sync-app/",
+      "language": "Electron + Node.js",
+      "features": [
+        "Watches GuildShopSync.lua for price changes (chokidar file watcher)",
+        "Watches GBankExport.lua for guild vault changes (chokidar file watcher)",
+        "Watches BankAltExport.lua for bank alt changes (chokidar file watcher)",
+        "Uploads AH prices to /api/consumes/prices",
+        "Uploads guild vault to /api/guild-bank/inventory",
+        "Uploads bank alts to /api/bank-alts/inventory",
+        "DELETE on account uncheck — removes bank alt data from server",
+        "Single instance lock (Electron requestSingleInstanceLock)",
+        "Auto-installs all 3 addons to WoW folder on first setup",
+        "Account discovery from WTF/Account/ folder",
+        "Account-level enable/disable checkboxes",
+        "Connection test to server",
+        "Manual Sync Now button",
+        "Open Website button",
+        "Sync log with rolling 50 entries",
+        "UTF-8 BOM crash fix in file parsing",
+        "Timestamp guard for guild bank uploads"
+      ],
+      "missing": [
+        "Start with Windows auto-launch toggle in settings UI",
+        "Desktop toast notifications with on/off toggle"
+      ],
+      "supersedes": "AH_and_VaultSyncTray.cs (C# WinForms v4.0) — completely replaced by Electron app"
+    },
+    "installer": {
+      "name": "AH & Vault Sync Setup 5.0.0.exe",
+      "version": "5.0.0",
+      "status": "BUILT — electron-builder NSIS installer compiled",
+      "location": "C:/Claude-Flow/output-files/ah-vault-sync-app/dist/",
+      "framework": "electron-builder + NSIS",
+      "features": [
+        "NSIS-based Windows installer (.exe setup)",
+        "Allows user to choose installation directory",
+        "Creates Desktop shortcut",
+        "Creates Start Menu shortcut",
+        "Bundles all 3 addons (GuildShopSync, GBankExport, BankAltExport) as extraResources",
+        "Bundles Electron app with all dependencies",
+        "Uninstaller included"
+      ],
+      "legacyInnoSetup": {
+        "name": "AH_and_Vault_Sync.iss",
+        "status": "LEGACY — was for C# WinForms app, no longer applicable",
+        "location": "C:/Claude-Flow/output-files/AH_and_Vault_Sync-v4.0/"
+      }
+    },
+    "serverApis": [
+      {
+        "endpoint": "/api/consumes/prices",
+        "status": "PRODUCTION",
+        "location": "/home/opc/tbc-website/routes/api/consumes/prices.ts",
+        "method": "PUT",
+        "purpose": "Store AH prices in Deno KV"
+      },
+      {
+        "endpoint": "/api/guild-bank/inventory",
+        "status": "PRODUCTION",
+        "location": "/home/opc/tbc-website/routes/api/guild-bank/inventory.ts",
+        "methods": ["PUT", "GET"],
+        "purpose": "Store and retrieve guild vault contents. Deno KV key: ['guild-bank', 'inventory']",
+        "validation": "Requires guildName, scanTime, tabs array"
+      }
+    ],
+    "websitePages": [
+      {
+        "route": "/guild-bank",
+        "status": "PRODUCTION",
+        "location": "/home/opc/tbc-website/routes/guild-bank.tsx",
+        "component": "GuildBankBrowser.tsx island",
+        "purpose": "Display guild vault contents with item grid"
+      }
+    ]
+  },
+
+  "componentsToBuild": {
+    "title": "Components To Build",
+    "description": "New components required for v5.0 bank alt functionality",
+    "items": [
+      {
+        "name": "BankAltExport.lua",
+        "type": "WoW Addon",
+        "phase": 1,
+        "status": "COMPLETE",
+        "location": "C:/turtlewow/Interface/AddOns/BankAltExport/",
+        "lines": 504,
+        "note": "v2 multi-character addon (504 lines). Original v1 was 417 lines. v2 adds improved multi-character handling, enhanced flat format, and bug fixes.",
+        "purpose": "Scan bank alt character bags (0-4) and personal bank (-1, 5-11)",
+        "verified": "Tested with 2,814 total items scanned"
+      },
+      {
+        "name": "SettingsForm.cs + Settings.cs",
+        "type": "Tray App GUI (Legacy)",
+        "phase": 2,
+        "status": "SUPERSEDED — Replaced by Electron app UI",
+        "location": "C:/Claude-Flow/output-files/AH_and_Vault_Sync-v4.0/source/",
+        "note": "The C# WinForms settings GUI was never compiled. Its functionality has been replaced by the Electron app's built-in settings window with account checkboxes, WoW path selection, and connection testing.",
+        "files": ["Settings.cs (220 lines)", "SettingsForm.cs (285 lines)", "SettingsForm.Designer.cs (185 lines)"],
+        "features": [
+          "TreeView of accounts from WTF/Account/ folder",
+          "Characters discovered from SavedVariables files",
+          "Checkboxes to include/exclude accounts and characters",
+          "Persist to %LocalAppData%/AH_and_VaultSync/settings.json"
+        ]
+      },
+      {
+        "name": "Tray App v5.0 Updates",
+        "type": "Tray App Code",
+        "phase": 2,
+        "status": "COMPLETE (Electron app)",
+        "location": "C:/Claude-Flow/output-files/ah-vault-sync-app/",
+        "note": "Implemented as Electron + Node.js application, NOT C# WinForms. Uses chokidar for file watching instead of polling. Supports all three data sources (AH prices, guild vault, bank alts) with account-level enable/disable and DELETE on uncheck.",
+        "changes": [
+          "BankAltExport file watcher (chokidar)",
+          "Parse BANKALTEXPORT_V1 flat format",
+          "Upload to /api/bank-alts/inventory endpoint",
+          "DELETE from /api/bank-alts/inventory on account uncheck",
+          "Filter by settings (only sync selected accounts)",
+          "Account discovery from WTF/Account/ folder",
+          "Auto-install addons to WoW folder on first setup",
+          "Connection test to server",
+          "Sync log with rolling 50 entries",
+          "UTF-8 BOM crash fix in file parsing",
+          "Timestamp guard for guild bank uploads"
+        ]
+      },
+      {
+        "name": "/api/bank-alts/inventory.ts",
+        "type": "Server API",
+        "phase": 3,
+        "status": "COMPLETE",
+        "location": "/home/opc/tbc-website/routes/api/bank-alts/inventory.ts",
+        "lines": 150,
+        "methods": ["PUT", "GET", "DELETE"],
+        "purpose": "Store, retrieve, and delete bank alt inventory per account. Deno KV key: ['bank-alts', accountName]",
+        "note": "PUT has character-level merge logic — uploads for one character do not overwrite other characters on the same account. DELETE removes all data for a given account."
+      },
+      {
+        "name": "/api/guild-storage/combined.ts",
+        "type": "Server API",
+        "phase": 3,
+        "status": "COMPLETE",
+        "location": "/home/opc/tbc-website/routes/api/guild-storage/combined.ts",
+        "lines": 150,
+        "methods": ["GET"],
+        "purpose": "Return merged view: guild vault + all bank alts with aggregated counts and location breakdown"
+      },
+      {
+        "name": "Website UI Updates",
+        "type": "Website",
+        "phase": 4,
+        "status": "COMPLETE + EXTRAS",
+        "location": "/home/opc/tbc-website/islands/GuildStorageTabs.tsx",
+        "lines": 908,
+        "note": "908 lines — significantly expanded beyond original 700-line spec. Includes item icons (ItemCell component), item tooltips (useItemTooltip hook), sticky table headers, All Accounts dropdown in Bank Alts tab, source column in Combined View, and KV quality self-healing fix in lookup.ts.",
+        "changes": [
+          "Created GuildStorageTabs.tsx island (908 lines)",
+          "Guild Vault tab — existing GuildBankBrowser functionality",
+          "Bank Alts tab — account/character selector with All Accounts dropdown, bag+bank items",
+          "Combined View tab — merged counts with location breakdown toggle and source column",
+          "Item icons integration via ItemCell component",
+          "Item tooltips via useItemTooltip hook",
+          "Sticky table headers for long item lists",
+          "Updated routes/guild-bank.tsx to use new component",
+          "KV quality self-healing fix in lookup.ts for 218+ items with wrong quality from Dec 2025 scraper bug"
+        ]
+      },
+      {
+        "name": "v5.0 Installer",
+        "type": "Installer",
+        "phase": 5,
+        "status": "COMPLETE",
+        "location": "C:/Claude-Flow/output-files/ah-vault-sync-app/dist/AH & Vault Sync Setup 5.0.0.exe",
+        "note": "Built with electron-builder + NSIS. Produces a proper Windows installer (.exe setup) that bundles the Electron app + all 3 addons.",
+        "features": [
+          "electron-builder configured in package.json with NSIS target",
+          "All 3 addons bundled as extraResources",
+          "Desktop and Start Menu shortcuts created",
+          "User can choose installation directory",
+          "Uninstaller included"
+        ]
+      }
+    ]
+  },
+
+  "navigationFlow": {
+    "title": "Build Strategy: Complete First, Compile Once",
+    "diagram": [
+      "┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐",
+      "│                              BUILD STRATEGY: COMPLETE FIRST, COMPILE ONCE                               │",
+      "├─────────────────────────────────────────────────────────────────────────────────────────────────────────┤",
+      "│                                                                                                         │",
+      "│   Phase 1: Build BankAltExport.lua addon                                          ✅ COMPLETE          │",
+      "│   Phase 2: Build v5.0 tray app + Settings GUI (Electron replaced C# WinForms)     ✅ COMPLETE          │",
+      "│   Phase 3: Build missing server APIs (incl. DELETE method)                         ✅ COMPLETE          │",
+      "│   Phase 4: Update website UI + extras (icons, tooltips, sticky headers)            ✅ COMPLETE + EXTRAS│",
+      "│   Phase 5: Build Electron installer (electron-builder + NSIS)                       ✅ COMPLETE          │",
+      "│   Phase 6: Test & deploy                                                           ⬜ NOT STARTED      │",
+      "│                                                                                                         │",
+      "│   Why: Single installer compilation. All features tested together. Clean upgrade path.                 │",
+      "│                                                                                                         │",
+      "└─────────────────────────────────────────────────────────────────────────────────────────────────────────┘"
+    ]
+  },
+
+  "urlStructure": {
+    "title": "System Architecture — Data Flow",
+    "description": "Complete data pipeline from game client to website",
+    "diagram": [
+      "╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗",
+      "║                        AH & VAULT SYNC v5.0 — COMPLETE DATA PIPELINE                                  ║",
+      "╠═══════════════════════════════════════════════════════════════════════════════════════════════════════╣",
+      "║                                                                                                       ║",
+      "║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐  ║",
+      "║  │                              GAME CLIENT (TurtleWoW 1.12.1)                                     │  ║",
+      "║  ├─────────────────────────────────────────────────────────────────────────────────────────────────┤  ║",
+      "║  │                                                                                                 │  ║",
+      "║  │  [DONE] GuildShopSync.lua v3.0          [DONE] GBankExport.lua v3.0       [DONE] BankAltExport │  ║",
+      "║  │  • 68 items at AH                       • 5 tabs, 490 slots                • Bags 0-4          │  ║",
+      "║  │  • GuildShopSyncDB.triggerUpload        • GBankExport_Data                 • Bank -1, 5-11     │  ║",
+      "║  │  • /gss scan                            • GBankExport_FlatData             • /bae scan         │  ║",
+      "║  │                                         • GBANKEXPORT_V1 format            • BANKALTEXPORT_V1  │  ║",
+      "║  │                                                                            • v2: 504 lines    │  ║",
+      "║  │                                                                                                 │  ║",
+      "║  └─────────────────────────────────────────────────────────────────────────────────────────────────┘  ║",
+      "║                              │                           │                           │                ║",
+      "║                              │  /reload saves            │                           │                ║",
+      "║                              ▼  to WTF/Account/          ▼                           ▼                ║",
+      "║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐  ║",
+      "║  │                    WINDOWS HOST — ah-vault-sync-app (Electron + Node.js)                        │  ║",
+      "║  ├─────────────────────────────────────────────────────────────────────────────────────────────────┤  ║",
+      "║  │                                                                                                 │  ║",
+      "║  │  [DONE] Watch GuildShopSync.lua         [DONE] Watch GBankExport           [DONE] Watch BankAlt│  ║",
+      "║  │         (chokidar file watcher)                (chokidar file watcher)            (chokidar)   │  ║",
+      "║  │  [DONE] Parse price data                [DONE] Parse GBANKEXPORT_V1        [DONE] Parse format │  ║",
+      "║  │  [DONE] Upload /api/consumes/prices     [DONE] Upload /api/guild-bank      [DONE] Upload API   │  ║",
+      "║  │  [DONE] Account uncheck → DELETE from server                                                   │  ║",
+      "║  │                                                                                                 │  ║",
+      "║  │  [DONE] Account discovery (WTF/Account/)  [DONE] Account-level checkboxes  [DONE] Addon install│  ║",
+      "║  │  [DONE] Single instance lock              [DONE] Connection test            [DONE] Sync log    │  ║",
+      "║  │  [DONE] UTF-8 BOM fix                     [DONE] Timestamp guard                               │  ║",
+      "║  │                                                                                                 │  ║",
+      "║  │  [TODO] Start with Windows toggle          [TODO] Desktop toast notifications                    │  ║",
+      "║  │                                                                                                 │  ║",
+      "║  └─────────────────────────────────────────────────────────────────────────────────────────────────┘  ║",
+      "║                              │                           │                           │                ║",
+      "║                              │ HTTPS PUT/DELETE          │                           │                ║",
+      "║                              ▼                           ▼                           ▼                ║",
+      "║  ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐  ║",
+      "║  │                              LINUX SERVER — tbcguild.duckdns.org                                │  ║",
+      "║  ├─────────────────────────────────────────────────────────────────────────────────────────────────┤  ║",
+      "║  │                                                                                                 │  ║",
+      "║  │  [DONE] /api/consumes/prices           [DONE] /api/guild-bank/inventory   [DONE] /api/bank-alts│  ║",
+      "║  │  [DONE] Deno KV storage                [DONE] Deno KV storage             [DONE] Deno KV       │  ║",
+      "║  │                                                                           [DONE] PUT/GET/DELETE│  ║",
+      "║  │                                                                           [DONE] /combined     │  ║",
+      "║  │                                                                                                 │  ║",
+      "║  │  [DONE] /guild-bank page               [DONE] Bank Alts tab               [DONE] Combined tab  │  ║",
+      "║  │  [DONE] GuildStorageTabs.tsx (908 lines) — 3-tab island with vault, bank alts, combined view   │  ║",
+      "║  │  [DONE] Item icons (ItemCell)          [DONE] Tooltips (useItemTooltip)   [DONE] Sticky headers│  ║",
+      "║  │  [DONE] All Accounts dropdown          [DONE] Source column               [DONE] KV self-heal  │  ║",
+      "║  │                                                                                                 │  ║",
+      "║  └─────────────────────────────────────────────────────────────────────────────────────────────────┘  ║",
+      "║                                                                                                       ║",
+      "╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝"
+    ]
+  },
+
+  "dataFlowDiagrams": {
+    "bagshuiAnalysis": {
+      "title": "Bagshui Addon Analysis — Leveraged Patterns (NOT Reinventing the Wheel)",
+      "description": "Analysis of existing Bagshui addon. BankAltExport uses the SAME core WoW APIs — not reinventing the wheel. Works standalone (doesn't require Bagshui).",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                     BAGSHUI PATTERNS LEVERAGED IN BANKALTEXPORT                    │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  CORE WoW APIs (Same as Bagshui/Components/Inventory.Cache.lua)                    │",
+        "│  ─────────────────────────────────────────────────────────────────────────────────  │",
+        "│  GetContainerNumSlots(bagId)         → Returns slot count (0 if not available)     │",
+        "│  GetContainerItemLink(bagId, slot)   → Returns item link with embedded itemId      │",
+        "│  GetContainerItemInfo(bagId, slot)   → Returns texture, count, locked, quality     │",
+        "│  GetItemInfo(itemId)                 → Returns name, quality, type, subtype, max   │",
+        "│                                                                                     │",
+        "│  EVENTS (Same Pattern)                                                             │",
+        "│  ─────────────────────────────────────────────────────────────────────────────────  │",
+        "│  BANKFRAME_OPENED  → Auto-scan bank when player opens bank at banker NPC           │",
+        "│  BANKFRAME_CLOSED  → Bank frame closed                                             │",
+        "│  BAG_UPDATE        → Bag contents changed (triggers delayed scan)                  │",
+        "│                                                                                     │",
+        "│  PATTERNS BORROWED FROM BAGSHUI                                                    │",
+        "│  ─────────────────────────────────────────────────────────────────────────────────  │",
+        "│  • Item link parsing: string.find(link, 'item:(%d+)') extracts itemId              │",
+        "│  • GetItemInfo for richer data: itemType, itemSubtype, maxStackCount               │",
+        "│  • Charges handling: Negative count from SuperWoW = charges (math.abs)             │",
+        "│  • Quality fallback: GetContainerItemInfo can return -1, use GetItemInfo           │",
+        "│  • Name fallback: If GetItemInfo fails, parse [name] from link                     │",
+        "│                                                                                     │",
+        "│  WHY STANDALONE ADDON?                                                             │",
+        "│  ─────────────────────────────────────────────────────────────────────────────────  │",
+        "│  • Not all users have Bagshui installed                                            │",
+        "│  • BankAltExport must work independently                                           │",
+        "│  • Uses same proven WoW API patterns                                               │",
+        "│  • Installer doesn't require Bagshui as dependency                                 │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "bankAltDataHierarchy": {
+      "title": "Bank Alt Data Hierarchy",
+      "description": "How bank alt character inventory is organized - bags (0-4) and personal bank (-1, 5-11)",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                        BANK ALT DATA HIERARCHY                                      │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│   Account (e.g., STORMBANK)                                                         │",
+        "│   ├── Character: Bankalt (Mage 35)                                                 │",
+        "│   │   ├── Bags: 0=Backpack(16), 1-4=Equipped bags (14-18 each) = ~80 slots        │",
+        "│   │   └── Bank: -1=Main(24), 5-11=Bank bags (14-18 each) = ~130 slots             │",
+        "│   └── Character: Stashmaster (Rogue 5)                                             │",
+        "│       └── ... same structure                                                        │",
+        "│                                                                                     │",
+        "│   WoW API: GetContainerNumSlots(bagId), GetContainerItemInfo(bagId,slot)           │",
+        "│   Event: BANKFRAME_OPENED — triggers bank scan at banker NPC                       │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "flatDataFormat": {
+      "title": "BANKALTEXPORT_V1 Flat Data Format",
+      "description": "Pipe-delimited format for tray app parsing (modeled after GBANKEXPORT_V1)",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                     BANKALTEXPORT_V1 — FLAT DATA FORMAT                             │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  BANKALTEXPORT_V1                      ← Header                                    │",
+        "│  SCAN_TIME|2026-02-06 12:30:45         ← Timestamp                                 │",
+        "│  ACCOUNT|STORMBANK                     ← Account name                              │",
+        "│  CHAR|Bankalt|Mage|35                  ← Character header                          │",
+        "│  BAG|0|1|Fire Prot Potion|20|1|13457   ← Bag item (bag|slot|name|count|q|id)      │",
+        "│  BANK|-1|1|Arcanite Bar|40|3|12360     ← Bank item                                 │",
+        "│  ENDCHAR                               ← End character                             │",
+        "│  SUMMARY                                                                            │",
+        "│  TOTAL_ITEMS|4500                                                                  │",
+        "│  END                                                                               │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "apiEndpoints": {
+      "title": "Server API Endpoints",
+      "description": "All endpoints are DONE and deployed",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                           SERVER API ENDPOINTS                                      │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  [DONE] PUT/GET    /api/consumes/prices         — AH prices                        │",
+        "│  [DONE] PUT/GET    /api/guild-bank/inventory    — Guild vault                      │",
+        "│  [DONE] PUT/GET/DEL/api/bank-alts/inventory     — Bank alt data (+ char merge)     │",
+        "│  [DONE] GET        /api/guild-storage/combined  — Merged vault + alts              │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "gbankExportFormat": {
+      "title": "GBANKEXPORT_V1 Format (Existing — Reference)",
+      "description": "Current flat format used by GBankExport.lua. BankAltExport will follow similar structure.",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                     GBANKEXPORT_V1 — EXISTING FORMAT (Reference)                    │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  GBANKEXPORT_V1                                        ← Header                    │",
+        "│  SCAN_TIME|2026-02-06 12:30:45                         ← Timestamp                 │",
+        "│  GUILD|Thralls Book Club                               ← Guild name               │",
+        "│  TAB|1|Consumables                                     ← Tab header               │",
+        "│  ITEM|Greater Fire Protection Potion|20|1|13457|1      ← Item (name|count|q|id|slot)│",
+        "│  ITEM|Flask of the Titans|5|3|13510|2                                              │",
+        "│  TAB|2|Materials                                                                   │",
+        "│  ITEM|Arcanite Bar|40|3|12360|1                                                    │",
+        "│  SUMMARY                                                                            │",
+        "│  TOTAL_ITEMS|5528                                                                  │",
+        "│  UNIQUE_ITEMS|160                                                                  │",
+        "│  TOTAL|Greater Fire Protection Potion|200|1|13457      ← Aggregated per item      │",
+        "│  END                                                                               │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "bankAltExportFormat": {
+      "title": "BANKALTEXPORT_V1 Format (To Build)",
+      "description": "New flat format for bank alt character inventories",
+      "diagram": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│                     BANKALTEXPORT_V1 — NEW FORMAT (To Build)                        │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                                     │",
+        "│  BANKALTEXPORT_V1                                      ← Header                    │",
+        "│  SCAN_TIME|2026-02-06 12:30:45                         ← Timestamp                 │",
+        "│  ACCOUNT|STORMBANK                                     ← Account name              │",
+        "│  CHAR|Bankalt|Mage|35                                  ← Character header          │",
+        "│  BAG|0|1|Greater Fire Protection Potion|20|1|13457     ← Bag item (bag|slot|...)  │",
+        "│  BAG|1|3|Flask of the Titans|5|3|13510                                             │",
+        "│  BANK|-1|1|Arcanite Bar|40|3|12360                     ← Bank item (bag|slot|...) │",
+        "│  BANK|5|2|Black Lotus|15|3|13468                       ← Bank bag item             │",
+        "│  ENDCHAR                                               ← End of character         │",
+        "│  CHAR|Stashmaster|Rogue|5                              ← Next character           │",
+        "│  BAG|0|1|Linen Cloth|200|1|2589                                                    │",
+        "│  ENDCHAR                                                                           │",
+        "│  SUMMARY                                                                            │",
+        "│  TOTAL_ITEMS|4500                                                                  │",
+        "│  UNIQUE_ITEMS|85                                                                   │",
+        "│  END                                                                               │",
+        "│                                                                                     │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    }
+  },
+
+  "pageMockups": {
+    "trayAppContextMenu": {
+      "title": "Tray App: Context Menu (Right-Click) — DESIGN MOCKUP",
+      "description": "Original design mockup for system tray context menu. NOTE: The actual Electron tray menu is simpler than this mockup. The Electron app uses a basic context menu without per-source sync timestamps. Gap: the actual menu shows a single last-sync time rather than individual timestamps per data source (AH Prices, Guild Vault, each Bank Alt account).",
+      "mockup": [
+        "┌────────────────────────────────┐",
+        "│  AH & Vault Sync v5.0          │",
+        "├────────────────────────────────┤",
+        "│  ✓ AH Prices     Synced 2m ago │",
+        "│  ✓ Guild Vault   Synced 5m ago │",
+        "│  ✓ STORMBANK     Synced 8m ago │",
+        "├────────────────────────────────┤",
+        "│  Settings...                   │",
+        "│  Open Website                  │",
+        "│  Sync Now                      │",
+        "│  Exit                          │",
+        "└────────────────────────────────┘"
+      ],
+      "actualElectronMenu": {
+        "note": "Actual Electron tray menu is simpler: shows app title, last sync time (single), Sync Now, Open Website, and Quit. Per-source timestamps and Settings menu item are not yet implemented in the tray context menu (settings are in the main window).",
+        "gap": [
+          "Per-source sync timestamps not shown in tray menu (shows single timestamp)",
+          "Settings accessed via main window, not tray menu"
+        ]
+      }
+    },
+    "websiteGuildStorageTabs": {
+      "title": "Website: Guild Storage Page — 3 Tabs",
+      "description": "Tabbed view: Guild Vault, Bank Alts, Combined",
+      "mockup": [
+        "┌─────────────────────────────────────────────────────────────────────────────────────┐",
+        "│  Guild Storage                                               Last synced: 2m ago   │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  [Guild Vault]  [Bank Alts]  [Combined View]                                       │",
+        "├─────────────────────────────────────────────────────────────────────────────────────┤",
+        "│  Guild Vault tab — existing GuildBankBrowser functionality                         │",
+        "│  Bank Alts tab — account/character selector, bag+bank items                        │",
+        "│  Combined View tab — merged counts with location breakdown toggle                  │",
+        "└─────────────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    },
+    "trayAppSettingsGui": {
+      "title": "Tray App: Settings GUI — Account/Character Selection (Phase 2)",
+      "description": "Original WinForms design mockup. NOTE: This is now implemented as an Electron BrowserWindow, not WinForms. The Electron app implements account-level checkboxes and WoW path selection, but does NOT yet have per-character checkboxes (only account-level enable/disable). The TreeView with individual character checkboxes shown below is aspirational — current Electron UI has flat account checkboxes.",
+      "implementationStatus": {
+        "implemented": [
+          "WoW Install Path selection",
+          "Account discovery from WTF/Account/ folder",
+          "Account-level enable/disable checkboxes",
+          "Connection test to server",
+          "Settings persist to local config",
+          "Manual Sync Now button",
+          "Open Website button",
+          "Sync log display"
+        ],
+        "notYetImplemented": [
+          "Start with Windows toggle",
+          "Desktop toast notification toggle"
+        ]
+      },
+      "mockup": [
+        "┌───────────────────────────────────────────────────────────────────────────────┐",
+        "│  AH & Vault Sync v5.0 — Settings                                     [X]    │",
+        "├───────────────────────────────────────────────────────────────────────────────┤",
+        "│                                                                               │",
+        "│  WoW Install Path: [ C:\\turtlewow                        ] [Browse...]      │",
+        "│                                                                               │",
+        "│  ┌─────────────────────────────────────────────────────────────────────────┐ │",
+        "│  │  SYNC SOURCES                                                           │ │",
+        "│  ├─────────────────────────────────────────────────────────────────────────┤ │",
+        "│  │  [✓] AH Prices (GuildShopSync) — Account: [ STORMSHADOW ▼ ]             │ │",
+        "│  │  [✓] Guild Vault (GBankExport) — Account: [ STORMSHADOW ▼ ]             │ │",
+        "│  │  [✓] Bank Alt Inventories (BankAltExport)                               │ │",
+        "│  └─────────────────────────────────────────────────────────────────────────┘ │",
+        "│                                                                               │",
+        "│  ┌─────────────────────────────────────────────────────────────────────────┐ │",
+        "│  │  BANK ALT ACCOUNTS & CHARACTERS — Select which to sync                  │ │",
+        "│  ├─────────────────────────────────────────────────────────────────────────┤ │",
+        "│  │  ▼ [✓] STORMBANK                                                        │ │",
+        "│  │      [✓] Bankalt (Mage 35)                                              │ │",
+        "│  │      [✓] Stashmaster (Rogue 5)                                          │ │",
+        "│  │      [ ] Pvpalt (Warrior 19)  ← unchecked = excluded                    │ │",
+        "│  │                                                                          │ │",
+        "│  │  ▼ [✓] ALTACCOUNT2                                                      │ │",
+        "│  │      [✓] Herbfarmer (Druid 40)                                          │ │",
+        "│  │                                                                          │ │",
+        "│  │  ► [ ] STORMSHADOW  ← main account, not a bank alt, excluded            │ │",
+        "│  │                                                                          │ │",
+        "│  │  [Refresh from WTF folder]                                              │ │",
+        "│  └─────────────────────────────────────────────────────────────────────────┘ │",
+        "│                                                                               │",
+        "│  ┌─────────────────────────────────────────────────────────────────────────┐ │",
+        "│  │  OPTIONS                                                                 │ │",
+        "│  │  [✓] Start with Windows         Poll interval: [ 5 ] seconds            │ │",
+        "│  │  [✓] Show balloon notifications [✓] Auto-upload to website              │ │",
+        "│  └─────────────────────────────────────────────────────────────────────────┘ │",
+        "│                                                                               │",
+        "│                                        [ Cancel ]  [ Save & Apply ]          │",
+        "└───────────────────────────────────────────────────────────────────────────────┘"
+      ]
+    }
+  },
+
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Build BankAltExport Addon",
+      "status": "COMPLETE",
+      "description": "Create BankAltExport.lua addon modeled after GBankExport.lua patterns. Scans character bags (0-4) and personal bank (-1, 5-11). Auto-scans bank on BANKFRAME_OPENED event. Outputs BANKALTEXPORT_V1 flat format to SavedVariables. v2 multi-character addon is 504 lines (original v1 was 417 lines).",
+      "estimatedTime": "4-6 hours",
+      "files": {
+        "create": [
+          {"path": "Interface/AddOns/BankAltExport/BankAltExport.lua", "purpose": "Main addon logic — bag and bank scanning using GetContainerItemInfo API"},
+          {"path": "Interface/AddOns/BankAltExport/BankAltExport.toc", "purpose": "Addon manifest with SavedVariables declaration"}
+        ]
+      },
+      "technicalDetails": {
+        "wowApiFunctions": ["GetContainerNumSlots(bagId)", "GetContainerItemInfo(bagId, slot)", "GetContainerItemLink(bagId, slot)"],
+        "bagIds": {"backpack": 0, "equippedBags": "1-4", "mainBank": -1, "bankBags": "5-11"},
+        "events": ["BANKFRAME_OPENED", "BAG_UPDATE"],
+        "savedVariables": ["BankAltExport_Data", "BankAltExport_FlatData"],
+        "slashCommands": ["/bae scan", "/bae status", "/bae clear"]
+      },
+      "acceptanceCriteria": [
+        "Addon loads without Lua errors on /reload",
+        "/bae scan captures all 5 character bags correctly",
+        "BANKFRAME_OPENED triggers auto-scan of personal bank",
+        "FlatData output matches BANKALTEXPORT_V1 format",
+        "SavedVariables persists to WTF/Account/[ACCOUNT]/SavedVariables/",
+        "Multiple characters on same account work correctly"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Build Tray App v5.0 with Settings GUI",
+      "status": "COMPLETE",
+      "description": "Electron + Node.js tray app replaced the original C# WinForms plan. All core sync functionality built: watches all 3 SavedVariables files via chokidar, uploads to all 3 API endpoints, supports account discovery, account-level enable/disable with DELETE on uncheck, auto-installs addons, connection test, sync log, UTF-8 BOM fix, and timestamp guard. Per-character filtering and some polish features remain unimplemented.",
+      "estimatedTime": "6-8 hours",
+      "files": {
+        "create": [
+          {"path": "ah-vault-sync-app/main.js", "purpose": "Electron main process — file watchers, tray icon, window management"},
+          {"path": "ah-vault-sync-app/index.html", "purpose": "Electron renderer — settings UI with account checkboxes, sync log, action buttons"},
+          {"path": "ah-vault-sync-app/package.json", "purpose": "Electron app manifest with dependencies (chokidar, electron)"}
+        ],
+        "superseded": [
+          {"path": "source/SettingsForm.cs", "note": "SUPERSEDED — Replaced by Electron app UI"},
+          {"path": "source/SettingsForm.Designer.cs", "note": "SUPERSEDED — Replaced by Electron app UI"},
+          {"path": "source/Settings.cs", "note": "SUPERSEDED — Replaced by Electron app config"},
+          {"path": "source/AH_and_VaultSyncTray_v5.cs", "note": "SUPERSEDED — Replaced by Electron main.js"}
+        ]
+      },
+      "acceptanceCriteria": [
+        "All 3 file watchers detect SavedVariables changes",
+        "AH prices uploaded to /api/consumes/prices",
+        "Guild vault uploaded to /api/guild-bank/inventory",
+        "Bank alts uploaded to /api/bank-alts/inventory",
+        "Account uncheck triggers DELETE to remove data from server",
+        "Accounts discovered from WTF/Account/ folder",
+        "Account-level enable/disable checkboxes work",
+        "Addons auto-installed to WoW folder on first setup",
+        "Connection test verifies server reachability",
+        "Sync log shows rolling 50 entries",
+        "Single instance lock prevents duplicate app windows"
+      ],
+      "unimplemented": [
+        "Start with Windows auto-launch toggle in settings",
+        "Desktop toast notifications with on/off toggle"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Build Missing Server APIs",
+      "status": "COMPLETE",
+      "description": "Created two new Deno Fresh API endpoints. /api/bank-alts/inventory supports PUT, GET, and DELETE methods with character-level merge logic on PUT. Existing /api/guild-bank/inventory and /api/consumes/prices are NOT modified.",
+      "estimatedTime": "2-3 hours",
+      "files": {
+        "create": [
+          {"path": "routes/api/bank-alts/inventory.ts", "purpose": "PUT/GET/DELETE for bank alt inventory. PUT has character-level merge logic. DELETE removes account data. Deno KV key: ['bank-alts', accountName]"},
+          {"path": "routes/api/guild-storage/combined.ts", "purpose": "GET merged view of guild vault + all bank alts with aggregated counts"}
+        ]
+      },
+      "acceptanceCriteria": [
+        "PUT /api/bank-alts/inventory stores per-account data with character-level merge",
+        "GET /api/bank-alts/inventory returns all accounts",
+        "GET /api/bank-alts/inventory?account=X filters by account",
+        "DELETE /api/bank-alts/inventory?account=X removes account data",
+        "GET /api/guild-storage/combined merges and aggregates correctly",
+        "CORS headers allow tray app origin"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Update Website UI",
+      "status": "COMPLETE + EXTRAS",
+      "description": "Created GuildStorageTabs.tsx island (908 lines) with 3 tabs: Guild Vault (existing), Bank Alts (new), Combined View (new). Updated routes/guild-bank.tsx to use new component. EXTRAS beyond original spec: item icons integration via ItemCell component, item tooltips via useItemTooltip hook, sticky table headers for long item lists, All Accounts dropdown in Bank Alts tab, source column in Combined View, and KV quality self-healing fix in lookup.ts patching 218+ items with wrong quality from Dec 2025 scraper bug.",
+      "estimatedTime": "4-6 hours",
+      "files": {
+        "create": [
+          {"path": "islands/GuildStorageTabs.tsx", "purpose": "3-tab component (908 lines): Guild Vault, Bank Alts, Combined View with icons, tooltips, sticky headers"}
+        ],
+        "refactor": [
+          {"path": "routes/guild-bank.tsx", "changes": "Integrate new tab component"},
+          {"path": "utils/lookup.ts", "changes": "KV quality self-healing fix for 218+ items with wrong quality from Dec 2025 scraper bug"}
+        ]
+      },
+      "extras": [
+        "Item icons integration via ItemCell component",
+        "Item tooltips via useItemTooltip hook",
+        "Sticky table headers for long item lists",
+        "All Accounts dropdown in Bank Alts tab",
+        "Source column in Combined View tab",
+        "KV quality self-healing fix in lookup.ts (218+ items corrected)"
+      ],
+      "acceptanceCriteria": [
+        "3 tabs visible and functional",
+        "Guild Vault tab unchanged (existing functionality)",
+        "Bank Alts tab shows accounts/characters with inventories",
+        "Bank Alts tab has All Accounts dropdown for cross-account view",
+        "Combined View aggregates counts with location breakdown and source column",
+        "Item icons display correctly via ItemCell",
+        "Item tooltips appear on hover via useItemTooltip",
+        "Table headers stay visible when scrolling (sticky headers)",
+        "KV quality self-healing corrects items with wrong quality values",
+        "Playwright tests pass"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Build Electron Installer",
+      "status": "COMPLETE",
+      "description": "electron-builder configured with NSIS target in package.json. Installer built: 'AH & Vault Sync Setup 5.0.0.exe'. Bundles Electron app + all 3 addons as extraResources. Creates Desktop and Start Menu shortcuts. User can choose install directory.",
+      "estimatedTime": "2-3 hours",
+      "files": {
+        "create": [
+          {"path": "dist/AH & Vault Sync Setup 5.0.0.exe", "purpose": "Final compiled NSIS installer (built with electron-builder)"}
+        ]
+      },
+      "acceptanceCriteria": [
+        "electron-builder produces a Windows installer (.exe) — DONE",
+        "Installer bundles all 3 addons (GuildShopSync, GBankExport, BankAltExport) — DONE",
+        "Installer includes Electron app bundle — DONE",
+        "Desktop and Start Menu shortcuts created — DONE",
+        "Uninstaller works cleanly — DONE"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Test & Deploy",
+      "status": "Not Started",
+      "description": "Comprehensive testing: fresh install on clean Windows, all data flows (AH prices, guild vault, bank alts), settings GUI, account enable/disable with DELETE, addon auto-install, website display of all 3 tabs with icons and tooltips. Fix bugs. Deploy.",
+      "estimatedTime": "2-3 hours",
+      "acceptanceCriteria": [
+        "Fresh install on clean Windows works",
+        "Reboot survival verified (auto-start on login)",
+        "All 3 addons function correctly in WoW",
+        "All 3 data sources sync to server",
+        "Account uncheck triggers DELETE and removes data from website",
+        "Website displays all 3 tabs correctly with icons and tooltips",
+        "Playwright tests pass",
+        "Installer uninstall cleans up properly"
+      ]
+    }
+  ],
+
+  "changeLog": {
+    "title": "Document Change Log",
+    "entries": [
+      {
+        "date": "2026-02-08T02:00:00-08:00",
+        "version": "v12",
+        "changes": [
+          "DOCUMENT OVERHAUL: Updated to reflect actual implementation state",
+          "Tray app technology: C# WinForms SUPERSEDED by Electron/Node.js app",
+          "BankAltExport v2: Multi-character addon (504 lines) replaces original v1 (417 lines)",
+          "Phase 4 EXTRAS: Item icons (ItemCell), tooltips (useItemTooltip), sticky headers, All Accounts dropdown, source column",
+          "KV quality self-healing: Patched lookup.ts to fix 218+ items with wrong quality from Dec 2025 scraper bug",
+          "Bank-alts API: Added DELETE method + character-level merge logic",
+          "Tray app features: Account uncheck DELETE, UTF-8 BOM fix, timestamp guard, addon auto-install",
+          "Phase 5 COMPLETE: electron-builder NSIS installer built ('AH & Vault Sync Setup 5.0.0.exe')",
+          "Added remainingWork section documenting outstanding items",
+          "Overall progress: ~92% complete (core pipeline fully functional, installer built, needs Start with Windows toggle + polish)"
+        ]
+      },
+      {
+        "date": "2026-02-07T18:15:00-08:00",
+        "version": "v11",
+        "changes": [
+          "PHASE 4 COMPLETE: Website UI with 3 tabs deployed",
+          "Created GuildStorageTabs.tsx island (700 lines) with Guild Vault, Bank Alts, Combined View tabs",
+          "Guild Vault tab — preserves existing GuildBankBrowser functionality",
+          "Bank Alts tab — account/character dropdown selectors, bag+bank item display with location breakdown",
+          "Combined View tab — merged counts from vault+alts with toggle for location breakdown",
+          "Updated routes/guild-bank.tsx to use GuildStorageTabs instead of GuildBankBrowser",
+          "Rebuilt Fresh app and verified 57 islands registered",
+          "Playwright 20/20 tests passing",
+          "Overall progress: 66% complete (4 of 6 phases done)"
+        ]
+      },
+      {
+        "date": "2026-02-06T05:00:00-08:00",
+        "version": "v10",
+        "changes": [
+          "BAGSHUI ANALYSIS: Analyzed existing Bagshui addon to leverage proven patterns",
+          "Core WoW APIs confirmed: GetContainerNumSlots, GetContainerItemLink, GetContainerItemInfo, GetItemInfo",
+          "Enhanced BankAltExport.lua with GetItemInfo for richer item data (type, subtype, maxStack)",
+          "Added charges handling for SuperWoW compatibility (negative count = charges)",
+          "Added quality fallback pattern (GetContainerItemInfo quality can be -1)",
+          "Added name fallback pattern (parse [name] from link if GetItemInfo fails)",
+          "NOT reinventing the wheel — using same proven patterns as Bagshui",
+          "BankAltExport works standalone (doesn't require Bagshui to be installed)"
+        ]
+      },
+      {
+        "date": "2026-02-06T04:30:00-08:00",
+        "version": "v9",
+        "changes": [
+          "PHASE 1 STARTED: BankAltExport addon files created",
+          "Created BankAltExport.lua (290 lines) — bag and bank scanning using GetContainerItemInfo API",
+          "Created BankAltExport.toc — addon manifest with SavedVariables declaration",
+          "Addon location: C:/turtlewow/Interface/AddOns/BankAltExport/",
+          "Slash commands: /bae scan, /bae bags, /bae status, /bae list, /bae debug, /bae clear",
+          "Auto-scans bank on BANKFRAME_OPENED event",
+          "Outputs BANKALTEXPORT_V1 flat format to BankAltExport_FlatData SavedVariable",
+          "NEXT: Test addon loads without Lua errors, verify all commands work, verify bank scanning"
+        ]
+      },
+      {
+        "date": "2026-02-06T03:00:00-08:00",
+        "version": "v8",
+        "changes": [
+          "FULL CODEBASE ANALYSIS: Read all source files",
+          "Documented GuildShopSync.lua (285 lines) — 68 items, /gss commands, triggerUpload mechanism",
+          "Documented GBankExport.lua (581 lines) — GuildBankFrame hooks, GBANKEXPORT_V1 format, tab switching",
+          "Documented AH_and_VaultSyncTray.cs (~1000 lines) — polling, uploads, mutex, SessionEnding",
+          "Documented AH_and_Vault_Sync.iss (325 lines) — addon installation, Registry Run key, cleanup",
+          "Verified server APIs exist: /api/consumes/prices, /api/guild-bank/inventory",
+          "Added GBANKEXPORT_V1 format reference for modeling BANKALTEXPORT_V1",
+          "Added complete file paths and line counts for all components"
+        ]
+      },
+      {
+        "date": "2026-02-06T02:15:00-08:00",
+        "version": "v7",
+        "changes": ["Revised phase order", "Added build strategy diagram", "Added testing plan"]
+      }
+    ]
+  }
+}

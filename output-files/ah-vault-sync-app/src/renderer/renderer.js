@@ -5,6 +5,7 @@ const wowPathInput = document.getElementById('wowPath');
 const browseBtn = document.getElementById('browseBtn');
 const accountsList = document.getElementById('accountsList');
 const autoSyncCheckbox = document.getElementById('autoSync');
+const startWithWindowsCheckbox = document.getElementById('startWithWindows');
 const lastSyncTime = document.getElementById('lastSyncTime');
 const connectionStatus = document.getElementById('connectionStatus');
 const watcherStatus = document.getElementById('watcherStatus');
@@ -58,15 +59,21 @@ installAddonsBtn.addEventListener('click', () => {
 ipcRenderer.on('config-data', (event, config) => {
   wowPathInput.value = config.wowPath || '';
   autoSyncCheckbox.checked = config.autoSync !== false;
+  startWithWindowsCheckbox.checked = !!config.startWithWindows;
   enabledAccounts = config.enabledAccounts || {};
 
   if (config.lastSyncTime) {
     lastSyncTime.textContent = new Date(config.lastSyncTime).toLocaleString();
   }
 
+  // Reflect current watcher state from main process
+  if (config.watcherRunning) {
+    watcherStatus.textContent = 'Running';
+    watcherStatus.className = 'status-value status-ok';
+  }
+
   if (config.wowPath) {
     ipcRenderer.send('get-accounts', config.wowPath);
-    // Check addon status on startup
     ipcRenderer.send('check-addons', config.wowPath);
   }
 });
@@ -219,7 +226,8 @@ function saveConfig() {
   const config = {
     wowPath: wowPathInput.value,
     enabledAccounts: enabledAccounts,
-    autoSync: autoSyncCheckbox.checked
+    autoSync: autoSyncCheckbox.checked,
+    startWithWindows: startWithWindowsCheckbox.checked
   };
 
   ipcRenderer.send('save-config', config);

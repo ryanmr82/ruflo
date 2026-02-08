@@ -21,7 +21,8 @@ class Uploader {
     const response = await this.client.put('/api/consumes/prices', {
       prices: data.prices,
       scanTime: data.scanTime,
-      itemCount: data.itemCount
+      itemCount: data.itemCount,
+      source: 'GuildShopSync-addon'
     });
     return response.data;
   }

@@ -15,6 +15,7 @@ const store = new Store();
 let mainWindow;
 let tray;
 let fileWatcher;
+let watcherRunning = false;
 
 // App configuration
 const APP_NAME = 'AH & Vault Sync';
@@ -197,13 +198,17 @@ function startWatching() {
   });
 
   fileWatcher.start();
-  mainWindow.webContents.send('watcher-started');
+  watcherRunning = true;
+  if (mainWindow && mainWindow.webContents) {
+    mainWindow.webContents.send('watcher-started');
+  }
 }
 
 function stopWatching() {
   if (fileWatcher) {
     fileWatcher.stop();
   }
+  watcherRunning = false;
 }
 
 async function handleManualSync() {
@@ -222,25 +227,33 @@ async function handleManualSync() {
     const tempWatcher = new FileWatcher(wowPath, enabledAccounts, store);
     const uploader = new Uploader(SERVER_URL);
 
-    // Sync prices — from first checked account that has GuildShopSync
+    // Sync prices — from ANY account that has GuildShopSync data (prices are global)
     const accounts = tempWatcher.discoverAccounts();
-    const priceAccount = accounts.find(a => enabledAccounts[a.name] && a.addons.GuildShopSync);
-    if (priceAccount) {
-      const priceData = tempWatcher.readPriceData(priceAccount.name);
-      if (priceData) {
-        await uploader.uploadPrices(priceData);
-        mainWindow.webContents.send('sync-success', { type: 'prices' });
+    const priceAccounts = accounts.filter(a => a.addons.GuildShopSync);
+    let bestPriceData = null;
+    for (const acct of priceAccounts) {
+      const pd = tempWatcher.readPriceData(acct.name);
+      if (pd && pd.itemCount > 0 && (!bestPriceData || pd.itemCount > bestPriceData.itemCount)) {
+        bestPriceData = pd;
       }
     }
+    if (bestPriceData) {
+      await uploader.uploadPrices(bestPriceData);
+      mainWindow.webContents.send('sync-success', { type: 'prices' });
+    }
 
-    // Sync guild bank — from first checked account that has GBankExport
-    const gbankAccount = accounts.find(a => enabledAccounts[a.name] && a.addons.GBankExport);
-    if (gbankAccount) {
-      const guildBankData = tempWatcher.readGuildBankData(gbankAccount.name);
-      if (guildBankData) {
-        await uploader.uploadGuildBank(guildBankData);
-        mainWindow.webContents.send('sync-success', { type: 'guildBank' });
+    // Sync guild bank — from ANY account that has GBankExport data (guild bank is global)
+    const gbankAccounts = accounts.filter(a => a.addons.GBankExport);
+    let bestGbankData = null;
+    for (const acct of gbankAccounts) {
+      const gd = tempWatcher.readGuildBankData(acct.name);
+      if (gd && gd.totalItems > 0 && (!bestGbankData || gd.totalItems > bestGbankData.totalItems)) {
+        bestGbankData = gd;
       }
+    }
+    if (bestGbankData) {
+      await uploader.uploadGuildBank(bestGbankData);
+      mainWindow.webContents.send('sync-success', { type: 'guildBank' });
     }
 
     // Sync bank alts — all checked accounts that have BankAltExport data
@@ -274,6 +287,9 @@ ipcMain.on('save-config', async (event, config) => {
   store.set('wowPath', config.wowPath);
   store.set('enabledAccounts', newEnabledAccounts);
   store.set('autoSync', config.autoSync);
+
+  // Start with Windows toggle
+  app.setLoginItemSettings({ openAtLogin: !!config.startWithWindows });
 
   event.reply('config-saved');
 
@@ -316,11 +332,14 @@ ipcMain.on('save-config', async (event, config) => {
 });
 
 ipcMain.on('get-config', (event) => {
+  const loginSettings = app.getLoginItemSettings();
   event.reply('config-data', {
     wowPath: store.get('wowPath', ''),
     enabledAccounts: store.get('enabledAccounts', {}),
     autoSync: store.get('autoSync', true),
-    lastSyncTime: store.get('lastSyncTime')
+    startWithWindows: loginSettings.openAtLogin,
+    lastSyncTime: store.get('lastSyncTime'),
+    watcherRunning: watcherRunning
   });
 });
 
@@ -480,10 +499,13 @@ app.whenReady().then(() => {
   createWindow();
   createTray();
 
-  // Auto-start watching if configured
-  if (store.get('autoSync', true) && store.get('wowPath')) {
-    startWatching();
-  }
+  // Wait for renderer to finish loading before starting watcher
+  // so the watcher-started IPC message isn't lost
+  mainWindow.webContents.once('did-finish-load', () => {
+    if (store.get('autoSync', true) && store.get('wowPath')) {
+      startWatching();
+    }
+  });
 });
 
 app.on('window-all-closed', (event) => {

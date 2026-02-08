@@ -74,16 +74,18 @@ class FileWatcher extends EventEmitter {
 
     const watchPaths = [];
 
-    // Watch SavedVariables folders only for checked (enabled) accounts
     const accounts = this.discoverAccounts();
     for (const account of accounts) {
-      if (this.enabledAccounts[account.name] === false) continue;
       const savedVarsPath = path.join(account.path, 'SavedVariables');
-      if (fs.existsSync(savedVarsPath)) {
-        watchPaths.push(path.join(savedVarsPath, 'GuildShopSync.lua'));
-        watchPaths.push(path.join(savedVarsPath, 'GBankExport.lua'));
-        watchPaths.push(path.join(savedVarsPath, 'BankAltExport.lua'));
-      }
+      if (!fs.existsSync(savedVarsPath)) continue;
+
+      // Prices and guild bank are global — watch on ALL accounts
+      watchPaths.push(path.join(savedVarsPath, 'GuildShopSync.lua'));
+      watchPaths.push(path.join(savedVarsPath, 'GBankExport.lua'));
+
+      // Bank alt data is per-account — only watch enabled accounts
+      if (this.enabledAccounts[account.name] === false) continue;
+      watchPaths.push(path.join(savedVarsPath, 'BankAltExport.lua'));
     }
 
     this.watcher = chokidar.watch(watchPaths, {
