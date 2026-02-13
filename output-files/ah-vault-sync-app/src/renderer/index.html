@@ -60,6 +60,48 @@
         </div>
       </section>
 
+      <!-- Guild Bank Scanner Section -->
+      <section class="gbank-section">
+        <h2>Guild Bank Scanner</h2>
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" id="gbankAutoScan" checked>
+            <span>Auto-scan when guild bank is opened</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="gbankCooldown">Scan Cooldown:</label>
+          <select id="gbankCooldown">
+            <option value="0">No cooldown (scan every open)</option>
+            <option value="5">5 minutes</option>
+            <option value="15">15 minutes</option>
+            <option value="30" selected>30 minutes</option>
+            <option value="60">60 minutes</option>
+            <option value="120">120 minutes</option>
+          </select>
+          <p class="gbank-hint">Skip auto-scan if last scan was within this window. Use /gbe scan in-game to force a scan at any time.</p>
+        </div>
+        <div id="gbankInfo" class="gbank-info-box">
+          <div class="gbank-info-row">
+            <span class="label">Last GBank Scan:</span>
+            <span id="gbankLastScan" class="value">No data yet</span>
+          </div>
+          <div class="gbank-info-row">
+            <span class="label">Guild:</span>
+            <span id="gbankGuild" class="value">—</span>
+          </div>
+          <div class="gbank-info-row">
+            <span class="label">Items:</span>
+            <span id="gbankItems" class="value">—</span>
+          </div>
+        </div>
+        <div class="gbank-commands">
+          <div><code>/gbe auto</code> — toggle auto-scan</div>
+          <div><code>/gbe cooldown &lt;min&gt;</code> — set cooldown</div>
+          <div><code>/gbe scan</code> — force scan now</div>
+        </div>
+      </section>
+
       <!-- Status Section -->
       <section class="status-section">
         <h2>Sync Status</h2>

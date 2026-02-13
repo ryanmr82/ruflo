@@ -16,6 +16,11 @@ const openDashboardBtn = document.getElementById('openDashboardBtn');
 const saveConfigBtn = document.getElementById('saveConfigBtn');
 const addonStatus = document.getElementById('addonStatus');
 const installAddonsBtn = document.getElementById('installAddonsBtn');
+const gbankAutoScanCheckbox = document.getElementById('gbankAutoScan');
+const gbankCooldownSelect = document.getElementById('gbankCooldown');
+const gbankLastScan = document.getElementById('gbankLastScan');
+const gbankGuild = document.getElementById('gbankGuild');
+const gbankItems = document.getElementById('gbankItems');
 
 let currentAccounts = [];
 let enabledAccounts = {};
@@ -75,6 +80,7 @@ ipcRenderer.on('config-data', (event, config) => {
   if (config.wowPath) {
     ipcRenderer.send('get-accounts', config.wowPath);
     ipcRenderer.send('check-addons', config.wowPath);
+    ipcRenderer.send('get-gbank-settings');
   }
 });
 
@@ -155,6 +161,34 @@ ipcRenderer.on('addons-status', (event, results) => {
   updateAddonStatus(results);
 });
 
+ipcRenderer.on('addons-auto-updated', (event, updated) => {
+  for (const u of updated) {
+    addLog(`Auto-updated addon: ${u.addon} (${u.from || 'new'} → ${u.to})`, 'success');
+  }
+  // Refresh addon status display
+  if (wowPathInput.value) {
+    ipcRenderer.send('check-addons', wowPathInput.value);
+  }
+});
+
+// GBank Settings IPC handlers
+ipcRenderer.on('gbank-settings-data', (event, settings) => {
+  updateGBankSettingsUI(settings);
+});
+
+ipcRenderer.on('gbank-settings-updated', (event, settings) => {
+  updateGBankSettingsUI(settings);
+  addLog('Guild bank scanner settings updated from in-game.', 'info');
+});
+
+ipcRenderer.on('gbank-settings-saved', (event, result) => {
+  if (result.success) {
+    addLog('Guild bank scanner settings saved. Do /reload in-game to apply.', 'success');
+  } else {
+    addLog('Failed to save GBank settings: ' + result.error, 'error');
+  }
+});
+
 function updateAddonStatus(results) {
   if (!results || results.length === 0) {
     addonStatus.innerHTML = '<p class="placeholder-text">No addon information available</p>';
@@ -231,6 +265,37 @@ function saveConfig() {
   };
 
   ipcRenderer.send('save-config', config);
+
+  // Also save GBank scanner settings to SavedVariables
+  ipcRenderer.send('save-gbank-settings', {
+    autoScan: gbankAutoScanCheckbox.checked,
+    cooldownMinutes: parseInt(gbankCooldownSelect.value)
+  });
+}
+
+function updateGBankSettingsUI(settings) {
+  if (!settings) return;
+
+  gbankAutoScanCheckbox.checked = settings.autoScan !== false;
+  gbankCooldownSelect.value = String(settings.cooldownMinutes != null ? settings.cooldownMinutes : 30);
+
+  if (settings.lastScan) {
+    gbankLastScan.textContent = settings.lastScan;
+  } else {
+    gbankLastScan.textContent = 'No data yet';
+  }
+
+  if (settings.guildName) {
+    gbankGuild.textContent = settings.guildName;
+  } else {
+    gbankGuild.textContent = '\u2014';
+  }
+
+  if (settings.uniqueItems != null && settings.totalItems != null) {
+    gbankItems.textContent = settings.uniqueItems + ' unique | ' + settings.totalItems + ' total';
+  } else {
+    gbankItems.textContent = '\u2014';
+  }
 }
 
 function addLog(message, type = '') {

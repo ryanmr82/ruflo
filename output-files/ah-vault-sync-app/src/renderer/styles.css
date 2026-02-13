@@ -362,6 +362,51 @@ section h2 {
   color: #f44336;
 }
 
+/* Guild Bank Scanner Section */
+.gbank-info-box {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 12px;
+  margin-top: 10px;
+}
+
+.gbank-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.9em;
+}
+
+.gbank-info-row .label {
+  color: #888;
+}
+
+.gbank-info-row .value {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.gbank-commands {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+  font-size: 0.8em;
+  color: #888;
+  line-height: 1.8;
+}
+
+.gbank-commands code {
+  color: #ffd700;
+  font-family: 'Consolas', monospace;
+}
+
+.gbank-hint {
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 4px;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

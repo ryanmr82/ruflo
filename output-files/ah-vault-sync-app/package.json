@@ -1,6 +1,6 @@
 {
   "name": "ah-vault-sync",
-  "version": "6.0.0",
+  "version": "6.2.0",
   "description": "AH & Vault Sync - Auto-upload AH prices, guild vault, and bank alt inventories",
   "main": "src/main.js",
   "scripts": {

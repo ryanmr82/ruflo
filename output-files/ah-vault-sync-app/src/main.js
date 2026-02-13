@@ -182,6 +182,8 @@ function startWatching() {
       console.error('Guild bank upload failed:', error);
       mainWindow.webContents.send('sync-error', { type: 'guildBank', error: error.message });
     }
+    // Push updated settings/scan info to renderer (may have changed via in-game commands)
+    refreshGBankSettingsToRenderer();
   });
 
   fileWatcher.on('bankAltChanged', async (data) => {
@@ -368,6 +370,62 @@ ipcMain.on('browse-folder', async (event) => {
   }
 });
 
+// Read addon version from a .toc file (returns version string or null)
+function getAddonVersion(tocPath) {
+  try {
+    if (!fs.existsSync(tocPath)) return null;
+    const content = fs.readFileSync(tocPath, 'utf8');
+    const match = content.match(/^##\s*Version:\s*(.+)$/m);
+    return match ? match[1].trim() : null;
+  } catch (err) {
+    console.error('Error reading addon version from', tocPath, err);
+    return null;
+  }
+}
+
+// Auto-update addons on startup if bundled versions are newer than installed
+function autoUpdateAddons(wowPath) {
+  const addonsPath = path.join(wowPath, 'Interface', 'AddOns');
+  if (!fs.existsSync(addonsPath)) return null;
+
+  let sourceAddons;
+  if (app.isPackaged) {
+    sourceAddons = path.join(process.resourcesPath, 'addons');
+  } else {
+    sourceAddons = path.join(__dirname, '..', 'addons');
+  }
+
+  if (!fs.existsSync(sourceAddons)) return null;
+
+  const addonsToCheck = ['GuildShopSync', 'GBankExport', 'BankAltExport'];
+  const updated = [];
+
+  for (const addon of addonsToCheck) {
+    const bundledToc = path.join(sourceAddons, addon, `${addon}.toc`);
+    const installedToc = path.join(addonsPath, addon, `${addon}.toc`);
+
+    const bundledVersion = getAddonVersion(bundledToc);
+    const installedVersion = getAddonVersion(installedToc);
+
+    if (!bundledVersion) continue; // No bundled addon to compare
+
+    // Update if: addon not installed, or installed version differs from bundled
+    if (!installedVersion || installedVersion !== bundledVersion) {
+      updated.push({ addon, from: installedVersion, to: bundledVersion });
+    }
+  }
+
+  if (updated.length > 0) {
+    const result = installAddons(wowPath);
+    if (result && result.success) {
+      console.log('Auto-updated addons:', updated.map(u => `${u.addon} ${u.from || '(new)'} -> ${u.to}`).join(', '));
+      return updated;
+    }
+  }
+
+  return null;
+}
+
 // Install addons to WoW folder
 function installAddons(wowPath) {
   const addonsPath = path.join(wowPath, 'Interface', 'AddOns');
@@ -459,6 +517,43 @@ ipcMain.on('check-addons', (event, wowPath) => {
   event.reply('addons-status', results);
 });
 
+// GBank Scanner Settings — read from SavedVariables
+ipcMain.on('get-gbank-settings', (event) => {
+  const settings = readGBankSettingsFromDisk();
+  event.reply('gbank-settings-data', settings);
+});
+
+// GBank Scanner Settings — write to SavedVariables
+ipcMain.on('save-gbank-settings', (event, settings) => {
+  const wowPath = store.get('wowPath');
+  if (!wowPath) {
+    event.reply('gbank-settings-saved', { success: false, error: 'No WoW path configured' });
+    return;
+  }
+
+  const tempWatcher = new FileWatcher(wowPath, store.get('enabledAccounts', {}), store);
+  const accounts = tempWatcher.discoverAccounts();
+  const gbankAccounts = accounts.filter(a => a.addons.GBankExport);
+
+  if (gbankAccounts.length === 0) {
+    event.reply('gbank-settings-saved', { success: false, error: 'No GBankExport data found. Open the guild bank in-game first.' });
+    return;
+  }
+
+  try {
+    for (const account of gbankAccounts) {
+      const filePath = path.join(account.path, 'SavedVariables', 'GBankExport.lua');
+      if (fs.existsSync(filePath)) {
+        writeGBankSettings(filePath, settings);
+      }
+    }
+    event.reply('gbank-settings-saved', { success: true });
+  } catch (error) {
+    console.error('Error saving GBank settings:', error);
+    event.reply('gbank-settings-saved', { success: false, error: error.message });
+  }
+});
+
 ipcMain.on('manual-sync', async (event) => {
   await handleManualSync();
 });
@@ -485,6 +580,91 @@ ipcMain.on('stop-watching', () => {
   stopWatching();
 });
 
+// GBank Settings helpers
+function parseGBankSettings(content) {
+  const result = {
+    autoScan: true,
+    cooldownMinutes: 30,
+    lastScan: null,
+    guildName: null,
+    totalItems: 0,
+    uniqueItems: 0
+  };
+
+  // Parse GBankExport_Settings
+  const settingsBlock = content.match(/GBankExport_Settings\s*=\s*\{([^}]*)\}/s);
+  if (settingsBlock) {
+    const autoMatch = settingsBlock[1].match(/\["autoScan"\]\s*=\s*(true|false)/);
+    if (autoMatch) result.autoScan = autoMatch[1] === 'true';
+
+    const cooldownMatch = settingsBlock[1].match(/\["cooldownMinutes"\]\s*=\s*(\d+)/);
+    if (cooldownMatch) result.cooldownMinutes = parseInt(cooldownMatch[1]);
+  }
+
+  // Parse scan info from GBankExport_Data
+  const scanTimeMatch = content.match(/\["scanTime"\]\s*=\s*"([^"]+)"/);
+  if (scanTimeMatch) result.lastScan = scanTimeMatch[1];
+
+  const guildMatch = content.match(/\["guildName"\]\s*=\s*"([^"]+)"/);
+  if (guildMatch) result.guildName = guildMatch[1];
+
+  const totalMatch = content.match(/\["totalItems"\]\s*=\s*(\d+)/);
+  if (totalMatch) result.totalItems = parseInt(totalMatch[1]);
+
+  const uniqueMatch = content.match(/\["uniqueItems"\]\s*=\s*(\d+)/);
+  if (uniqueMatch) result.uniqueItems = parseInt(uniqueMatch[1]);
+
+  return result;
+}
+
+function writeGBankSettings(filePath, settings) {
+  let content = fs.readFileSync(filePath, 'utf8');
+
+  const newSettingsBlock = 'GBankExport_Settings = {\n' +
+    '\t["autoScan"] = ' + (settings.autoScan ? 'true' : 'false') + ',\n' +
+    '\t["cooldownMinutes"] = ' + settings.cooldownMinutes + ',\n' +
+    '}';
+
+  // Check if GBankExport_Settings already exists in file
+  const existingMatch = content.match(/GBankExport_Settings\s*=\s*\{[^}]*\}/s);
+  if (existingMatch) {
+    content = content.replace(existingMatch[0], newSettingsBlock);
+  } else {
+    // Append at end of file
+    content = content.trimEnd() + '\n\n' + newSettingsBlock + '\n';
+  }
+
+  fs.writeFileSync(filePath, content, 'utf8');
+}
+
+function readGBankSettingsFromDisk() {
+  const defaults = { autoScan: true, cooldownMinutes: 30, lastScan: null, guildName: null, totalItems: 0, uniqueItems: 0 };
+  const wowPath = store.get('wowPath');
+  if (!wowPath) return defaults;
+
+  try {
+    const tempWatcher = new FileWatcher(wowPath, store.get('enabledAccounts', {}), store);
+    const accounts = tempWatcher.discoverAccounts();
+    const gbankAccount = accounts.find(a => a.addons.GBankExport);
+    if (!gbankAccount) return defaults;
+
+    const filePath = path.join(gbankAccount.path, 'SavedVariables', 'GBankExport.lua');
+    if (!fs.existsSync(filePath)) return defaults;
+
+    const content = fs.readFileSync(filePath, 'utf8');
+    return parseGBankSettings(content);
+  } catch (error) {
+    console.error('Error reading GBank settings:', error);
+    return defaults;
+  }
+}
+
+function refreshGBankSettingsToRenderer() {
+  if (!mainWindow || !mainWindow.webContents) return;
+  const settings = readGBankSettingsFromDisk();
+  mainWindow.webContents.send('gbank-settings-updated', settings);
+}
+
 // App lifecycle
 app.on('second-instance', () => {
   // Someone tried to launch a second instance — show our existing window
@@ -502,8 +682,17 @@ app.whenReady().then(() => {
   // Wait for renderer to finish loading before starting watcher
   // so the watcher-started IPC message isn't lost
   mainWindow.webContents.once('did-finish-load', () => {
-    if (store.get('autoSync', true) && store.get('wowPath')) {
-      startWatching();
+    const wowPath = store.get('wowPath');
+    if (wowPath) {
+      // Auto-update addons if bundled versions are newer than installed
+      const updated = autoUpdateAddons(wowPath);
+      if (updated && mainWindow) {
+        mainWindow.webContents.send('addons-auto-updated', updated);
+      }
+
+      if (store.get('autoSync', true)) {
+        startWatching();
+      }
     }
   });
 });

@@ -2,7 +2,7 @@
 ## Title: GBankExport
 ## Notes: Scans guild bank contents and exports item data to SavedVariables for external viewing.
 ## Author: Claude-Built
-## Version: 3.0
-## SavedVariables: GBankExport_Data, GBankExport_FlatData
+## Version: 3.1
+## SavedVariables: GBankExport_Data, GBankExport_FlatData, GBankExport_Settings
 
 GBankExport.lua

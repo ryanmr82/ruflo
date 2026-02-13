@@ -1051,5 +1051,147 @@ Each report contains:
 - **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
 - **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
 
+### 2026-02-13
+
+#### 1. Lighthouse External Audit - tbcguild.duckdns.org
+- **File:** `2026_02_13_02_20_AM_PST_Lighthouse_External_Audit_TBCGuild.md`
+- **Date:** February 13, 2026, 2:20 AM PST
+- **Topics:** Lighthouse audit, Performance testing, Core Web Vitals, TBC Guild website, External client test, Desktop preset
+- **Key Findings:**
+  - Performance score: **100** from external Windows client (vs slower results from server-side test)
+  - FCP: 0.5s, LCP: 0.7s, TBT: 0ms, CLS: 0, TTI: 0.7s — all excellent
+  - Server response time: 112ms (good)
+  - LCP element: `<h1>THRALLS BOOK CLUB</h1>` (text, not hero image)
+  - DuckDNS DNS did NOT cause latency issues during this test
+  - Opportunities: Minify CSS (9KB), unused CSS (34KB), unused JS (24KB), next-gen images (164KB)
+  - 50 requests, 514 KB total transfer (consistent with server-side test)
+  - Only cache issue: turtlecraft.gg question mark icon (4h TTL)
+- **Technologies:** Lighthouse v12.8.2, Chrome headless, Node.js, npx
+- **Status:** Completed Successfully
+- **Type:** Performance Audit / External Client Test
+- **Reports Created:**
+  - `C:\Claude-Flow\lighthouse-reports\tbcguild-windows.report.html` (viewable in browser)
+  - `C:\Claude-Flow\lighthouse-reports\tbcguild-windows.report.json` (raw data)
+- **Comparison:** Linux server-side was significantly slower (FCP 1.8s, LCP 3.8s, TTI 4.2s) due to resource contention
+- **Related:** Linux Lighthouse report at `/var/oled/claude-flow/lighthouse-reports/tbcguild-homepage.report.html`
+
 ---
-*Index last updated: 2026-02-04 11:57 PM PST*
+
+### Quick Search - February 2026 (updated)
+- **Lighthouse:** External audit from Windows, Performance 100 (2026-02-13)
+- **TBC Guild Website:** Core Web Vitals excellent from external client (2026-02-13)
+- **Performance:** FCP 0.5s, LCP 0.7s, TBT 0ms, CLS 0 (2026-02-13)
+- **DuckDNS:** DNS latency not observed during test (2026-02-13)
+- **DPSMate Lite:** Addon packaged for distribution (2026-02-04)
+- **GBankExport:** New TurtleWoW addon for guild bank scanning (2026-02-04)
+- **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
+- **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
+
+#### 2. GBankExport v3.1 — Auto-Scan Settings + Electron App UI
+- **File:** `2026_02_13_02_55_AM_PST_GBankExport_Auto_Scan_Settings_And_Electron_UI.md`
+- **Date:** February 13, 2026, 2:55 AM PST
+- **Topics:** GBankExport addon, Auto-scan toggle, Cooldown timer, Electron app UI, Bidirectional settings sync, SavedVariables
+- **Key Findings:**
+  - Added `GBankExport_Settings` SavedVariable with `autoScan` (bool) and `cooldownMinutes` (number)
+  - New slash commands: `/gbe auto`, `/gbe cooldown <min>`, `/gbe settings`
+  - New "Guild Bank Scanner" section in Electron app with toggle, cooldown dropdown, scan info display
+  - Bidirectional sync: Electron writes to SavedVariables file, game reads on /reload; game writes on /reload/logout, file watcher pushes to Electron
+  - Existing scan logic, upload behavior, and all other UI sections untouched
+- **Technologies:** Lua (WoW addon), Electron, Node.js, chokidar file watcher, IPC
+- **Status:** Completed — Installer Built, Ready for Testing
+- **Type:** Feature Addition
+- **Installer:** `C:\Claude-Flow\output-files\ah-vault-sync-app\dist\AH & Vault Sync Setup 6.1.0.exe` (83.4 MB)
+- **Version Bumps:** Addon 3.0 -> 3.1, Electron app 6.0.0 -> 6.1.0
+- **Files Modified:**
+  - `addons\GBankExport\GBankExport.lua` — Settings logic, new commands
+  - `addons\GBankExport\GBankExport.toc` — Added SavedVariable
+  - `src\main.js` — IPC handlers, settings read/write helpers
+  - `src\renderer\index.html` — New GUI section
+  - `src\renderer\renderer.js` — DOM bindings, IPC handlers
+  - `src\renderer\styles.css` — New section styles
+  - `package.json` — Version bump
+- **Backup:** `C:\Claude-Flow\output-files\ah-vault-sync-app\backup\pre-gbank-settings-v6.1\`
+- **Rollback Available:** Yes — copy backup files back, rebuild
+
+---
+
+### Quick Search - February 2026 (updated)
+- **GBankExport v3.1:** Auto-scan settings, cooldown timer, Electron UI (2026-02-13)
+- **AH & Vault Sync v6.1.0:** New Guild Bank Scanner section (2026-02-13)
+- **Bidirectional Sync:** SavedVariables <-> Electron app settings (2026-02-13)
+- **Lighthouse:** External audit from Windows, Performance 100 (2026-02-13)
+- **TBC Guild Website:** Core Web Vitals excellent from external client (2026-02-13)
+- **DPSMate Lite:** Addon packaged for distribution (2026-02-04)
+- **GBankExport:** New TurtleWoW addon for guild bank scanning (2026-02-04)
+- **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
+- **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
+
+#### 3. AH & Vault Sync v6.2.0 — Addon Auto-Update on Upgrade
+- **File:** `2026_02_13_03_15_AM_PST_AH_Vault_Sync_v6.2_Addon_Auto_Update_On_Upgrade.md`
+- **Date:** February 13, 2026, 3:15 AM PST
+- **Topics:** Electron app, Addon auto-update, Version comparison, TOC parsing, Startup logic, Upgrade fix
+- **Key Findings:**
+  - NSIS installer does NOT copy addons to WoW folder — defers to Electron app GUI
+  - On upgrade, addon files were stale because browse action (which triggers install) never fires when WoW path already saved
+  - Added `getAddonVersion()` to read `## Version:` from `.toc` files
+  - Added `autoUpdateAddons()` that compares bundled vs installed versions on startup
+  - Auto-copies all addon files if any version mismatch detected
+  - Renderer logs which addons were updated on launch
+- **Technologies:** Electron, Node.js, TOC file parsing, IPC
+- **Status:** Completed — Installer Built, Ready for Testing
+- **Type:** Bug Fix / Feature Addition
+- **Installer:** `C:\Claude-Flow\output-files\ah-vault-sync-app\dist\AH & Vault Sync Setup 6.2.0.exe`
+- **Version Bump:** 6.1.0 → 6.2.0
+- **Files Modified:**
+  - `src\main.js` — Added `getAddonVersion()`, `autoUpdateAddons()`, startup hook
+  - `src\renderer\renderer.js` — Added `addons-auto-updated` IPC handler
+  - `package.json` — Version bump
+- **Rollback Available:** Yes — revert 3 files, rebuild
+
+---
+
+#### 4. AH & Vault Sync v6.2.0 — Deployed to Website with Update Notification
+- **File:** `2026_02_13_03_30_AM_PST_AH_Vault_Sync_v6.2_Deployed_To_Website.md`
+- **Date:** February 13, 2026, 3:30 AM PST
+- **Topics:** Website deployment, Installer upload, Update notification banner, guild-bank page, tray-app-version.json
+- **Key Findings:**
+  - Uploaded AH-Vault-Sync-Setup-6.2.0.zip (83 MB) to server static/downloads/
+  - Added dismissible update notification banner on /guild-bank page (visible to all users)
+  - Banner driven by /static/tray-app-version.json — no code changes needed for future releases
+  - Updated download route (tray-app.ts) to serve v6.2.0
+  - Updated admin download section version in GuildStorageTabs.tsx
+  - Added CSS styles matching ConsumesShop scanner-update-banner pattern
+  - Banner uses localStorage to persist dismissal per version
+- **Technologies:** Deno Fresh, TypeScript/TSX, CSS, SCP, SSH, systemd
+- **Status:** Completed — Live
+- **Type:** Deployment / Website Update
+- **Server:** torreyserver (132.226.72.121)
+- **Website URL:** https://tbcguild.duckdns.org/guild-bank
+- **Files Modified (Server):**
+  - `static/downloads/AH-Vault-Sync-Setup-6.2.0.zip` — NEW
+  - `static/tray-app-version.json` — NEW
+  - `routes/api/download/tray-app.ts` — Updated filename
+  - `islands/GuildStorageTabs.tsx` — Banner + version bump
+  - `static/styles.css` — Banner CSS appended
+- **Backup:** `GuildStorageTabs.tsx.bak-pre-6.2.0`, old zip retained
+- **Rollback Available:** Yes — documented in status report
+
+---
+
+### Quick Search - February 2026 (updated)
+- **Website Deployment:** AH & Vault Sync v6.2.0 deployed to guild-bank page (2026-02-13)
+- **Update Notification:** Dismissible banner on /guild-bank, driven by JSON file (2026-02-13)
+- **Addon Auto-Update:** Version comparison on startup, auto-copy on mismatch (2026-02-13)
+- **AH & Vault Sync v6.2.0:** Addon auto-update on upgrade fix (2026-02-13)
+- **GBankExport v3.1:** Auto-scan settings, cooldown timer, Electron UI (2026-02-13)
+- **AH & Vault Sync v6.1.0:** New Guild Bank Scanner section (2026-02-13)
+- **Bidirectional Sync:** SavedVariables <-> Electron app settings (2026-02-13)
+- **Lighthouse:** External audit from Windows, Performance 100 (2026-02-13)
+- **TBC Guild Website:** Core Web Vitals excellent from external client (2026-02-13)
+- **DPSMate Lite:** Addon packaged for distribution (2026-02-04)
+- **GBankExport:** New TurtleWoW addon for guild bank scanning (2026-02-04)
+- **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
+- **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
+
+---
+*Index last updated: 2026-02-13 3:30 AM PST*

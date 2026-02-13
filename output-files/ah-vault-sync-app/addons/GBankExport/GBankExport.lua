@@ -14,12 +14,13 @@
 ------------------------------------------------------------
 GBankExport_Data     = GBankExport_Data     or {}
 GBankExport_FlatData = GBankExport_FlatData or ""
+GBankExport_Settings = GBankExport_Settings or {}
 
 ------------------------------------------------------------
 -- Constants & State
 ------------------------------------------------------------
 local frame   = CreateFrame("Frame")
-local VERSION = "3.0"
+local VERSION = "3.1"
 local MAX_TABS  = 5
 local MAX_SLOTS = 98
 
@@ -50,6 +51,13 @@ local QUALITY_COLORS = {
     [0] = "9d9d9d", [1] = "ffffff", [2] = "1eff00",
     [3] = "0070dd", [4] = "a335ee", [5] = "ff8000",
 }
+
+local function GetSetting(key, default)
+    if GBankExport_Settings[key] == nil then
+        return default
+    end
+    return GBankExport_Settings[key]
+end
 
 ------------------------------------------------------------
 -- Detect how many tabs the guild has
@@ -362,8 +370,27 @@ local function HookGuildBankFrame()
     GuildBankFrame:SetScript("OnShow", function()
         if origOnShow then origOnShow() end
         bankIsOpen = true
+
+        -- Check if auto-scan is enabled
+        if not GetSetting("autoScan", true) then
+            Print("Guild bank opened. Auto-scan is OFF. Use /gbe scan to scan manually.")
+            return
+        end
+
+        -- Check cooldown
+        local cooldownMinutes = GetSetting("cooldownMinutes", 30)
+        if cooldownMinutes > 0 and GBankExport_Data and GBankExport_Data.scanTimestamp then
+            local elapsed = time() - GBankExport_Data.scanTimestamp
+            local cooldownSeconds = cooldownMinutes * 60
+            if elapsed < cooldownSeconds then
+                local minutesAgo = math.floor(elapsed / 60)
+                Print("Skipping auto-scan (last scan " .. minutesAgo .. " min ago, cooldown " .. cooldownMinutes .. " min).")
+                Print("Use /gbe scan to force a scan at any time.")
+                return
+            end
+        end
+
         Print("Guild bank opened. Waiting for data to load...")
-        -- Wait for initial data load, then scan
         timerActive  = true
         timerElapsed = -INITIAL_WAIT  -- negative = countdown to scan start
     end)
@@ -383,9 +410,25 @@ local function HookGuildBankFrame()
     -- If bank is already open (e.g. player did /reload with bank open)
     if GuildBankFrame:IsVisible() then
         bankIsOpen = true
-        Print("Guild bank already open. Scanning in " .. INITIAL_WAIT .. "s...")
-        timerActive  = true
-        timerElapsed = -INITIAL_WAIT
+        if not GetSetting("autoScan", true) then
+            Print("Guild bank already open. Auto-scan is OFF.")
+        else
+            local cooldownMinutes = GetSetting("cooldownMinutes", 30)
+            local shouldScan = true
+            if cooldownMinutes > 0 and GBankExport_Data and GBankExport_Data.scanTimestamp then
+                local elapsed = time() - GBankExport_Data.scanTimestamp
+                if elapsed < cooldownMinutes * 60 then
+                    shouldScan = false
+                    local minutesAgo = math.floor(elapsed / 60)
+                    Print("Bank already open. Skipping auto-scan (last scan " .. minutesAgo .. " min ago).")
+                end
+            end
+            if shouldScan then
+                Print("Guild bank already open. Scanning in " .. INITIAL_WAIT .. "s...")
+                timerActive  = true
+                timerElapsed = -INITIAL_WAIT
+            end
+        end
     end
 end
 
@@ -568,13 +611,45 @@ SlashCmdList["GBANKEXPORT"] = function(msg)
             Print("No data. Open the guild bank first.")
         end
 
+    elseif msg == "auto" then
+        local current = GetSetting("autoScan", true)
+        GBankExport_Settings.autoScan = not current
+        if GBankExport_Settings.autoScan then
+            Print("Auto-scan: ON — will scan when guild bank opens (subject to cooldown).")
+        else
+            Print("Auto-scan: OFF — use /gbe scan to scan manually.")
+        end
+
+    elseif string.find(msg, "^cooldown") then
+        local _, _, val = string.find(msg, "cooldown%s+(%d+)")
+        if val then
+            val = tonumber(val)
+            GBankExport_Settings.cooldownMinutes = val
+            if val == 0 then
+                Print("Scan cooldown: DISABLED — will auto-scan every time the bank is opened.")
+            else
+                Print("Scan cooldown: " .. val .. " minutes.")
+            end
+        else
+            local current = GetSetting("cooldownMinutes", 30)
+            Print("Current scan cooldown: " .. current .. " minutes. Usage: /gbe cooldown <minutes>")
+        end
+
+    elseif msg == "settings" then
+        Print("--- GBankExport Settings ---")
+        Print("  Auto-scan: " .. (GetSetting("autoScan", true) and "ON" or "OFF"))
+        Print("  Cooldown:  " .. GetSetting("cooldownMinutes", 30) .. " minutes")
+        Print("  Use /gbe auto to toggle, /gbe cooldown <min> to adjust.")
+
     else
         Print("--- GBankExport v" .. VERSION .. " ---")
-        Print("  /gbe scan   - Rescan (guild bank must be open)")
-        Print("  /gbe status - Last scan summary")
-        Print("  /gbe list   - All items sorted A-Z")
-        Print("  /gbe tabs   - Items by tab")
-        Print("  /gbe debug  - API diagnostics")
-        Print("Auto-scans when you open the guild bank.")
+        Print("  /gbe scan       - Rescan (guild bank must be open)")
+        Print("  /gbe auto       - Toggle auto-scan on/off")
+        Print("  /gbe cooldown # - Set cooldown (minutes, 0=off)")
+        Print("  /gbe settings   - Show current settings")
+        Print("  /gbe status     - Last scan summary")
+        Print("  /gbe list       - All items sorted A-Z")
+        Print("  /gbe tabs       - Items by tab")
+        Print("  /gbe debug      - API diagnostics")
     end
 end
