@@ -1193,5 +1193,50 @@ Each report contains:
 - **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
 - **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
 
+#### 5. Guild Bank Upload Timezone Fix — Server-Side Freshness Guard
+- **File:** `2026_02_13_11_50_PM_PST_Guild_Bank_Upload_Timezone_Fix.md`
+- **Date:** February 13, 2026, 11:50 PM PST
+- **Topics:** Guild bank upload, Timezone bug, Server-side freshness guard, scanTime comparison, Dedup guard, Multi-timezone guild members
+- **Key Findings:**
+  - **ROOT CAUSE:** Server's freshness guard compared `scanTime` strings: `if (body.scanTime <= existing.scanTime)`. Since `scanTime` is local time from the uploading machine (no timezone indicator), uploads from PST users were rejected when an EST user had previously uploaded data with a future-looking timestamp.
+  - EST user uploaded with `scanTime=2026-02-14 00:47:17` (their local midnight). All subsequent PST uploads (`2026-02-13 23:25:03`) were rejected because `"2026-02-13" < "2026-02-14"` in string comparison.
+  - Server logs showed 7+ consecutive SKIPPED uploads after the EST timestamp was stored, including the user's latest scan with 6236 items (more complete than the stored 4307 items).
+  - The Electron app (AH & Vault Sync) was working correctly throughout — file watcher detected changes, parsed FlatData, sent HTTP PUT requests. Problem was entirely server-side rejection.
+- **Fix Applied:**
+  - Replaced timezone-dependent `scanTime <=` comparison with exact-duplicate dedup check (`scanTime === existing.scanTime && totalItems === existing.totalItems`)
+  - All new scans from any timezone are now accepted; only exact duplicates are skipped
+  - Verified: PST timestamp that was previously SKIPPED → now ACCEPTED
+  - Real data uploaded via Electron file watcher → ACCEPTED (6236 items, 5 tabs)
+- **Technologies:** Deno Fresh, TypeScript, Deno KV, SSH, SCP, systemd
+- **Status:** Completed — Fix Deployed and Verified
+- **Type:** Critical Bug Fix
+- **Server:** torreyserver (132.226.72.121)
+- **Files Modified:**
+  - `/home/opc/tbc-website/routes/api/guild-bank/inventory.ts` — Replaced freshness guard with dedup guard
+- **Backup:** `/home/opc/tbc-website/routes/api/guild-bank/inventory.ts.bak-pre-tz-fix`
+- **Rollback Available:** Yes — restore from `.bak-pre-tz-fix`, restart service
+- **Also Noted:** GuildShopSync scheduled task still missing (price scanner, separate from guild bank)
+
 ---
-*Index last updated: 2026-02-13 3:30 AM PST*
+
+### Quick Search - February 2026 (updated)
+- **Guild Bank Upload Bug:** Timezone mismatch in freshness guard, PST uploads rejected (2026-02-13)
+- **scanTime Comparison:** String comparison across timezones — unreliable, replaced with dedup (2026-02-13)
+- **Multi-Timezone:** EST user's timestamp blocked all PST uploads (2026-02-13)
+- **Server-Side Fix:** inventory.ts freshness guard → dedup guard (2026-02-13)
+- **Website Deployment:** AH & Vault Sync v6.2.0 deployed to guild-bank page (2026-02-13)
+- **Update Notification:** Dismissible banner on /guild-bank, driven by JSON file (2026-02-13)
+- **Addon Auto-Update:** Version comparison on startup, auto-copy on mismatch (2026-02-13)
+- **AH & Vault Sync v6.2.0:** Addon auto-update on upgrade fix (2026-02-13)
+- **GBankExport v3.1:** Auto-scan settings, cooldown timer, Electron UI (2026-02-13)
+- **AH & Vault Sync v6.1.0:** New Guild Bank Scanner section (2026-02-13)
+- **Bidirectional Sync:** SavedVariables <-> Electron app settings (2026-02-13)
+- **Lighthouse:** External audit from Windows, Performance 100 (2026-02-13)
+- **TBC Guild Website:** Core Web Vitals excellent from external client (2026-02-13)
+- **DPSMate Lite:** Addon packaged for distribution (2026-02-04)
+- **GBankExport:** New TurtleWoW addon for guild bank scanning (2026-02-04)
+- **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
+- **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
+
+---
+*Index last updated: 2026-02-13 11:50 PM PST*
