@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AH & Vault Sync</title>
+  <title>Guild Sync</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app-container">
     <header class="app-header">
-      <h1>AH & Vault Sync</h1>
+      <h1>Guild Sync</h1>
       <p class="subtitle">Turtle WoW Guild Data Pipeline</p>
     </header>
 
@@ -57,6 +57,26 @@
             <input type="checkbox" id="startWithWindows">
             <span>Start with Windows</span>
           </label>
+        </div>
+      </section>
+
+      <!-- Guild Roster Tracker Section -->
+      <section class="guild-growth-section">
+        <h2>Guild Roster Tracker</h2>
+        <div id="guildGrowthInfo" class="gbank-info-box">
+          <div class="gbank-info-row">
+            <span class="label">GuildTracker Accounts:</span>
+            <span id="gtAccountCount" class="value">Scanning...</span>
+          </div>
+          <div class="gbank-info-row">
+            <span class="label">Last Growth Sync:</span>
+            <span id="gtLastSync" class="value">Never</span>
+          </div>
+        </div>
+        <div class="gbank-commands">
+          <div><code>/gt</code> — show guild growth stats</div>
+          <div><code>/gt leveling</code> — show leveling progress</div>
+          <div>Data syncs automatically when roster changes are detected.</div>
         </div>
       </section>
 

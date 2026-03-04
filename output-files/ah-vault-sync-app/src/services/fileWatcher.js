@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const chokidar = require('chokidar');
 const EventEmitter = require('events');
+const { discoverAllGuildTrackerData } = require('./guildTrackerParser');
+const { processGuildGrowthData } = require('./guildGrowthProcessor');
 
 class FileWatcher extends EventEmitter {
   constructor(wowPath, enabledAccounts = {}, store = null) {
@@ -51,6 +53,7 @@ class FileWatcher extends EventEmitter {
       const hasGuildShopSync = fs.existsSync(path.join(savedVarsPath, 'GuildShopSync.lua'));
       const hasGBankExport = fs.existsSync(path.join(savedVarsPath, 'GBankExport.lua'));
       const hasBankAltExport = fs.existsSync(path.join(savedVarsPath, 'BankAltExport.lua'));
+      const hasGuildTracker = fs.existsSync(path.join(savedVarsPath, 'GuildTracker.lua'));
 
       accounts.push({
         name: accountName,
@@ -59,7 +62,8 @@ class FileWatcher extends EventEmitter {
         addons: {
           GuildShopSync: hasGuildShopSync,
           GBankExport: hasGBankExport,
-          BankAltExport: hasBankAltExport
+          BankAltExport: hasBankAltExport,
+          GuildTracker: hasGuildTracker
         }
       });
     }
@@ -79,9 +83,10 @@ class FileWatcher extends EventEmitter {
       const savedVarsPath = path.join(account.path, 'SavedVariables');
       if (!fs.existsSync(savedVarsPath)) continue;
 
-      // Prices and guild bank are global — watch on ALL accounts
+      // Prices, guild bank, and guild tracker are global — watch on ALL accounts
       watchPaths.push(path.join(savedVarsPath, 'GuildShopSync.lua'));
       watchPaths.push(path.join(savedVarsPath, 'GBankExport.lua'));
+      watchPaths.push(path.join(savedVarsPath, 'GuildTracker.lua'));
 
       // Bank alt data is per-account — only watch enabled accounts
       if (this.enabledAccounts[account.name] === false) continue;
@@ -128,6 +133,11 @@ class FileWatcher extends EventEmitter {
       const data = this.readBankAltData(accountName);
       if (data) {
         this.emit('bankAltChanged', { ...data, account: accountName });
+      }
+    } else if (fileName === 'GuildTracker.lua') {
+      const data = this.readGuildGrowthData();
+      if (data) {
+        this.emit('guildTrackerChanged', data);
       }
     }
   }
@@ -365,6 +375,22 @@ class FileWatcher extends EventEmitter {
     }
 
     return allData;
+  }
+
+  /**
+   * Read all GuildTracker SavedVariables from all accounts, merge them,
+   * and run through the guild growth processor.
+   * @returns {Object|null} Processed guild growth data
+   */
+  readGuildGrowthData() {
+    try {
+      const accountDataList = discoverAllGuildTrackerData(this.wowPath);
+      if (!accountDataList || accountDataList.length === 0) return null;
+      return processGuildGrowthData(accountDataList);
+    } catch (error) {
+      console.error('Error processing guild growth data:', error);
+      return null;
+    }
   }
 }
 

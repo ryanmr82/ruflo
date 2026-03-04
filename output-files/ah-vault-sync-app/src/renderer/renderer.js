@@ -21,6 +21,8 @@ const gbankCooldownSelect = document.getElementById('gbankCooldown');
 const gbankLastScan = document.getElementById('gbankLastScan');
 const gbankGuild = document.getElementById('gbankGuild');
 const gbankItems = document.getElementById('gbankItems');
+const gtAccountCount = document.getElementById('gtAccountCount');
+const gtLastSync = document.getElementById('gtLastSync');
 
 let currentAccounts = [];
 let enabledAccounts = {};
@@ -81,6 +83,7 @@ ipcRenderer.on('config-data', (event, config) => {
     ipcRenderer.send('get-accounts', config.wowPath);
     ipcRenderer.send('check-addons', config.wowPath);
     ipcRenderer.send('get-gbank-settings');
+    ipcRenderer.send('get-guild-growth-status');
   }
 });
 
@@ -137,6 +140,10 @@ ipcRenderer.on('sync-success', (event, data) => {
     addLog(`Bank alt data synced: ${data.account || 'Unknown'}`, 'success');
   } else if (data.type === 'bankAltDelete') {
     addLog(`Bank alt data removed from website: ${data.account}`, 'info');
+  } else if (data.type === 'guildGrowth') {
+    const info = data.data || {};
+    addLog(`Guild growth synced: ${info.rosterCount || '?'} members, ${info.eventCount || '?'} events, ${info.under60 || '?'} leveling`, 'success');
+    gtLastSync.textContent = new Date().toLocaleString();
   }
 });
 
@@ -189,6 +196,19 @@ ipcRenderer.on('gbank-settings-saved', (event, result) => {
   }
 });
 
+ipcRenderer.on('guild-growth-status', (event, data) => {
+  if (data.hasData) {
+    gtAccountCount.textContent = `${data.accountCount} account(s) detected`;
+    gtAccountCount.style.color = '#4caf50';
+  } else {
+    gtAccountCount.textContent = 'No GuildTracker data found';
+    gtAccountCount.style.color = '#f44336';
+  }
+  if (data.lastSync) {
+    gtLastSync.textContent = new Date(data.lastSync).toLocaleString();
+  }
+});
+
 function updateAddonStatus(results) {
   if (!results || results.length === 0) {
     addonStatus.innerHTML = '<p class="placeholder-text">No addon information available</p>';
@@ -225,6 +245,7 @@ function renderAccounts(accounts) {
     const hasGSS = account.addons.GuildShopSync;
     const hasGBE = account.addons.GBankExport;
     const hasBAE = account.addons.BankAltExport;
+    const hasGT = account.addons.GuildTracker;
 
     html += `
       <div class="account-item">
@@ -238,6 +259,7 @@ function renderAccounts(accounts) {
             <span class="addon-badge ${hasGSS ? '' : 'inactive'}">Prices</span>
             <span class="addon-badge ${hasGBE ? '' : 'inactive'}">GBank</span>
             <span class="addon-badge ${hasBAE ? '' : 'inactive'}">BankAlt</span>
+            <span class="addon-badge ${hasGT ? '' : 'inactive'}">Roster</span>
           </div>
         </div>
         <div class="character-list">

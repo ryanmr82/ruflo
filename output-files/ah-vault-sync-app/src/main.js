@@ -18,9 +18,10 @@ let fileWatcher;
 let watcherRunning = false;
 
 // App configuration
-const APP_NAME = 'AH & Vault Sync';
-const SERVER_URL = 'https://tbcguild.duckdns.org';
-const DASHBOARD_URL = 'https://tbcguild.duckdns.org/guild-bank';
+const APP_NAME = 'Guild Sync';
+const SERVER_URL = 'https://hydraguild.duckdns.org';
+const SERVER_URL_FALLBACK = 'https://132.226.72.121';
+const DASHBOARD_URL = 'https://hydraguild.duckdns.org/guild-bank';
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -108,7 +109,7 @@ function updateTrayMenu() {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Open AH & Vault Sync',
+      label: 'Open Guild Sync',
       click: () => {
         mainWindow.show();
       }
@@ -160,7 +161,7 @@ function startWatching() {
 
   fileWatcher.on('pricesChanged', async (data) => {
     try {
-      const uploader = new Uploader(SERVER_URL);
+      const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
       await uploader.uploadPrices(data);
       store.set('lastSyncTime', Date.now());
       updateTrayMenu();
@@ -173,7 +174,7 @@ function startWatching() {
 
   fileWatcher.on('guildBankChanged', async (data) => {
     try {
-      const uploader = new Uploader(SERVER_URL);
+      const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
       await uploader.uploadGuildBank(data);
       store.set('lastSyncTime', Date.now());
       updateTrayMenu();
@@ -188,7 +189,7 @@ function startWatching() {
 
   fileWatcher.on('bankAltChanged', async (data) => {
     try {
-      const uploader = new Uploader(SERVER_URL);
+      const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
       await uploader.uploadBankAlt(data);
       store.set('lastSyncTime', Date.now());
       updateTrayMenu();
@@ -196,6 +197,24 @@ function startWatching() {
     } catch (error) {
       console.error('Bank alt upload failed:', error);
       mainWindow.webContents.send('sync-error', { type: 'bankAlt', error: error.message });
+    }
+  });
+
+  fileWatcher.on('guildTrackerChanged', async (data) => {
+    try {
+      const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
+      await uploader.uploadGuildGrowth(data);
+      store.set('lastSyncTime', Date.now());
+      store.set('lastGuildGrowthSync', Date.now());
+      updateTrayMenu();
+      mainWindow.webContents.send('sync-success', { type: 'guildGrowth', data: {
+        eventCount: data.events ? data.events.length : 0,
+        rosterCount: data.currentRosterCount || 0,
+        under60: data.levelingTracker ? data.levelingTracker.totalUnder60 : 0,
+      }});
+    } catch (error) {
+      console.error('Guild growth upload failed:', error);
+      mainWindow.webContents.send('sync-error', { type: 'guildGrowth', error: error.message });
     }
   });
 
@@ -227,7 +246,7 @@ async function handleManualSync() {
   try {
     const enabledAccounts = store.get('enabledAccounts', {});
     const tempWatcher = new FileWatcher(wowPath, enabledAccounts, store);
-    const uploader = new Uploader(SERVER_URL);
+    const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
 
     // Sync prices — from ANY account that has GuildShopSync data (prices are global)
     const accounts = tempWatcher.discoverAccounts();
@@ -267,6 +286,18 @@ async function handleManualSync() {
       }
     }
 
+    // Sync guild growth — merge all GuildTracker data across accounts
+    const guildGrowthData = tempWatcher.readGuildGrowthData();
+    if (guildGrowthData) {
+      await uploader.uploadGuildGrowth(guildGrowthData);
+      store.set('lastGuildGrowthSync', Date.now());
+      mainWindow.webContents.send('sync-success', { type: 'guildGrowth', data: {
+        eventCount: guildGrowthData.events ? guildGrowthData.events.length : 0,
+        rosterCount: guildGrowthData.currentRosterCount || 0,
+        under60: guildGrowthData.levelingTracker ? guildGrowthData.levelingTracker.totalUnder60 : 0,
+      }});
+    }
+
     store.set('lastSyncTime', Date.now());
     updateTrayMenu();
 
@@ -296,7 +327,7 @@ ipcMain.on('save-config', async (event, config) => {
   event.reply('config-saved');
 
   // Detect accounts that were just unchecked and delete their data from the server
-  const uploader = new Uploader(SERVER_URL);
+  const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
   for (const accountName of Object.keys(newEnabledAccounts)) {
     const wasEnabled = oldEnabledAccounts[accountName] !== false;
     const isNowDisabled = newEnabledAccounts[accountName] === false;
@@ -397,7 +428,7 @@ function autoUpdateAddons(wowPath) {
 
   if (!fs.existsSync(sourceAddons)) return null;
 
-  const addonsToCheck = ['GuildShopSync', 'GBankExport', 'BankAltExport'];
+  const addonsToCheck = ['GuildShopSync', 'GBankExport', 'BankAltExport', 'GuildTracker'];
   const updated = [];
 
   for (const addon of addonsToCheck) {
@@ -453,7 +484,7 @@ function installAddons(wowPath) {
     return { success: false, error: 'Addons not found in app package' };
   }
 
-  const addonsToInstall = ['GuildShopSync', 'GBankExport', 'BankAltExport'];
+  const addonsToInstall = ['GuildShopSync', 'GBankExport', 'BankAltExport', 'GuildTracker'];
   const results = [];
 
   for (const addon of addonsToInstall) {
@@ -503,7 +534,7 @@ ipcMain.on('install-addons', (event, wowPath) => {
 // Check addon installation status without reinstalling
 ipcMain.on('check-addons', (event, wowPath) => {
   const addonsPath = path.join(wowPath, 'Interface', 'AddOns');
-  const addonsToCheck = ['GuildShopSync', 'GBankExport', 'BankAltExport'];
+  const addonsToCheck = ['GuildShopSync', 'GBankExport', 'BankAltExport', 'GuildTracker'];
   const results = [];
 
   for (const addon of addonsToCheck) {
@@ -560,7 +591,7 @@ ipcMain.on('manual-sync', async (event) => {
 
 ipcMain.on('test-connection', async (event) => {
   try {
-    const uploader = new Uploader(SERVER_URL);
+    const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
     await uploader.testConnection();
     event.reply('connection-test-result', { success: true });
   } catch (error) {
@@ -570,6 +601,27 @@ ipcMain.on('test-connection', async (event) => {
 
 ipcMain.on('open-dashboard', () => {
   shell.openExternal(DASHBOARD_URL);
+});
+
+ipcMain.on('get-guild-growth-status', (event) => {
+  const wowPath = store.get('wowPath');
+  if (!wowPath) {
+    event.reply('guild-growth-status', { hasData: false });
+    return;
+  }
+
+  try {
+    const tempWatcher = new FileWatcher(wowPath, store.get('enabledAccounts', {}), store);
+    const accounts = tempWatcher.discoverAccounts();
+    const gtAccounts = accounts.filter(a => a.addons.GuildTracker);
+    event.reply('guild-growth-status', {
+      hasData: gtAccounts.length > 0,
+      accountCount: gtAccounts.length,
+      lastSync: store.get('lastGuildGrowthSync'),
+    });
+  } catch (error) {
+    event.reply('guild-growth-status', { hasData: false, error: error.message });
+  }
 });
 
 ipcMain.on('start-watching', () => {
