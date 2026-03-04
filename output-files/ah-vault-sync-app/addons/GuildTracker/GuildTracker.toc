@@ -1,0 +1,6 @@
+## Interface: 11200
+## Title: GuildTracker
+## Notes: Tracks guild member joins and leaves with timestamps
+## Author: HYDRA Guild Tools
+## SavedVariables: GuildTracker_DB
+GuildTracker.lua
