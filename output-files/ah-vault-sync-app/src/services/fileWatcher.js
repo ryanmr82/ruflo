@@ -15,6 +15,20 @@ class FileWatcher extends EventEmitter {
     this.wtfPath = path.join(wowPath, 'WTF', 'Account');
   }
 
+  /**
+   * Check if a specific addon is enabled for an account.
+   * Handles both old boolean format and new per-addon object format.
+   */
+  isAddonEnabled(accountName, addonKey) {
+    const val = this.enabledAccounts[accountName];
+    if (val === undefined) return true;
+    if (typeof val === 'boolean') return val;
+    if (typeof val === 'object' && val !== null) {
+      return val[addonKey] !== false;
+    }
+    return true;
+  }
+
   discoverAccounts() {
     const accounts = [];
 
@@ -83,14 +97,19 @@ class FileWatcher extends EventEmitter {
       const savedVarsPath = path.join(account.path, 'SavedVariables');
       if (!fs.existsSync(savedVarsPath)) continue;
 
-      // Prices, guild bank, and guild tracker are global — watch on ALL accounts
-      watchPaths.push(path.join(savedVarsPath, 'GuildShopSync.lua'));
-      watchPaths.push(path.join(savedVarsPath, 'GBankExport.lua'));
-      watchPaths.push(path.join(savedVarsPath, 'GuildTracker.lua'));
-
-      // Bank alt data is per-account — only watch enabled accounts
-      if (this.enabledAccounts[account.name] === false) continue;
-      watchPaths.push(path.join(savedVarsPath, 'BankAltExport.lua'));
+      // Per-addon filtering — only watch files for addons enabled on this account
+      if (this.isAddonEnabled(account.name, 'prices')) {
+        watchPaths.push(path.join(savedVarsPath, 'GuildShopSync.lua'));
+      }
+      if (this.isAddonEnabled(account.name, 'gbank')) {
+        watchPaths.push(path.join(savedVarsPath, 'GBankExport.lua'));
+      }
+      if (this.isAddonEnabled(account.name, 'bankalt')) {
+        watchPaths.push(path.join(savedVarsPath, 'BankAltExport.lua'));
+      }
+      if (this.isAddonEnabled(account.name, 'roster')) {
+        watchPaths.push(path.join(savedVarsPath, 'GuildTracker.lua'));
+      }
     }
 
     this.watcher = chokidar.watch(watchPaths, {
@@ -366,7 +385,7 @@ class FileWatcher extends EventEmitter {
     const allData = {};
 
     for (const account of accounts) {
-      if (this.enabledAccounts[account.name] && account.addons.BankAltExport) {
+      if (this.isAddonEnabled(account.name, 'bankalt') && account.addons.BankAltExport) {
         const data = this.readBankAltData(account.name);
         if (data) {
           allData[account.name] = data;
@@ -378,15 +397,29 @@ class FileWatcher extends EventEmitter {
   }
 
   /**
-   * Read all GuildTracker SavedVariables from all accounts, merge them,
-   * and run through the guild growth processor.
+   * Read GuildTracker SavedVariables from enabled accounts only,
+   * merge them, and run through the guild growth processor.
+   * Filters by enabledAccounts and auto-detects guild name.
    * @returns {Object|null} Processed guild growth data
    */
   readGuildGrowthData() {
     try {
-      const accountDataList = discoverAllGuildTrackerData(this.wowPath);
-      if (!accountDataList || accountDataList.length === 0) return null;
-      return processGuildGrowthData(accountDataList);
+      const allAccountData = discoverAllGuildTrackerData(this.wowPath);
+      if (!allAccountData || allAccountData.length === 0) return null;
+
+      // Filter out accounts with roster disabled
+      const filtered = allAccountData.filter(acct => {
+        if (!this.isAddonEnabled(acct.name, 'roster')) {
+          console.log(`Skipping account with roster disabled: ${acct.name}`);
+          return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) return null;
+
+      // Process with auto guild name detection (majority vote)
+      return processGuildGrowthData(filtered);
     } catch (error) {
       console.error('Error processing guild growth data:', error);
       return null;
