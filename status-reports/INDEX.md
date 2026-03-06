@@ -1238,5 +1238,139 @@ Each report contains:
 - **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
 - **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
 
+### 2026-02-18
+
+#### 1. SuperMacro HYDRA Auto-Recruiting Package
+- **File:** `2026_02_18_10_34_PM_PST_SuperMacro_HYDRA_AutoRecruiting_Package.md`
+- **Date:** February 18, 2026, 10:34 PM PST
+- **Topics:** SuperMacro addon, HYDRA guild recruiting, Auto-posting macros, Pre-canned messages, TurtleWoW, Distributable zip
+- **Key Findings:**
+  - Verified existing SuperMacro addon (v3.18) with SM_AutoRun.lua auto-posting system (timer + global cooldown queue)
+  - Created 25 recruiting messages targeting distinct player personas (progression, PvP, casuals, dad gamers, tanks, healers, etc.)
+  - All messages under 255-char WoW limit, prefixed with `/6` (World Chat), include guild URL https://hydraguild.duckdns.org/
+  - Created SM_PreCanned.lua — auto-installs macros on first login, slash commands `/smhydra` (reinstall) and `/smchannel` (change channel number)
+  - Created comprehensive README explaining auto-posting system, channel configuration, recommended setup
+  - Built distributable zip package (180 KB) for sharing with guild members
+- **Technologies:** Lua (WoW vanilla API), SuperMacro addon framework, PowerShell Compress-Archive
+- **Status:** Completed
+- **Type:** Addon Build / Packaging
+- **Files Created:**
+  - `C:\Users\ryanr\Downloads\SuperMacro-HYDRA-AutoRecruiting.zip` — Distributable package
+  - `C:\Users\ryanr\Downloads\HYDRA_Recruiting_Messages.md` — Message reference
+  - `SM_PreCanned.lua` — Pre-canned macro installer (in zip)
+  - `README_HYDRA_AutoRecruiting.md` — User guide (in zip)
+- **No Live Changes:** User's TurtleWoW addon folder was NOT modified
+- **Slash Commands Added:** `/smhydra`, `/smchannel <num>`
+
 ---
-*Index last updated: 2026-02-13 11:50 PM PST*
+
+### Quick Search - February 2026 (updated)
+- **SuperMacro HYDRA:** 25 pre-canned recruiting macros with auto-posting (2026-02-18)
+- **Auto-Recruiting:** Timer-based macro posting with global cooldown queue (2026-02-18)
+- **SM_PreCanned.lua:** Auto-install macros on first login, `/smhydra` reinstall (2026-02-18)
+- **Channel Switch:** `/smchannel <num>` changes World Chat channel for all macros (2026-02-18)
+- **Guild Bank Upload Bug:** Timezone mismatch in freshness guard, PST uploads rejected (2026-02-13)
+- **scanTime Comparison:** String comparison across timezones — unreliable, replaced with dedup (2026-02-13)
+- **Multi-Timezone:** EST user's timestamp blocked all PST uploads (2026-02-13)
+- **Server-Side Fix:** inventory.ts freshness guard → dedup guard (2026-02-13)
+- **Website Deployment:** AH & Vault Sync v6.2.0 deployed to guild-bank page (2026-02-13)
+- **Update Notification:** Dismissible banner on /guild-bank, driven by JSON file (2026-02-13)
+- **Addon Auto-Update:** Version comparison on startup, auto-copy on mismatch (2026-02-13)
+- **AH & Vault Sync v6.2.0:** Addon auto-update on upgrade fix (2026-02-13)
+- **GBankExport v3.1:** Auto-scan settings, cooldown timer, Electron UI (2026-02-13)
+- **AH & Vault Sync v6.1.0:** New Guild Bank Scanner section (2026-02-13)
+- **Bidirectional Sync:** SavedVariables <-> Electron app settings (2026-02-13)
+- **Lighthouse:** External audit from Windows, Performance 100 (2026-02-13)
+- **TBC Guild Website:** Core Web Vitals excellent from external client (2026-02-13)
+- **DPSMate Lite:** Addon packaged for distribution (2026-02-04)
+- **GBankExport:** New TurtleWoW addon for guild bank scanning (2026-02-04)
+- **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
+- **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
+
+### 2026-02-21
+
+#### 1. GuildRecruiter Addon Created for TurtleWoW
+- **File:** `2026_02_21_03_37_PM_PST_GuildRecruiter_Addon_Created_For_TurtleWoW.md`
+- **Date:** February 21, 2026, 3:37 PM PST
+- **Topics:** TurtleWoW addon development, Guild recruitment, Unguilded player scanning, /who automation, Race-by-race scan, Whisper queue
+- **Key Findings:**
+  - No existing vanilla 1.12-compatible addon available for download (OwnedCore login-walled, SuperGuildInvite targets WotLK)
+  - Built custom GuildRecruiter v1.0.0 using proven vanilla API patterns
+  - Race-by-race scanning (Orc, Troll, Tauren, Undead, Goblin) via /who to bypass 49-result cap
+  - Whisper queue with rate limiting (5s between whispers) to avoid chat throttle
+  - Auto-invite when player replies "invite" keyword
+  - History tracking via SavedVariables — 14-day re-whisper cooldown
+  - 12 slash commands for full in-game control
+- **Technologies:** Lua (WoW vanilla 1.12 API), SavedVariables, PowerShell Compress-Archive
+- **Status:** Completed — Installed and packaged
+- **Type:** Addon Development
+- **Files Created:**
+  - `C:\TurtleWoW\Interface\AddOns\GuildRecruiter\GuildRecruiter.toc`
+  - `C:\TurtleWoW\Interface\AddOns\GuildRecruiter\GuildRecruiter.lua`
+  - `C:\TurtleWoW\Interface\AddOns\GuildRecruiter\README.txt`
+  - `C:\Users\ryanr\Downloads\GuildRecruiter.zip` (distributable package, 6.3 KB)
+- **Rollback Available:** Yes — delete addon folder and SavedVariables
+- **Testing Required:** In-game verification needed
+
+---
+
+### Quick Search - February 2026 (updated)
+- **GuildRecruiter v1.0.0:** Custom addon for unguilded player scanning + whisper recruitment (2026-02-21)
+- **Guild Recruitment:** Race-by-race /who scan, whisper queue, auto-invite on reply (2026-02-21)
+- **TurtleWoW Custom Races:** Goblin (Horde), High Elf (Alliance) included in scan list (2026-02-21)
+- **SuperMacro HYDRA:** 25 pre-canned recruiting macros with auto-posting (2026-02-18)
+- **Auto-Recruiting:** Timer-based macro posting with global cooldown queue (2026-02-18)
+- **SM_PreCanned.lua:** Auto-install macros on first login, `/smhydra` reinstall (2026-02-18)
+- **Channel Switch:** `/smchannel <num>` changes World Chat channel for all macros (2026-02-18)
+- **Guild Bank Upload Bug:** Timezone mismatch in freshness guard, PST uploads rejected (2026-02-13)
+- **scanTime Comparison:** String comparison across timezones — unreliable, replaced with dedup (2026-02-13)
+- **Multi-Timezone:** EST user's timestamp blocked all PST uploads (2026-02-13)
+- **Server-Side Fix:** inventory.ts freshness guard → dedup guard (2026-02-13)
+- **Website Deployment:** AH & Vault Sync v6.2.0 deployed to guild-bank page (2026-02-13)
+- **Update Notification:** Dismissible banner on /guild-bank, driven by JSON file (2026-02-13)
+- **Addon Auto-Update:** Version comparison on startup, auto-copy on mismatch (2026-02-13)
+- **AH & Vault Sync v6.2.0:** Addon auto-update on upgrade fix (2026-02-13)
+- **GBankExport v3.1:** Auto-scan settings, cooldown timer, Electron UI (2026-02-13)
+- **AH & Vault Sync v6.1.0:** New Guild Bank Scanner section (2026-02-13)
+- **Bidirectional Sync:** SavedVariables <-> Electron app settings (2026-02-13)
+- **Lighthouse:** External audit from Windows, Performance 100 (2026-02-13)
+- **TBC Guild Website:** Core Web Vitals excellent from external client (2026-02-13)
+- **DPSMate Lite:** Addon packaged for distribution (2026-02-04)
+- **GBankExport:** New TurtleWoW addon for guild bank scanning (2026-02-04)
+- **Combat Log:** Skeram MC analysis, interrupt tracking (2026-02-02)
+- **GuildShopSync:** Scheduled task missing, SetupTask.ps1 bug (2026-02-01)
+
+## March 2026 Reports
+
+#### 1. TurtleLogs Onyxia Phase 2 Split Bug — Investigation & Fix
+- **File:** `2026_03_05_08_35_PM_PST_TurtleLogs_Onyxia_Phase2_Split_Bug_Fix.md`
+- **Date:** March 5, 2026, 8:35 PM PST
+- **Topics:** TurtleLogs API, combat log parsing, Onyxia encounter splitting, Phase 2 Hover bug
+- **Key Findings:**
+  - TurtleLogs parser splits Onyxia encounters at `Hover(17131)` Phase 2 transition cast
+  - Kill attempt gets misassigned to Molten Core (map 409) instead of Onyxia's Lair (map 249)
+  - Bug is sporadic — correlates with longer Phase 2 air phase durations (>2 min)
+  - Zone ID 0 during combat is universal to all Onyxia logs and NOT the root cause
+  - Five progressive injection tests proved only Hover removal fixes the split
+  - Fix applied to TurtleLogs upload copy only — local parsing untouched
+- **Technologies:** Deno Fresh, TurtleLogs API, fflate ZIP, WoW combat log format, regex
+- **Status:** Fixed and deployed
+- **Type:** Bug Investigation & Fix
+- **Files Modified:**
+  - Server: `routes/api/logs.ts` (+15 lines, -1 line) — conditional Hover stripping for ONY uploads
+- **Server Commit:** `527d2a1` on `main` (tbc-guild-website)
+- **Rollback Available:** Yes — revert the single `turtleContent` block to use `data.content` directly
+- **Verification:** TurtleLogs entry 95884 — single Onyxia's Lair entry, 2 attempts (1 wipe + 1 kill)
+
+---
+
+### Quick Search - March 2026
+- **TurtleLogs Split Bug:** Onyxia Hover(17131) causes encounter split, kill mislabeled as MC (2026-03-05)
+- **Phase 2 Air Phase:** TurtleLogs parser treats Hover as encounter boundary (2026-03-05)
+- **Molten Core Mislabel:** map_id 409 fallback when parser splits at phase transition (2026-03-05)
+- **Server Fix:** `routes/api/logs.ts` strips Hover for TurtleLogs upload only (2026-03-05)
+- **Website Crash Loop:** 55-min restart loop from `ss: command not found` + rogue nohup process (2026-03-05)
+- **Firefox DNS Cache:** Persistent "trouble finding site" after outage, `about:networking#dns` fix (2026-03-05)
+
+---
+*Index last updated: 2026-03-05 8:35 PM PST*
