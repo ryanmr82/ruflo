@@ -1,6 +1,6 @@
 -- GuildTracker — tracks guild member joins and leaves with timestamps
 -- Vanilla WoW 1.12 / TurtleWoW compatible (Lua 5.0)
--- v1.2: guild name tracking, two-pass offline scan, departed-return fix
+-- v1.3: fix offline checkbox override — restore user's show-offline preference after scan
 
 GuildTracker_DB = nil
 
@@ -10,6 +10,8 @@ GT.scanDelay = 0
 GT.pendingScan = false
 GT.scanning = false
 GT.offlineReady = false  -- true once we've confirmed offline members are loaded
+GT.userOfflinePref = nil -- user's original show-offline setting (saved before scan forces it on)
+GT.restorePending = false -- true when we need to restore the user's pref after scan
 
 -- Class colors for display
 local CLASS_COLORS = {
@@ -71,23 +73,34 @@ local function DaysBetween(older, newer)
 end
 
 -- Two-pass roster scan with guaranteed offline member inclusion
+-- Only forces offline on during explicit scan requests (login, /gt scan).
+-- On regular roster updates, scans with whatever data is available.
+-- Saves user's show-offline preference and restores it after forced scan.
 local function ScanRoster()
     if not IsInGuild() then return end
     if GT.scanning then return end
     GT.scanning = true
 
-    -- PASS 1: Ensure offline members are included in the data.
-    -- If offline isn't shown, set it and request a fresh roster update.
-    -- We'll scan on the NEXT GUILD_ROSTER_UPDATE when data is ready.
-    if GetGuildRosterShowOffline() ~= 1 then
-        SetGuildRosterShowOffline(1)
-        GuildRoster()
-        GT.offlineReady = false
-        GT.scanning = false  -- allow re-entry on next event
-        return  -- wait for next GUILD_ROSTER_UPDATE with full data
+    -- If this is a forced scan (login / /gt scan), ensure offline members are loaded.
+    -- Otherwise, just scan with whatever data we have — don't override the user's UI.
+    if GT.pendingScan then
+        GT.pendingScan = false
+
+        if GetGuildRosterShowOffline() ~= 1 then
+            -- Save the user's preference before overriding
+            if GT.userOfflinePref == nil then
+                GT.userOfflinePref = 0
+            end
+            SetGuildRosterShowOffline(1)
+            GuildRoster()
+            GT.offlineReady = false
+            GT.restorePending = true
+            GT.scanning = false
+            return  -- wait for next GUILD_ROSTER_UPDATE with full data
+        end
     end
 
-    -- PASS 2: Offline is confirmed on. Proceed with scan.
+    -- Proceed with scan using whatever data is currently loaded
     GT.offlineReady = true
 
     local numMembers = GetNumGuildMembers()
@@ -256,6 +269,13 @@ local function ScanRoster()
 
     if newJoins > 0 or departed > 0 then
         Msg("Scan complete: |cff00ff00+" .. newJoins .. " joins|r, |cffff4444-" .. departed .. " leaves|r (total: " .. numMembers .. ")")
+    end
+
+    -- Restore user's show-offline preference if we changed it for the scan
+    if GT.restorePending and GT.userOfflinePref ~= nil then
+        SetGuildRosterShowOffline(GT.userOfflinePref)
+        GT.userOfflinePref = nil
+        GT.restorePending = false
     end
 
     GT.scanning = false
@@ -513,15 +533,17 @@ frame:SetScript("OnEvent", function()
         if not GuildTracker_DB.roster then GuildTracker_DB.roster = {} end
         if not GuildTracker_DB.levelHistory then GuildTracker_DB.levelHistory = {} end
 
-        Msg("v1.2 loaded. Type |cff66bbff/gt help|r for commands.")
+        Msg("v1.3 loaded. Type |cff66bbff/gt help|r for commands.")
     end
 
     if event == "PLAYER_ENTERING_WORLD" then
         if IsInGuild() then
-            -- Force offline on and request full roster data
+            -- Save user's current offline preference before we override
+            GT.userOfflinePref = GetGuildRosterShowOffline()
             SetGuildRosterShowOffline(1)
             GuildRoster()
             GT.offlineReady = false
+            GT.restorePending = true
             GT.pendingScan = true
         end
     end

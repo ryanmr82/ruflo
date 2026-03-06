@@ -2,5 +2,6 @@
 ## Title: GuildTracker
 ## Notes: Tracks guild member joins and leaves with timestamps
 ## Author: HYDRA Guild Tools
+## Version: 1.3
 ## SavedVariables: GuildTracker_DB
 GuildTracker.lua
