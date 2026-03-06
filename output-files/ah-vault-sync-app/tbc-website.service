@@ -1,0 +1,32 @@
+[Unit]
+Description=TBC Website (Deno Fresh)
+After=network.target
+
+[Service]
+Type=simple
+User=opc
+WorkingDirectory=/home/opc/tbc-website
+Environment=PATH=/home/opc/.deno/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=DENO_DIR=/home/opc/.cache/deno
+Environment=HOME=/home/opc
+Environment=PORT=8000
+Environment=DISCORD_BOT_TOKEN=MTQ2MTk4Nzc4NTk3MDk0NjE4MA.GCmU0A.MtvBAYuBY6DpxghNucf3kidKHEJIx0l1VCroAQ
+Environment=DISCORD_GUILD_ID=1039762365345976330
+Environment=DISCORD_ALCHEMY_CHANNEL_ID=1371230469919608882
+Environment=DISCORD_ORDERS_CHANNEL_ID=1371230469919608882
+
+# Kill any process holding port 8000 before starting
+ExecStartPre=/bin/bash -c 'fuser -k 8000/tcp 2>/dev/null; sleep 1; fuser -k -9 8000/tcp 2>/dev/null; sleep 1; true'
+
+ExecStart=/bin/bash -c "cd /home/opc/tbc-website && /home/opc/.deno/bin/deno run -A --unstable-kv main.ts"
+
+# Clean shutdown: SIGTERM, wait 15s, then SIGKILL
+TimeoutStopSec=15
+KillMode=mixed
+KillSignal=SIGTERM
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
