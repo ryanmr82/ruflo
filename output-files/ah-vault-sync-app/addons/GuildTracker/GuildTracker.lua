@@ -1,5 +1,6 @@
 -- GuildTracker — tracks guild member joins and leaves with timestamps
 -- Vanilla WoW 1.12 / TurtleWoW compatible (Lua 5.0)
+-- v1.2: guild name tracking, two-pass offline scan, departed-return fix
 
 GuildTracker_DB = nil
 
@@ -7,6 +8,8 @@ local GT = {}
 GT.initialized = false
 GT.scanDelay = 0
 GT.pendingScan = false
+GT.scanning = false
+GT.offlineReady = false  -- true once we've confirmed offline members are loaded
 
 -- Class colors for display
 local CLASS_COLORS = {
@@ -31,7 +34,6 @@ local function Msg(text)
 end
 
 local function GetTimestamp()
-    -- Returns "MM/DD/YY HH:MM" format
     return date("%m/%d/%y %H:%M")
 end
 
@@ -39,7 +41,6 @@ local function GetDateOnly()
     return date("%m/%d/%y")
 end
 
--- Parse a stored timestamp "MM/DD/YY HH:MM" into a comparable table
 local function ParseDate(str)
     if not str then return nil end
     local _, _, mo, d, y, h, mi = string.find(str, "(%d+)/(%d+)/(%d+) (%d+):(%d+)")
@@ -53,46 +54,66 @@ local function ParseDate(str)
     }
 end
 
--- Convert parsed date to a sortable number (YYMMDDHHmm)
 local function DateToNum(str)
     local p = ParseDate(str)
     if not p then return 0 end
     return p.year * 100000000 + p.month * 1000000 + p.day * 10000 + p.hour * 100 + p.minute
 end
 
--- Calculate rough days between two date strings
 local function DaysBetween(older, newer)
     local o = ParseDate(older)
     local n = ParseDate(newer)
     if not o or not n then return 999 end
-    -- Rough calculation: convert to days since epoch-ish
     local function toDays(p)
         return (p.year * 365) + (p.month * 30) + p.day + (p.hour / 24)
     end
     return toDays(n) - toDays(o)
 end
 
--- Scan the guild roster and detect changes
-GT.scanning = false
+-- Two-pass roster scan with guaranteed offline member inclusion
 local function ScanRoster()
     if not IsInGuild() then return end
-    if GT.scanning then return end  -- prevent re-entry from SetGuildRosterShowOffline triggering GUILD_ROSTER_UPDATE
+    if GT.scanning then return end
     GT.scanning = true
 
-    -- Temporarily show offline members so the full roster is returned.
-    local prevShowOffline = GetGuildRosterShowOffline()
-    SetGuildRosterShowOffline(1)
+    -- PASS 1: Ensure offline members are included in the data.
+    -- If offline isn't shown, set it and request a fresh roster update.
+    -- We'll scan on the NEXT GUILD_ROSTER_UPDATE when data is ready.
+    if GetGuildRosterShowOffline() ~= 1 then
+        SetGuildRosterShowOffline(1)
+        GuildRoster()
+        GT.offlineReady = false
+        GT.scanning = false  -- allow re-entry on next event
+        return  -- wait for next GUILD_ROSTER_UPDATE with full data
+    end
+
+    -- PASS 2: Offline is confirmed on. Proceed with scan.
+    GT.offlineReady = true
 
     local numMembers = GetNumGuildMembers()
     if numMembers == 0 then
-        SetGuildRosterShowOffline(prevShowOffline)
         GT.scanning = false
         return
     end
 
+    -- Safety check: if member count is suspiciously low, request fresh data.
+    -- This catches cases where SetGuildRosterShowOffline was set but data
+    -- hasn't propagated yet. A guild with tracking should have > 50 members.
     local db = GuildTracker_DB
+    if db.initialized and db.seedCount and db.seedCount > 100 and numMembers < 100 then
+        GuildRoster()
+        GT.scanning = false
+        return  -- wait for next update with full data
+    end
+
     local now = GetTimestamp()
     local currentRoster = {}
+
+    -- Get guild name for cross-guild filtering
+    local guildName = GetGuildInfo("player")
+    if guildName then
+        db.guildName = guildName
+    end
 
     for i = 1, numMembers do
         local name, rank, rankIndex, level, class, zone, note, officernote, online, status = GetGuildRosterInfo(i)
@@ -111,6 +132,9 @@ local function ScanRoster()
     -- First run: seed the roster without logging everything as "joins"
     if not db.initialized then
         Msg("First scan — seeding roster with |cff00ff00" .. numMembers .. "|r current members.")
+        if guildName then
+            Msg("Guild: |cff00ff00" .. guildName .. "|r")
+        end
         db.roster = {}
         for name, info in pairs(currentRoster) do
             db.roster[name] = {
@@ -125,7 +149,6 @@ local function ScanRoster()
         db.seedDate = now
         db.seedCount = numMembers
         Msg("Tracking started. Future joins and leaves will be logged.")
-        SetGuildRosterShowOffline(prevShowOffline)
         GT.scanning = false
         return
     end
@@ -141,7 +164,7 @@ local function ScanRoster()
     local newJoins = 0
     for name, info in pairs(currentRoster) do
         if not db.roster[name] then
-            -- New member detected
+            -- Brand new member never seen before
             newJoins = newJoins + 1
             db.roster[name] = {
                 firstSeen = now,
@@ -151,7 +174,6 @@ local function ScanRoster()
                 class = info.class,
             }
 
-            -- Log the join
             local entry = {
                 type = "join",
                 name = name,
@@ -164,26 +186,44 @@ local function ScanRoster()
 
             Msg("|cff00ff00+JOIN|r " .. CC(info.class, name) .. " (Lv" .. info.level .. " " .. info.class .. ", " .. info.rank .. ")")
 
-            -- Record initial level snapshot for new member
             if info.level < 60 then
                 if not db.levelHistory[name] then
                     db.levelHistory[name] = {}
                 end
                 db.levelHistory[name][today] = info.level
             end
-        else
-            -- Existing member — update last seen and current info
+        elseif db.roster[name].departed then
+            -- Member RETURNED after being marked departed — re-join
+            newJoins = newJoins + 1
+            db.roster[name].departed = nil
+            db.roster[name].departedDate = nil
             db.roster[name].lastSeen = now
             db.roster[name].level = info.level
             db.roster[name].rank = info.rank
             db.roster[name].class = info.class
 
-            -- Record daily level snapshot for under-60 members
+            local entry = {
+                type = "join",
+                name = name,
+                date = now,
+                level = info.level,
+                class = info.class,
+                rank = info.rank,
+            }
+            table.insert(db.log, entry)
+
+            Msg("|cff00ff00+RETURN|r " .. CC(info.class, name) .. " (Lv" .. info.level .. " " .. info.class .. ", " .. info.rank .. ")")
+        else
+            -- Existing active member — update last seen and current info
+            db.roster[name].lastSeen = now
+            db.roster[name].level = info.level
+            db.roster[name].rank = info.rank
+            db.roster[name].class = info.class
+
             if info.level < 60 then
                 if not db.levelHistory[name] then
                     db.levelHistory[name] = {}
                 end
-                -- Only write once per day to keep data compact
                 if not db.levelHistory[name][today] then
                     db.levelHistory[name][today] = info.level
                 end
@@ -195,7 +235,6 @@ local function ScanRoster()
     local departed = 0
     for name, info in pairs(db.roster) do
         if not currentRoster[name] and not info.departed then
-            -- Member left or was kicked
             departed = departed + 1
             info.departed = true
             info.departedDate = now
@@ -219,8 +258,6 @@ local function ScanRoster()
         Msg("Scan complete: |cff00ff00+" .. newJoins .. " joins|r, |cffff4444-" .. departed .. " leaves|r (total: " .. numMembers .. ")")
     end
 
-    -- Restore the user's original show-offline setting
-    SetGuildRosterShowOffline(prevShowOffline)
     GT.scanning = false
 end
 
@@ -229,7 +266,6 @@ local function HandleCommand(msg)
     if not msg then msg = "" end
     msg = string.lower(msg)
 
-    -- Trim whitespace
     local _, _, cmd, args = string.find(msg, "^(%S+)%s*(.*)")
     if not cmd then cmd = msg end
 
@@ -257,7 +293,7 @@ local function HandleCommand(msg)
 
     if cmd == "scan" then
         SetGuildRosterShowOffline(1)
-        GuildRoster()  -- Request fresh data
+        GuildRoster()
         GT.pendingScan = true
         Msg("Requesting roster update...")
         return
@@ -267,6 +303,7 @@ local function HandleCommand(msg)
         GuildTracker_DB = { roster = {}, log = {}, initialized = false }
         GT.initialized = false
         Msg("|cffff4444Tracking data reset.|r Next roster update will re-seed.")
+        SetGuildRosterShowOffline(1)
         GuildRoster()
         GT.pendingScan = true
         return
@@ -280,7 +317,8 @@ local function HandleCommand(msg)
             if not info.departed then active = active + 1 end
         end
         Msg("|cff00ff00=== Tracking Status ===|r")
-        Msg("  Tracking since: |cff66bbff" .. (db.seedDate or "?") .. "|r")
+        Msg("  Guild:           |cff66bbff" .. (db.guildName or "Unknown") .. "|r")
+        Msg("  Tracking since:  |cff66bbff" .. (db.seedDate or "?") .. "|r")
         Msg("  Initial roster:  |cff66bbff" .. (db.seedCount or "?") .. "|r members")
         Msg("  Current tracked: |cff66bbff" .. active .. "|r active, " .. (total - active) .. " departed")
         Msg("  Log entries:     |cff66bbff" .. table.getn(db.log) .. "|r")
@@ -316,7 +354,6 @@ local function HandleCommand(msg)
         Msg("|cff00ff00=== Today (" .. today .. ") ===|r")
         for i = 1, table.getn(db.log) do
             local e = db.log[i]
-            -- Check if date starts with today's date
             if e.date and string.find(e.date, today, 1, true) then
                 if e.type == "join" then
                     joins = joins + 1
@@ -339,7 +376,6 @@ local function HandleCommand(msg)
         local count = 0
 
         Msg(color .. "=== Recent " .. (cmd == "joins" and "Joins" or "Leaves") .. " (last 7 days) ===|r")
-        -- Show in reverse order (newest first)
         local logLen = table.getn(db.log)
         for i = logLen, 1, -1 do
             local e = db.log[i]
@@ -376,7 +412,6 @@ local function HandleCommand(msg)
             local e = db.log[i]
             local days = DaysBetween(e.date, now)
             if days <= 7 then
-                -- Extract just the date portion
                 local _, _, dateOnly = string.find(e.date, "^(%S+)")
                 if e.type == "join" then
                     joins = joins + 1
@@ -393,7 +428,6 @@ local function HandleCommand(msg)
         Msg("  Leaves: |cffff4444" .. leaves .. "|r")
         Msg("  Net:    " .. (joins - leaves >= 0 and "|cff00ff00+" or "|cffff4444") .. (joins - leaves) .. "|r")
 
-        -- Show per-day breakdown
         local allDays = {}
         for d, _ in pairs(joinsByDay) do
             allDays[d] = true
@@ -421,7 +455,6 @@ local function HandleCommand(msg)
             local member = db.roster[name]
             if member and not member.departed and member.level < 60 then
                 count = count + 1
-                -- Find min and max level in history
                 local minLvl = 999
                 local maxLvl = 0
                 local days = 0
@@ -469,7 +502,6 @@ frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 frame:SetScript("OnEvent", function()
     if event == "ADDON_LOADED" and arg1 == "GuildTracker" then
-        -- Initialize DB
         if not GuildTracker_DB then
             GuildTracker_DB = {
                 roster = {},
@@ -481,28 +513,26 @@ frame:SetScript("OnEvent", function()
         if not GuildTracker_DB.roster then GuildTracker_DB.roster = {} end
         if not GuildTracker_DB.levelHistory then GuildTracker_DB.levelHistory = {} end
 
-        Msg("v1.1 loaded. Type |cff66bbff/gt help|r for commands.")
+        Msg("v1.2 loaded. Type |cff66bbff/gt help|r for commands.")
     end
 
     if event == "PLAYER_ENTERING_WORLD" then
-        -- Request guild roster data after entering world
         if IsInGuild() then
+            -- Force offline on and request full roster data
             SetGuildRosterShowOffline(1)
             GuildRoster()
+            GT.offlineReady = false
             GT.pendingScan = true
         end
     end
 
     if event == "GUILD_ROSTER_UPDATE" then
-        -- Small delay to let data settle, then scan
         if GuildTracker_DB and IsInGuild() then
             ScanRoster()
-            GT.pendingScan = false
         end
     end
 end)
 
--- Register slash commands
 SLASH_GUILDTRACKER1 = "/guildtracker"
 SLASH_GUILDTRACKER2 = "/gt"
 SlashCmdList["GUILDTRACKER"] = HandleCommand
