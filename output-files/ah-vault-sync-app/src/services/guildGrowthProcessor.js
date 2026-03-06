@@ -2,13 +2,13 @@
  * Guild Growth Processor — processes GuildTracker SavedVariables from
  * multiple WoW accounts into a unified guild-growth-data.json.
  *
- * Port of parse_guild_tracker_v2.py (v3) to JavaScript.
+ * v2: guild name filtering, unique-member dedup, roster count sanity check
+ *
  * Handles: roster merging, event deduplication, XP-based leveling velocity,
  * daily stats, class breakdown, level distribution, retention metrics.
  */
 
 // Vanilla WoW XP required per level (XP to go from level N to N+1)
-// Source: https://warcraft.wiki.gg/wiki/Experience_to_level
 const XP_PER_LEVEL = {
   1: 400, 2: 900, 3: 1400, 4: 2100, 5: 2800,
   6: 3600, 7: 4500, 8: 5400, 9: 6500, 10: 7600,
@@ -24,9 +24,6 @@ const XP_PER_LEVEL = {
   56: 187900, 57: 195000, 58: 202300, 59: 209800, 60: 217400,
 };
 
-/**
- * Calculate total XP required to go from fromLevel to toLevel.
- */
 function xpBetweenLevels(fromLevel, toLevel) {
   if (fromLevel >= toLevel || fromLevel < 1) return 0;
   let total = 0;
@@ -36,9 +33,6 @@ function xpBetweenLevels(fromLevel, toLevel) {
   return total;
 }
 
-/**
- * Convert 'MM/DD/YY HH:MM' to a sortable integer.
- */
 function parseDateToSortkey(datestr) {
   if (!datestr) return 0;
   const m = datestr.match(/(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+)/);
@@ -51,17 +45,11 @@ function parseDateToSortkey(datestr) {
   return y * 100000000 + mo * 1000000 + d * 10000 + h * 100 + mi;
 }
 
-/**
- * Extract just the date portion from 'MM/DD/YY HH:MM'.
- */
 function dateToDay(datestr) {
   if (!datestr) return '';
   return datestr.split(' ')[0];
 }
 
-/**
- * Convert date string to rough days since epoch for comparison.
- */
 function dateToDaysEpoch(datestr) {
   if (!datestr) return 0;
   const m = datestr.match(/(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+)/);
@@ -75,66 +63,88 @@ function dateToDaysEpoch(datestr) {
 }
 
 /**
- * Deduplicate events across accounts within 48-hour windows.
+ * Deduplicate events by unique member name.
+ * For each (name, type) pair, keep only the FIRST event chronologically.
+ * This eliminates phantom duplicates from multi-account resyncs.
  */
 function deduplicateEvents(allEvents) {
-  // Group by (name, type)
-  const groups = {};
-  for (const ev of allEvents) {
-    const key = `${ev.name || ''}|${ev.type || ''}`;
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(ev);
-  }
-
+  const seen = {};  // key: "name|type" → first event
   const deduped = [];
 
-  for (const key of Object.keys(groups)) {
-    const events = groups[key];
-    events.sort((a, b) => parseDateToSortkey(a.date) - parseDateToSortkey(b.date));
+  // Sort all events chronologically first
+  const sorted = [...allEvents].sort((a, b) =>
+    parseDateToSortkey(a.date) - parseDateToSortkey(b.date)
+  );
 
-    const clusters = [];
-    for (const ev of events) {
-      const sk = parseDateToSortkey(ev.date);
-      let merged = false;
-      for (const cluster of clusters) {
-        const clusterSk = parseDateToSortkey(cluster[0].date);
-        if (Math.abs(sk - clusterSk) <= 4800) {
-          cluster.push(ev);
-          merged = true;
-          break;
-        }
-      }
-      if (!merged) {
-        clusters.push([ev]);
-      }
+  for (const ev of sorted) {
+    const key = `${ev.name || ''}|${ev.type || ''}`;
+    if (!seen[key]) {
+      // First occurrence of this member+type — keep it
+      seen[key] = ev;
+      deduped.push(ev);
     }
+    // All subsequent events for the same member+type are duplicates — skip
+  }
 
-    for (const cluster of clusters) {
-      cluster.sort((a, b) => parseDateToSortkey(a.date) - parseDateToSortkey(b.date));
-      let best = cluster[0];
-      for (let i = 1; i < cluster.length; i++) {
-        const ev = cluster[i];
-        if (Object.keys(ev).length > Object.keys(best).length) {
-          best = { ...ev, date: cluster[0].date };
-        }
-      }
-      deduped.push(best);
+  return deduped;
+}
+
+/**
+ * Auto-detect the target guild name from account data.
+ * Uses majority vote: the guild name that appears most frequently across accounts.
+ * Falls back to explicit targetGuild if provided.
+ */
+function detectTargetGuild(accountDataList, targetGuild) {
+  if (targetGuild) return targetGuild;
+
+  const guildCounts = {};
+  for (const acct of accountDataList) {
+    const gn = acct.guildName || '';
+    if (gn) {
+      guildCounts[gn] = (guildCounts[gn] || 0) + 1;
     }
   }
 
-  deduped.sort((a, b) => parseDateToSortkey(a.date) - parseDateToSortkey(b.date));
-  return deduped;
+  // Return the most common guild name
+  let bestGuild = '';
+  let bestCount = 0;
+  for (const [name, count] of Object.entries(guildCounts)) {
+    if (count > bestCount) {
+      bestCount = count;
+      bestGuild = name;
+    }
+  }
+  return bestGuild;
 }
 
 /**
  * Process all account data into the final guild-growth-data.json structure.
  *
- * @param {Array} accountDataList - Array of { name, seedDate, seedCount, log, roster, initialized }
+ * @param {Array} accountDataList - Array of { name, guildName, seedDate, seedCount, log, roster, initialized }
+ * @param {string} [targetGuild] - Optional guild name to filter by. Auto-detected if not provided.
  * @returns {Object} The complete guild growth data object
  */
-function processGuildGrowthData(accountDataList) {
+function processGuildGrowthData(accountDataList, targetGuild) {
   if (!accountDataList || accountDataList.length === 0) {
     return null;
+  }
+
+  // Detect target guild (majority vote or explicit)
+  const resolvedGuild = detectTargetGuild(accountDataList, targetGuild);
+
+  // Filter accounts to only include matching guild (or accounts without guild name for backward compat)
+  const filteredAccounts = accountDataList.filter(acct => {
+    const gn = acct.guildName || '';
+    // Include if: guild name matches, OR guild name is empty (addon v1.1 without guild tracking)
+    if (!gn) return true;
+    if (!resolvedGuild) return true;
+    return gn === resolvedGuild;
+  });
+
+  if (filteredAccounts.length === 0) {
+    console.log(`No accounts match guild "${resolvedGuild}". Using all accounts.`);
+    // Fallback: use all accounts if filtering eliminates everything
+    filteredAccounts.push(...accountDataList);
   }
 
   const accounts = [];
@@ -142,13 +152,14 @@ function processGuildGrowthData(accountDataList) {
   let bestSeedDate = null;
   let bestSeedCount = 0;
   let bestSeedSortkey = 99999999999;
-  const allRosters = []; // [{ sortkey, accountName, roster }]
+  const allRosters = [];
 
-  for (const acctData of accountDataList) {
+  for (const acctData of filteredAccounts) {
     const sk = parseDateToSortkey(acctData.seedDate || '');
 
     accounts.push({
       name: acctData.name,
+      guildName: acctData.guildName || '',
       seedDate: acctData.seedDate,
       seedCount: acctData.seedCount || 0,
       logEntries: (acctData.log || []).length,
@@ -158,7 +169,6 @@ function processGuildGrowthData(accountDataList) {
 
     allEvents.push(...(acctData.log || []));
 
-    // Track earliest seed
     if (sk > 0 && sk < bestSeedSortkey) {
       bestSeedSortkey = sk;
       bestSeedDate = acctData.seedDate;
@@ -182,20 +192,17 @@ function processGuildGrowthData(accountDataList) {
       } else {
         const newRank = (entry.rank || '');
         const oldRank = (existing.rank || '');
-        // Prefer non-stale rank over "Leave of Absenc" truncated rank
         if (oldRank.includes('Leave of Absen') && !newRank.includes('Leave of Absen')) {
           mergedRoster[name] = entry;
         } else if (!oldRank.includes('Leave of Absen') && !newRank.includes('Leave of Absen')) {
-          // Both real ranks; prefer newer
           mergedRoster[name] = entry;
         }
-        // If new is also Leave of Absenc, keep existing
       }
     }
   }
 
   // ================================================================
-  // DEDUPLICATE EVENTS
+  // DEDUPLICATE EVENTS — unique member name per event type
   // ================================================================
   const deduped = deduplicateEvents(allEvents);
 
@@ -303,7 +310,7 @@ function processGuildGrowthData(accountDataList) {
   const levelDistribution = Object.entries(levelRanges).map(([range, count]) => ({ range, count }));
 
   // ================================================================
-  // RETENTION
+  // RETENTION — based on unique names (dedup already ensures this)
   // ================================================================
   const joinNames = new Set(deduped.filter(e => e.type === 'join').map(e => e.name));
   const leaveNames = new Set(deduped.filter(e => e.type === 'leave').map(e => e.name));
@@ -325,6 +332,7 @@ function processGuildGrowthData(accountDataList) {
 
   // ================================================================
   // FRESHEST ROSTER — used for current member count and leveling tracker
+  // Sanity check: reject rosters with < 100 active members (online-only scan)
   // ================================================================
   let currentRosterCount = 0;
   let newestLastSeen = 0;
@@ -337,7 +345,10 @@ function processGuildGrowthData(accountDataList) {
       const ls = parseDateToSortkey(entry.lastSeen || '');
       if (ls > maxLs) maxLs = ls;
     }
-    if (maxLs > newestLastSeen) {
+    // Sanity check: skip rosters that look like online-only scans
+    // A real full roster should have > 100 active members for a guild this size
+    if (activeCount < 100 && currentRosterCount >= 100) continue;
+    if (maxLs > newestLastSeen || (activeCount > currentRosterCount && activeCount >= 100)) {
       newestLastSeen = maxLs;
       currentRosterCount = activeCount;
       freshestRoster = roster;
@@ -346,9 +357,6 @@ function processGuildGrowthData(accountDataList) {
 
   // ================================================================
   // LEVELING VELOCITY TRACKER
-  // Uses MIN level across ALL accounts (oldest known snapshot) vs
-  // MAX level across ALL accounts (most current) for each member.
-  // This survives account rescans that update old snapshots.
   // ================================================================
   const oldSeedDate = allRosters[0] ? accounts.find(a => a.name === allRosters[0].accountName)?.seedDate : null;
   const newSeedDate = allRosters.length > 0
@@ -358,11 +366,9 @@ function processGuildGrowthData(accountDataList) {
   let snapshotDays = dateToDaysEpoch(newSeedDate) - dateToDaysEpoch(oldSeedDate);
   if (snapshotDays < 1) snapshotDays = 1;
 
-  // For each member, find MIN level and MAX level across ALL account rosters.
-  // Also build lastSeen map and collect best metadata (class, rank, etc.)
-  const memberMinLevel = {};  // name -> lowest level seen
-  const memberMaxLevel = {};  // name -> highest level seen
-  const memberBestMeta = {};  // name -> { class, rank, firstSeen, departed }
+  const memberMinLevel = {};
+  const memberMaxLevel = {};
+  const memberBestMeta = {};
   const lastSeenMap = {};
 
   for (const { roster } of allRosters) {
@@ -377,7 +383,6 @@ function processGuildGrowthData(accountDataList) {
         }
       }
 
-      // Track best metadata (prefer non-departed, non-LoA entries)
       const existing = memberBestMeta[name];
       if (!existing) {
         memberBestMeta[name] = {
@@ -387,7 +392,6 @@ function processGuildGrowthData(accountDataList) {
           departed: entry.departed || false,
         };
       } else {
-        // Prefer non-departed over departed
         if (existing.departed && !entry.departed) {
           memberBestMeta[name] = {
             class: entry.class || existing.class,
@@ -396,7 +400,6 @@ function processGuildGrowthData(accountDataList) {
             departed: false,
           };
         } else if (!existing.departed && !entry.departed) {
-          // Both active — prefer better rank (non-LoA)
           const newRank = entry.rank || '';
           const oldRank = existing.rank || '';
           if (oldRank.includes('Leave of Absen') && !newRank.includes('Leave of Absen') && newRank) {
@@ -405,7 +408,6 @@ function processGuildGrowthData(accountDataList) {
         }
       }
 
-      // Build lastSeen map
       const ls = entry.lastSeen || '';
       if (ls) {
         const existingLs = lastSeenMap[name] || '';
@@ -418,7 +420,6 @@ function processGuildGrowthData(accountDataList) {
 
   const levelingCandidates = [];
 
-  // Use freshest roster for current members — only track people actually in the guild
   for (const [name, rosterEntry] of Object.entries(freshestRoster)) {
     if (rosterEntry.departed) continue;
     const maxLevel = memberMaxLevel[name] || 0;
@@ -428,7 +429,6 @@ function processGuildGrowthData(accountDataList) {
     const hasOldSnapshot = minLevel > 0 && minLevel < maxLevel;
     const levelsGained = hasOldSnapshot ? maxLevel - minLevel : 0;
 
-    // XP-based velocity
     const xpGained = hasOldSnapshot ? xpBetweenLevels(minLevel, maxLevel) : 0;
     const xpPerDay = hasOldSnapshot ? Math.round(xpGained / snapshotDays) : 0;
 
@@ -441,7 +441,6 @@ function processGuildGrowthData(accountDataList) {
 
     const meta = memberBestMeta[name] || {};
 
-    // Classify status using XP thresholds
     let status;
     if (!hasOldSnapshot) {
       status = 'NEW';
@@ -473,7 +472,6 @@ function processGuildGrowthData(accountDataList) {
     });
   }
 
-  // Sort: HOT first, then ACTIVE, SLOW, NEW, STAGNANT, AT_RISK
   const statusOrder = { HOT: 1, ACTIVE: 2, SLOW: 3, NEW: 4, STAGNANT: 5, AT_RISK: 6 };
   levelingCandidates.sort((a, b) => {
     const orderDiff = (statusOrder[a.status] || 99) - (statusOrder[b.status] || 99);
@@ -488,7 +486,6 @@ function processGuildGrowthData(accountDataList) {
   const atRiskCount = levelingCandidates.filter(c => c.status === 'AT_RISK').length;
   const newCount = levelingCandidates.filter(c => c.status === 'NEW').length;
 
-  // Velocity distribution (XP/day ranges)
   const velRanges = { '0': 0, '1-5k': 0, '5k-10k': 0, '10k-20k': 0, '20k-30k': 0, '30k+': 0 };
   for (const c of levelingCandidates) {
     const v = c.xpPerDay;
@@ -524,6 +521,7 @@ function processGuildGrowthData(accountDataList) {
   const lastUpdated = lastEvent.date || 'Unknown';
 
   return {
+    guildName: resolvedGuild || 'Unknown',
     seedDate: bestSeedDate,
     seedCount: bestSeedCount,
     lastUpdated,
@@ -551,7 +549,6 @@ function processGuildGrowthData(accountDataList) {
     levelDistribution,
     events: deduped,
     levelingTracker,
-    // Note: accounts list intentionally excluded from output (per user request to not expose account names)
   };
 }
 
@@ -560,5 +557,6 @@ module.exports = {
   xpBetweenLevels,
   parseDateToSortkey,
   deduplicateEvents,
+  detectTargetGuild,
   XP_PER_LEVEL,
 };

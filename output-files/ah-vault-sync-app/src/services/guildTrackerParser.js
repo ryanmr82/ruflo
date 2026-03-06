@@ -247,6 +247,9 @@ function toAccountData(accountName, db) {
     }
   }
 
+  // Extract guild name (added in addon v1.2)
+  const guildName = db.guildName || '';
+
   // Build log array (Lua arrays are 1-indexed, parser returns 0-indexed JS array)
   const log = [];
   if (db.log && Array.isArray(db.log)) {
@@ -267,6 +270,7 @@ function toAccountData(accountName, db) {
 
   return {
     name: accountName,
+    guildName,
     seedDate: db.seedDate || '',
     seedCount: db.seedCount || 0,
     log,
