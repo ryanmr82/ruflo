@@ -233,6 +233,21 @@ function updateAddonStatus(results) {
 }
 
 // Helper Functions
+function getAccountAddonSettings(accountName) {
+  const val = enabledAccounts[accountName];
+  if (val === undefined) return { prices: true, gbank: true, bankalt: true, roster: true };
+  if (typeof val === 'boolean') return { prices: val, gbank: val, bankalt: val, roster: val };
+  if (typeof val === 'object' && val !== null) {
+    return {
+      prices: val.prices !== false,
+      gbank: val.gbank !== false,
+      bankalt: val.bankalt !== false,
+      roster: val.roster !== false
+    };
+  }
+  return { prices: true, gbank: true, bankalt: true, roster: true };
+}
+
 function renderAccounts(accounts) {
   if (accounts.length === 0) {
     accountsList.innerHTML = '<p class="placeholder-text">No accounts found. Make sure you have the addons installed.</p>';
@@ -241,26 +256,61 @@ function renderAccounts(accounts) {
 
   let html = '';
   for (const account of accounts) {
-    const isEnabled = enabledAccounts[account.name] !== false;
+    const settings = getAccountAddonSettings(account.name);
     const hasGSS = account.addons.GuildShopSync;
     const hasGBE = account.addons.GBankExport;
     const hasBAE = account.addons.BankAltExport;
     const hasGT = account.addons.GuildTracker;
 
+    const allChecked = settings.prices && settings.gbank && settings.bankalt && settings.roster;
+    const noneChecked = !settings.prices && !settings.gbank && !settings.bankalt && !settings.roster;
+    const masterChecked = allChecked;
+    const masterIndeterminate = !allChecked && !noneChecked;
+
     html += `
       <div class="account-item">
         <div class="account-header">
           <input type="checkbox"
+                 class="master-checkbox"
+                 id="master-${account.name}"
                  data-account="${account.name}"
-                 ${isEnabled ? 'checked' : ''}
-                 onchange="toggleAccount('${account.name}', this.checked)">
+                 ${masterChecked ? 'checked' : ''}
+                 onchange="toggleAccountMaster('${account.name}', this.checked)">
           <span class="account-name">${account.name}</span>
-          <div class="addon-badges">
-            <span class="addon-badge ${hasGSS ? '' : 'inactive'}">Prices</span>
-            <span class="addon-badge ${hasGBE ? '' : 'inactive'}">GBank</span>
-            <span class="addon-badge ${hasBAE ? '' : 'inactive'}">BankAlt</span>
-            <span class="addon-badge ${hasGT ? '' : 'inactive'}">Roster</span>
-          </div>
+        </div>
+        <div class="addon-toggles">
+          <label class="addon-toggle ${hasGSS ? '' : 'unavailable'}">
+            <input type="checkbox"
+                   data-account="${account.name}" data-addon="prices"
+                   ${settings.prices ? 'checked' : ''}
+                   ${hasGSS ? '' : 'disabled'}
+                   onchange="toggleAddon('${account.name}', 'prices', this.checked)">
+            <span>Prices</span>
+          </label>
+          <label class="addon-toggle ${hasGBE ? '' : 'unavailable'}">
+            <input type="checkbox"
+                   data-account="${account.name}" data-addon="gbank"
+                   ${settings.gbank ? 'checked' : ''}
+                   ${hasGBE ? '' : 'disabled'}
+                   onchange="toggleAddon('${account.name}', 'gbank', this.checked)">
+            <span>GBank</span>
+          </label>
+          <label class="addon-toggle ${hasBAE ? '' : 'unavailable'}">
+            <input type="checkbox"
+                   data-account="${account.name}" data-addon="bankalt"
+                   ${settings.bankalt ? 'checked' : ''}
+                   ${hasBAE ? '' : 'disabled'}
+                   onchange="toggleAddon('${account.name}', 'bankalt', this.checked)">
+            <span>BankAlt</span>
+          </label>
+          <label class="addon-toggle ${hasGT ? '' : 'unavailable'}">
+            <input type="checkbox"
+                   data-account="${account.name}" data-addon="roster"
+                   ${settings.roster ? 'checked' : ''}
+                   ${hasGT ? '' : 'disabled'}
+                   onchange="toggleAddon('${account.name}', 'roster', this.checked)">
+            <span>Roster</span>
+          </label>
         </div>
         <div class="character-list">
           ${account.characters.map(c => `
@@ -272,10 +322,50 @@ function renderAccounts(accounts) {
   }
 
   accountsList.innerHTML = html;
+
+  // Set indeterminate state on master checkboxes after DOM render
+  for (const account of accounts) {
+    const settings = getAccountAddonSettings(account.name);
+    const allChecked = settings.prices && settings.gbank && settings.bankalt && settings.roster;
+    const noneChecked = !settings.prices && !settings.gbank && !settings.bankalt && !settings.roster;
+    const masterEl = document.getElementById(`master-${account.name}`);
+    if (masterEl && !allChecked && !noneChecked) {
+      masterEl.indeterminate = true;
+    }
+  }
 }
 
-window.toggleAccount = function(accountName, enabled) {
-  enabledAccounts[accountName] = enabled;
+window.toggleAccountMaster = function(accountName, enabled) {
+  const settings = { prices: enabled, gbank: enabled, bankalt: enabled, roster: enabled };
+  enabledAccounts[accountName] = settings;
+
+  // Update all addon checkboxes for this account
+  const addonCheckboxes = document.querySelectorAll(`input[data-account="${accountName}"][data-addon]`);
+  for (const cb of addonCheckboxes) {
+    if (!cb.disabled) cb.checked = enabled;
+  }
+
+  // Clear indeterminate
+  const masterEl = document.getElementById(`master-${accountName}`);
+  if (masterEl) masterEl.indeterminate = false;
+};
+
+window.toggleAddon = function(accountName, addonKey, enabled) {
+  // Ensure enabledAccounts[accountName] is an object
+  if (typeof enabledAccounts[accountName] !== 'object' || enabledAccounts[accountName] === null) {
+    enabledAccounts[accountName] = { prices: true, gbank: true, bankalt: true, roster: true };
+  }
+  enabledAccounts[accountName][addonKey] = enabled;
+
+  // Update master checkbox state
+  const s = enabledAccounts[accountName];
+  const allChecked = s.prices && s.gbank && s.bankalt && s.roster;
+  const noneChecked = !s.prices && !s.gbank && !s.bankalt && !s.roster;
+  const masterEl = document.getElementById(`master-${accountName}`);
+  if (masterEl) {
+    masterEl.checked = allChecked;
+    masterEl.indeterminate = !allChecked && !noneChecked;
+  }
 };
 
 function saveConfig() {

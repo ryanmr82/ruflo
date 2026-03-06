@@ -154,23 +154,56 @@ section h2 {
   color: #ffd700;
 }
 
-.addon-badges {
+.addon-toggles {
   display: flex;
-  gap: 5px;
-  margin-left: auto;
+  gap: 12px;
+  margin: 6px 0 4px 26px;
+  flex-wrap: wrap;
 }
 
-.addon-badge {
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 0.7em;
+.addon-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  transition: all 0.15s ease;
+}
+
+.addon-toggle:hover {
   background: rgba(255, 215, 0, 0.2);
-  color: #ffd700;
 }
 
-.addon-badge.inactive {
-  background: rgba(128, 128, 128, 0.2);
+.addon-toggle input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  accent-color: #ffd700;
+}
+
+.addon-toggle span {
+  color: #ddd;
+  user-select: none;
+}
+
+.addon-toggle.unavailable {
+  background: rgba(128, 128, 128, 0.1);
+  border-color: rgba(128, 128, 128, 0.2);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.addon-toggle.unavailable span {
   color: #666;
+}
+
+.master-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #ffd700;
 }
 
 .character-list {
