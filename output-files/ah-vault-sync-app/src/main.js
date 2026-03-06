@@ -17,6 +17,49 @@ let tray;
 let fileWatcher;
 let watcherRunning = false;
 
+// Addon keys used in per-addon account filtering
+const ADDON_KEYS = ['prices', 'gbank', 'bankalt', 'roster'];
+
+/**
+ * Check if a specific addon is enabled for an account.
+ * Handles both old boolean format and new per-addon object format.
+ * @param {Object} enabledAccounts - The enabledAccounts config object
+ * @param {string} accountName - Account name to check
+ * @param {string} addonKey - One of: 'prices', 'gbank', 'bankalt', 'roster'
+ * @returns {boolean}
+ */
+function isAddonEnabled(enabledAccounts, accountName, addonKey) {
+  const val = enabledAccounts[accountName];
+  if (val === undefined) return true; // default: enabled
+  if (typeof val === 'boolean') return val; // old format
+  if (typeof val === 'object' && val !== null) {
+    return val[addonKey] !== false; // new format, default true if key missing
+  }
+  return true;
+}
+
+/**
+ * Migrate old boolean enabledAccounts format to per-addon object format.
+ * { "KRR86": false } → { "KRR86": { prices: false, gbank: false, bankalt: false, roster: false } }
+ * { "REEE_V": true }  → { "REEE_V": { prices: true, gbank: true, bankalt: true, roster: true } }
+ */
+function migrateEnabledAccounts(enabledAccounts) {
+  let migrated = false;
+  const result = { ...enabledAccounts };
+  for (const [name, val] of Object.entries(result)) {
+    if (typeof val === 'boolean') {
+      result[name] = {
+        prices: val,
+        gbank: val,
+        bankalt: val,
+        roster: val
+      };
+      migrated = true;
+    }
+  }
+  return { result, migrated };
+}
+
 // App configuration
 const APP_NAME = 'Guild Sync';
 const SERVER_URL = 'https://hydraguild.duckdns.org';
@@ -248,9 +291,11 @@ async function handleManualSync() {
     const tempWatcher = new FileWatcher(wowPath, enabledAccounts, store);
     const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
 
-    // Sync prices — from ANY account that has GuildShopSync data (prices are global)
+    // Sync prices — only from accounts with prices enabled
     const accounts = tempWatcher.discoverAccounts();
-    const priceAccounts = accounts.filter(a => a.addons.GuildShopSync);
+    const priceAccounts = accounts.filter(a =>
+      a.addons.GuildShopSync && isAddonEnabled(enabledAccounts, a.name, 'prices')
+    );
     let bestPriceData = null;
     for (const acct of priceAccounts) {
       const pd = tempWatcher.readPriceData(acct.name);
@@ -263,8 +308,10 @@ async function handleManualSync() {
       mainWindow.webContents.send('sync-success', { type: 'prices' });
     }
 
-    // Sync guild bank — from ANY account that has GBankExport data (guild bank is global)
-    const gbankAccounts = accounts.filter(a => a.addons.GBankExport);
+    // Sync guild bank — only from accounts with gbank enabled
+    const gbankAccounts = accounts.filter(a =>
+      a.addons.GBankExport && isAddonEnabled(enabledAccounts, a.name, 'gbank')
+    );
     let bestGbankData = null;
     for (const acct of gbankAccounts) {
       const gd = tempWatcher.readGuildBankData(acct.name);
@@ -277,7 +324,7 @@ async function handleManualSync() {
       mainWindow.webContents.send('sync-success', { type: 'guildBank' });
     }
 
-    // Sync bank alts — all checked accounts that have BankAltExport data
+    // Sync bank alts — accounts with bankalt enabled (handled inside readAllBankAltData)
     const bankAltData = tempWatcher.readAllBankAltData();
     if (bankAltData && Object.keys(bankAltData).length > 0) {
       for (const [account, data] of Object.entries(bankAltData)) {
@@ -286,7 +333,7 @@ async function handleManualSync() {
       }
     }
 
-    // Sync guild growth — merge all GuildTracker data across accounts
+    // Sync guild growth — accounts with roster enabled (handled inside readGuildGrowthData)
     const guildGrowthData = tempWatcher.readGuildGrowthData();
     if (guildGrowthData) {
       await uploader.uploadGuildGrowth(guildGrowthData);
@@ -326,16 +373,16 @@ ipcMain.on('save-config', async (event, config) => {
 
   event.reply('config-saved');
 
-  // Detect accounts that were just unchecked and delete their data from the server
+  // Detect accounts whose bankalt was just disabled and delete their data from the server
   const uploader = new Uploader(SERVER_URL, SERVER_URL_FALLBACK);
   for (const accountName of Object.keys(newEnabledAccounts)) {
-    const wasEnabled = oldEnabledAccounts[accountName] !== false;
-    const isNowDisabled = newEnabledAccounts[accountName] === false;
+    const wasBankAltEnabled = isAddonEnabled(oldEnabledAccounts, accountName, 'bankalt');
+    const isNowBankAltDisabled = !isAddonEnabled(newEnabledAccounts, accountName, 'bankalt');
 
-    if (wasEnabled && isNowDisabled) {
+    if (wasBankAltEnabled && isNowBankAltDisabled) {
       try {
         await uploader.deleteBankAlt(accountName);
-        console.log(`Deleted bank alt data for unchecked account: ${accountName}`);
+        console.log(`Deleted bank alt data for account with bankalt disabled: ${accountName}`);
         if (mainWindow) {
           mainWindow.webContents.send('sync-success', {
             type: 'bankAltDelete',
@@ -728,6 +775,14 @@ app.on('second-instance', () => {
 });
 
 app.whenReady().then(() => {
+  // Migrate old boolean enabledAccounts → per-addon object format
+  const oldEA = store.get('enabledAccounts', {});
+  const { result: migratedEA, migrated } = migrateEnabledAccounts(oldEA);
+  if (migrated) {
+    store.set('enabledAccounts', migratedEA);
+    console.log('Migrated enabledAccounts to per-addon format:', migratedEA);
+  }
+
   createWindow();
   createTray();
 
