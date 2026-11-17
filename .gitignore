@@ -141,3 +141,7 @@ credentials/
 # Windows reserved filenames
 nul
 NUL
+
+# claude-flow runtime state rewritten by hooks on every command
+.claude-flow/policy/
+.claude-flow/neural/
